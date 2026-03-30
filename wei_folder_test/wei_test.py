@@ -1,2 +1,0 @@
-x = " HIHI"
-print(x)
