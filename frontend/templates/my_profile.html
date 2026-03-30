@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile — Movie Star</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            space: {
+              950: '#05050d',
+              900: '#0a0a0f',
+              800: '#0f0f1a',
+              700: '#13131f',
+              600: '#1a1a2e',
+              500: '#22223d',
+              400: '#2e2e50',
+            },
+            gold: {
+              DEFAULT: '#f5c518',
+              dim:     '#c9a214',
+              faint:   '#7a6010',
+            },
+            stardust: {
+              DEFAULT: '#8888aa',
+              light:   '#b0b0cc',
+              faint:   '#44445a',
+            },
+          },
+          fontFamily: {
+            display: ['Georgia', 'serif'],
+            body:    ['system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'gold-glow': '0 0 0 1px rgba(245,197,24,0.25), 0 4px 24px rgba(245,197,24,0.08)',
+            'card':      '0 2px 16px rgba(0,0,0,0.5)',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    /* Star rating interactive */
+    .star-select { display: flex; flex-direction: row-reverse; gap: 4px; }
+    .star-select input { display: none; }
+    .star-select label {
+      font-size: 1.6rem; color: #44445a; cursor: pointer;
+      transition: color 0.1s; line-height: 1;
+    }
+    .star-select input:checked ~ label,
+    .star-select label:hover,
+    .star-select label:hover ~ label { color: #f5c518; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2e2e50; border-radius: 3px; }
+
+    /* Nebula background */
+    body {
+      background:
+        radial-gradient(ellipse 80% 40% at 10% 10%, rgba(80,40,160,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 80%, rgba(245,197,24,0.05) 0%, transparent 60%),
+        #0a0a0f;
+    }
+    /* Star particles */
+    .star-particle {
+      position: fixed; border-radius: 50%;
+      background: white; pointer-events: none; z-index: 0;
+      animation: twinkle var(--dur, 3s) ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: var(--min-op, 0.1); }
+      50%      { opacity: var(--max-op, 0.6); }
+    }
+    /* Edit card animation */
+    .edit-panel { animation: slideDown 0.2s ease-out; }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="text-gray-100 font-body min-h-screen relative overflow-x-hidden">
+
+  <!-- Star particles (decorative) -->
+  <div id="stars" class="pointer-events-none" aria-hidden="true"></div>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="sticky top-0 z-50 border-b border-space-500/50 bg-space-900/90 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
+      <!-- Logo -->
+      <a href="#" class="font-display text-xl tracking-widest text-gold flex items-center gap-1">
+        ★ <span class="text-white">Movie</span>Star
+      </a>
+      <!-- Nav links -->
+      <div class="hidden md:flex items-center gap-6 text-sm text-stardust">
+        <a href="#" class="hover:text-white transition-colors">Home</a>
+        <a href="#" class="hover:text-white transition-colors">Explore</a>
+        <a href="#" class="hover:text-white transition-colors">My Feed</a>
+      </div>
+      <!-- Right icons -->
+      <div class="flex items-center gap-3">
+        <button class="text-stardust hover:text-white transition-colors p-1" aria-label="Search">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <button class="text-stardust hover:text-white transition-colors p-1" aria-label="Watchlist">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+        <img src="https://i.pravatar.cc/36?img=12" class="w-8 h-8 rounded-full border-2 border-gold/40 object-cover" alt="My avatar">
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── PROFILE BANNER ── -->
+  <div class="relative h-36 overflow-hidden z-10">
+    <div class="absolute inset-0"
+      style="background: linear-gradient(135deg, #0a0a2e 0%, #1a0a3e 40%, #0f1a3e 70%, #0a0a0f 100%)">
+    </div>
+    <!-- Constellation pattern overlay -->
+    <svg class="absolute inset-0 w-full h-full opacity-20" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10%" y1="30%" x2="25%" y2="60%" stroke="#f5c518" stroke-width="0.5" stroke-dasharray="2 4"/>
+      <line x1="25%" y1="60%" x2="45%" y2="20%" stroke="#f5c518" stroke-width="0.5" stroke-dasharray="2 4"/>
+      <line x1="45%" y1="20%" x2="70%" y2="70%" stroke="#f5c518" stroke-width="0.5" stroke-dasharray="2 4"/>
+      <line x1="70%" y1="70%" x2="90%" y2="40%" stroke="#f5c518" stroke-width="0.5" stroke-dasharray="2 4"/>
+      <circle cx="10%" cy="30%" r="2" fill="#f5c518"/>
+      <circle cx="25%" cy="60%" r="1.5" fill="#f5c518"/>
+      <circle cx="45%" cy="20%" r="2.5" fill="#f5c518"/>
+      <circle cx="70%" cy="70%" r="1.5" fill="#f5c518"/>
+      <circle cx="90%" cy="40%" r="2" fill="#f5c518"/>
+    </svg>
+    <!-- Bottom fade -->
+    <div class="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-space-900 to-transparent"></div>
+  </div>
+
+  <!-- ── MAIN CONTENT ── -->
+  <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+
+    <!-- Profile header -->
+    <div class="flex flex-col md:flex-row md:items-end gap-4 -mt-14 mb-8">
+      <!-- Avatar -->
+      <div class="relative flex-shrink-0">
+        <img src="https://i.pravatar.cc/100?img=12" alt="My avatar"
+          class="w-24 h-24 rounded-full border-4 border-space-900 object-cover shadow-card">
+        <div class="absolute inset-0 rounded-full ring-2 ring-gold/30"></div>
+      </div>
+      <!-- Info -->
+      <div class="flex-1 pt-2">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 class="font-display text-2xl tracking-wide text-white">Alex Chen</h1>
+            <p class="text-stardust text-sm">@alex_chen · Joined March 2024</p>
+            <p class="text-stardust-light text-sm mt-1 max-w-md">
+              Film lover. Sci-fi obsessive. Perth, WA. Probably watching something by Villeneuve right now.
+            </p>
+          </div>
+          <button onclick="alert('Edit profile modal would open here')"
+            class="self-start sm:self-auto flex items-center gap-2 px-4 py-2 rounded-lg border border-gold/40 text-gold text-sm font-medium hover:bg-gold/10 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit profile
+          </button>
+        </div>
+        <!-- Stats -->
+        <div class="flex gap-4 mt-4 flex-wrap">
+          <div class="bg-space-700/60 border border-space-500/50 rounded-xl px-4 py-2.5 text-center min-w-[80px]">
+            <div class="text-gold font-display text-xl leading-none">28</div>
+            <div class="text-stardust text-xs uppercase tracking-widest mt-1">Reviews</div>
+          </div>
+          <div class="bg-space-700/60 border border-space-500/50 rounded-xl px-4 py-2.5 text-center min-w-[80px]">
+            <div class="text-gold font-display text-xl leading-none">143</div>
+            <div class="text-stardust text-xs uppercase tracking-widest mt-1">Following</div>
+          </div>
+          <div class="bg-space-700/60 border border-space-500/50 rounded-xl px-4 py-2.5 text-center min-w-[80px]">
+            <div class="text-gold font-display text-xl leading-none">381</div>
+            <div class="text-stardust text-xs uppercase tracking-widest mt-1">Followers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="border-b border-space-500/50 mb-6 flex gap-0">
+      <button onclick="switchTab(this,'reviews')"
+        class="profile-tab px-5 py-3 text-sm font-medium border-b-2 border-gold text-white transition-all">
+        My Reviews (28)
+      </button>
+      <button onclick="switchTab(this,'watchlist')"
+        class="profile-tab px-5 py-3 text-sm font-medium border-b-2 border-transparent text-stardust hover:text-white transition-all">
+        Watchlist (15)
+      </button>
+      <button onclick="switchTab(this,'liked')"
+        class="profile-tab px-5 py-3 text-sm font-medium border-b-2 border-transparent text-stardust hover:text-white transition-all">
+        Liked Reviews (42)
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- ── REVIEWS TAB ── -->
+      <div id="tab-reviews" class="lg:col-span-2 flex flex-col gap-4">
+
+        <!-- Review card 1 -->
+        <div class="review-card bg-space-700/80 border border-space-500/50 rounded-2xl overflow-hidden shadow-card hover:shadow-gold-glow transition-all"
+          data-id="1">
+          <!-- Collapsed view -->
+          <div class="collapsed-view p-4 sm:p-5">
+            <div class="flex gap-4">
+              <!-- Poster -->
+              <a href="#" class="flex-shrink-0">
+                <img src="https://image.tmdb.org/t/p/w92/AmR3JG1VQVxU8TfAvljUhfSFUOx.jpg"
+                  class="w-14 rounded-lg object-cover aspect-[2/3] border border-space-400/50" alt="Dune poster">
+              </a>
+              <!-- Content -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between gap-2 flex-wrap">
+                  <div>
+                    <h3 class="font-semibold text-white leading-tight">Dune: Part Two</h3>
+                    <p class="text-stardust text-xs mt-0.5">2024 · Sci-Fi · Denis Villeneuve</p>
+                  </div>
+                  <!-- Stars display -->
+                  <div class="flex gap-0.5 text-gold text-base flex-shrink-0">★★★★★</div>
+                </div>
+                <p class="text-stardust-light text-sm mt-2 leading-relaxed line-clamp-2">
+                  "Villeneuve has outdone himself. The sandworm sequences are jaw-dropping and Zendaya finally gets the role she deserves. Best blockbuster in years."
+                </p>
+                <div class="flex items-center gap-2 mt-3 flex-wrap">
+                  <span class="text-stardust text-xs">Posted 10 Mar 2024</span>
+                  <span class="text-space-400 text-xs">·</span>
+                  <span class="text-xs text-stardust flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg>
+                    24 likes
+                  </span>
+                  <div class="ml-auto flex gap-2">
+                    <button onclick="openEdit(1)"
+                      class="px-3 py-1.5 rounded-lg border border-gold/40 text-gold text-xs font-medium hover:bg-gold/10 transition-colors">
+                      ✏ Edit
+                    </button>
+                    <button onclick="confirmDelete(1)"
+                      class="px-3 py-1.5 rounded-lg border border-red-800/40 text-red-400 text-xs font-medium hover:bg-red-900/20 transition-colors">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit panel (hidden by default) -->
+          <div class="edit-panel hidden border-t border-space-500/50 bg-space-800/80 p-4 sm:p-5" id="edit-1">
+            <p class="text-xs text-stardust uppercase tracking-widest mb-4">Editing your review</p>
+            <!-- Star rating editor -->
+            <div class="mb-4">
+              <label class="block text-xs text-stardust mb-2 uppercase tracking-widest">Your rating</label>
+              <div class="star-select" id="stars-1">
+                <input type="radio" name="rating-1" id="s1-5" value="5"><label for="s1-5">★</label>
+                <input type="radio" name="rating-1" id="s1-4" value="4"><label for="s1-4">★</label>
+                <input type="radio" name="rating-1" id="s1-3" value="3"><label for="s1-3">★</label>
+                <input type="radio" name="rating-1" id="s1-2" value="2"><label for="s1-2">★</label>
+                <input type="radio" name="rating-1" id="s1-1" value="1" checked><label for="s1-1">★</label>
+              </div>
+              <!-- Pre-select 5 stars on load -->
+              <script>document.getElementById('s1-5').checked = true;</script>
+            </div>
+            <!-- Review textarea -->
+            <div class="mb-4">
+              <label class="block text-xs text-stardust mb-2 uppercase tracking-widest">Your review</label>
+              <textarea rows="4"
+                class="w-full bg-space-900/80 border border-space-400/60 rounded-xl text-sm text-gray-200 placeholder-stardust-faint px-4 py-3 resize-none focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/20 transition-all"
+                maxlength="2000"
+                oninput="this.nextElementSibling.textContent = this.value.length + ' / 2000'"
+              >Villeneuve has outdone himself. The sandworm sequences are jaw-dropping and Zendaya finally gets the role she deserves. Best blockbuster in years.</textarea>
+              <div class="text-right text-xs text-stardust mt-1">143 / 2000</div>
+            </div>
+            <!-- Spoiler toggle -->
+            <label class="flex items-center gap-2 text-sm text-stardust mb-4 cursor-pointer select-none">
+              <input type="checkbox" class="rounded border-space-400 bg-space-900 accent-gold">
+              <span>Contains spoilers</span>
+            </label>
+            <!-- Actions -->
+            <div class="flex gap-2">
+              <button onclick="saveEdit(1)"
+                class="px-4 py-2 bg-gold text-black text-sm font-semibold rounded-lg hover:bg-gold-dim transition-colors">
+                Save changes
+              </button>
+              <button onclick="cancelEdit(1)"
+                class="px-4 py-2 text-stardust text-sm hover:text-white transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review card 2 -->
+        <div class="review-card bg-space-700/80 border border-space-500/50 rounded-2xl overflow-hidden shadow-card hover:shadow-gold-glow transition-all"
+          data-id="2">
+          <div class="collapsed-view p-4 sm:p-5">
+            <div class="flex gap-4">
+              <a href="#" class="flex-shrink-0">
+                <img src="https://image.tmdb.org/t/p/w92/wTnV3PCVW5O92JMrFvvrRcV39RU.jpg"
+                  class="w-14 rounded-lg object-cover aspect-[2/3] border border-space-400/50" alt="Past Lives">
+              </a>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between gap-2 flex-wrap">
+                  <div>
+                    <h3 class="font-semibold text-white leading-tight">Past Lives</h3>
+                    <p class="text-stardust text-xs mt-0.5">2023 · Romance · Celine Song</p>
+                  </div>
+                  <div class="flex gap-0.5 text-gold text-base flex-shrink-0">★★★★★</div>
+                </div>
+                <p class="text-stardust-light text-sm mt-2 leading-relaxed line-clamp-2">
+                  "One of the most quietly devastating films I've ever seen. The final scene is perfect. This one will haunt me for years."
+                </p>
+                <div class="flex items-center gap-2 mt-3 flex-wrap">
+                  <span class="text-stardust text-xs">Posted 4 Feb 2024</span>
+                  <span class="text-space-400 text-xs">·</span>
+                  <span class="text-xs text-stardust flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg>
+                    31 likes
+                  </span>
+                  <div class="ml-auto flex gap-2">
+                    <button onclick="openEdit(2)"
+                      class="px-3 py-1.5 rounded-lg border border-gold/40 text-gold text-xs font-medium hover:bg-gold/10 transition-colors">
+                      ✏ Edit
+                    </button>
+                    <button onclick="confirmDelete(2)"
+                      class="px-3 py-1.5 rounded-lg border border-red-800/40 text-red-400 text-xs font-medium hover:bg-red-900/20 transition-colors">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="edit-panel hidden border-t border-space-500/50 bg-space-800/80 p-4 sm:p-5" id="edit-2">
+            <p class="text-xs text-stardust uppercase tracking-widest mb-4">Editing your review</p>
+            <div class="mb-4">
+              <label class="block text-xs text-stardust mb-2 uppercase tracking-widest">Your rating</label>
+              <div class="star-select">
+                <input type="radio" name="rating-2" id="s2-5" value="5" checked><label for="s2-5">★</label>
+                <input type="radio" name="rating-2" id="s2-4" value="4"><label for="s2-4">★</label>
+                <input type="radio" name="rating-2" id="s2-3" value="3"><label for="s2-3">★</label>
+                <input type="radio" name="rating-2" id="s2-2" value="2"><label for="s2-2">★</label>
+                <input type="radio" name="rating-2" id="s2-1" value="1"><label for="s2-1">★</label>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-xs text-stardust mb-2 uppercase tracking-widest">Your review</label>
+              <textarea rows="4"
+                class="w-full bg-space-900/80 border border-space-400/60 rounded-xl text-sm text-gray-200 placeholder-stardust-faint px-4 py-3 resize-none focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/20 transition-all"
+                maxlength="2000"
+                oninput="this.nextElementSibling.textContent = this.value.length + ' / 2000'"
+              >One of the most quietly devastating films I've ever seen. The final scene is perfect. This one will haunt me for years.</textarea>
+              <div class="text-right text-xs text-stardust mt-1">120 / 2000</div>
+            </div>
+            <label class="flex items-center gap-2 text-sm text-stardust mb-4 cursor-pointer select-none">
+              <input type="checkbox" class="rounded border-space-400 bg-space-900 accent-gold">
+              <span>Contains spoilers</span>
+            </label>
+            <div class="flex gap-2">
+              <button onclick="saveEdit(2)"
+                class="px-4 py-2 bg-gold text-black text-sm font-semibold rounded-lg hover:bg-gold-dim transition-colors">
+                Save changes
+              </button>
+              <button onclick="cancelEdit(2)"
+                class="px-4 py-2 text-stardust text-sm hover:text-white transition-colors">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review card 3 -->
+        <div class="review-card bg-space-700/80 border border-space-500/50 rounded-2xl overflow-hidden shadow-card hover:shadow-gold-glow transition-all"
+          data-id="3">
+          <div class="collapsed-view p-4 sm:p-5">
+            <div class="flex gap-4">
+              <a href="#" class="flex-shrink-0">
+                <img src="https://image.tmdb.org/t/p/w92/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg"
+                  class="w-14 rounded-lg object-cover aspect-[2/3] border border-space-400/50" alt="Poor Things">
+              </a>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between gap-2 flex-wrap">
+                  <div>
+                    <h3 class="font-semibold text-white leading-tight">Poor Things</h3>
+                    <p class="text-stardust text-xs mt-0.5">2023 · Drama · Yorgos Lanthimos</p>
+                  </div>
+                  <div class="flex gap-0.5 text-gold text-base flex-shrink-0">
+                    ★★★<span class="text-stardust-faint">★★</span>
+                  </div>
+                </div>
+                <p class="text-stardust-light text-sm mt-2 leading-relaxed line-clamp-2">
+                  "Gorgeous to look at and Emma Stone is extraordinary. The relentless quirkiness wore me down by the second act but I can see why others love it."
+                </p>
+                <div class="flex items-center gap-2 mt-3 flex-wrap">
+                  <span class="text-stardust text-xs">Posted 20 Jan 2024</span>
+                  <span class="text-space-400 text-xs">·</span>
+                  <span class="text-xs text-stardust flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg>
+                    12 likes
+                  </span>
+                  <div class="ml-auto flex gap-2">
+                    <button onclick="openEdit(3)"
+                      class="px-3 py-1.5 rounded-lg border border-gold/40 text-gold text-xs font-medium hover:bg-gold/10 transition-colors">
+                      ✏ Edit
+                    </button>
+                    <button onclick="confirmDelete(3)"
+                      class="px-3 py-1.5 rounded-lg border border-red-800/40 text-red-400 text-xs font-medium hover:bg-red-900/20 transition-colors">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="edit-panel hidden border-t border-space-500/50 bg-space-800/80 p-4 sm:p-5" id="edit-3">
+            <p class="text-xs text-stardust uppercase tracking-widest mb-4">Editing your review</p>
+            <div class="mb-4">
+              <label class="block text-xs text-stardust mb-2 uppercase tracking-widest">Your rating</label>
+              <div class="star-select">
+                <input type="radio" name="rating-3" id="s3-5" value="5"><label for="s3-5">★</label>
+                <input type="radio" name="rating-3" id="s3-4" value="4"><label for="s3-4">★</label>
+                <input type="radio" name="rating-3" id="s3-3" value="3" checked><label for="s3-3">★</label>
+                <input type="radio" name="rating-3" id="s3-2" value="2"><label for="s3-2">★</label>
+                <input type="radio" name="rating-3" id="s3-1" value="1"><label for="s3-1">★</label>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-xs text-stardust mb-2 uppercase tracking-widest">Your review</label>
+              <textarea rows="4"
+                class="w-full bg-space-900/80 border border-space-400/60 rounded-xl text-sm text-gray-200 px-4 py-3 resize-none focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/20 transition-all"
+                maxlength="2000"
+                oninput="this.nextElementSibling.textContent = this.value.length + ' / 2000'"
+              >Gorgeous to look at and Emma Stone is extraordinary. The relentless quirkiness wore me down by the second act but I can see why others love it.</textarea>
+              <div class="text-right text-xs text-stardust mt-1">145 / 2000</div>
+            </div>
+            <label class="flex items-center gap-2 text-sm text-stardust mb-4 cursor-pointer select-none">
+              <input type="checkbox" class="rounded border-space-400 bg-space-900 accent-gold">
+              <span>Contains spoilers</span>
+            </label>
+            <div class="flex gap-2">
+              <button onclick="saveEdit(3)"
+                class="px-4 py-2 bg-gold text-black text-sm font-semibold rounded-lg hover:bg-gold-dim transition-colors">
+                Save changes
+              </button>
+              <button onclick="cancelEdit(3)"
+                class="px-4 py-2 text-stardust text-sm hover:text-white transition-colors">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Load more -->
+        <button class="w-full py-3 rounded-xl border border-space-400/50 text-stardust text-sm hover:text-white hover:border-space-300/50 transition-colors">
+          Load more reviews (25 remaining)
+        </button>
+      </div>
+
+      <!-- ── SIDEBAR ── -->
+      <div class="flex flex-col gap-4">
+        <!-- Average rating -->
+        <div class="bg-space-700/80 border border-space-500/50 rounded-2xl p-5">
+          <p class="text-xs text-stardust uppercase tracking-widest mb-3">Average rating given</p>
+          <div class="flex items-end gap-2 mb-1">
+            <span class="font-display text-4xl text-gold leading-none">4.2</span>
+            <span class="text-gold text-lg mb-1">/ 5</span>
+          </div>
+          <div class="flex gap-0.5 text-gold text-lg mb-2">★★★★<span class="text-stardust-faint">★</span></div>
+          <p class="text-stardust text-xs">Based on 28 reviews</p>
+        </div>
+
+        <!-- Favourite genres -->
+        <div class="bg-space-700/80 border border-space-500/50 rounded-2xl p-5">
+          <p class="text-xs text-stardust uppercase tracking-widest mb-4">Favourite genres</p>
+          <div class="flex flex-col gap-3">
+            <div>
+              <div class="flex justify-between text-xs mb-1"><span class="text-stardust-light">Sci-Fi</span><span class="text-stardust">11</span></div>
+              <div class="h-1.5 bg-space-500 rounded-full overflow-hidden">
+                <div class="h-full bg-gold rounded-full" style="width:78%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-1"><span class="text-stardust-light">Drama</span><span class="text-stardust">8</span></div>
+              <div class="h-1.5 bg-space-500 rounded-full overflow-hidden">
+                <div class="h-full bg-gold rounded-full" style="width:57%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-1"><span class="text-stardust-light">Thriller</span><span class="text-stardust">5</span></div>
+              <div class="h-1.5 bg-space-500 rounded-full overflow-hidden">
+                <div class="h-full bg-gold rounded-full" style="width:36%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-1"><span class="text-stardust-light">Romance</span><span class="text-stardust">4</span></div>
+              <div class="h-1.5 bg-space-500 rounded-full overflow-hidden">
+                <div class="h-full bg-gold rounded-full" style="width:29%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick link to other profile demo -->
+        <a href="other_profile.html"
+          class="bg-space-600/80 border border-gold/20 rounded-2xl p-4 flex items-center gap-3 hover:border-gold/40 transition-colors group">
+          <img src="https://i.pravatar.cc/40?img=5" class="w-9 h-9 rounded-full border border-gold/30" alt="">
+          <div class="flex-1">
+            <p class="text-xs text-stardust group-hover:text-white transition-colors">View another user →</p>
+            <p class="text-xs text-stardust-faint">See other_profile.html</p>
+          </div>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Watchlist tab (hidden) -->
+    <div id="tab-watchlist" class="hidden lg:col-span-2">
+      <p class="text-stardust text-sm">Watchlist content would appear here.</p>
+    </div>
+    <!-- Liked tab (hidden) -->
+    <div id="tab-liked" class="hidden">
+      <p class="text-stardust text-sm">Liked reviews would appear here.</p>
+    </div>
+
+  </div>
+
+  <!-- ── DELETE CONFIRM MODAL ── -->
+  <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal()"></div>
+    <div class="relative bg-space-700 border border-space-400/60 rounded-2xl p-6 max-w-sm w-full shadow-card">
+      <h3 class="font-semibold text-white mb-2">Delete this review?</h3>
+      <p class="text-stardust text-sm mb-6">This cannot be undone. Your review and rating will be permanently removed.</p>
+      <div class="flex gap-3">
+        <button onclick="closeModal()"
+          class="flex-1 py-2 rounded-lg border border-space-400/50 text-stardust text-sm hover:text-white transition-colors">
+          Cancel
+        </button>
+        <button onclick="closeModal()"
+          class="flex-1 py-2 rounded-lg bg-red-700/80 text-white text-sm font-medium hover:bg-red-700 transition-colors">
+          Delete review
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Star particles ──
+    const container = document.getElementById('stars');
+    for (let i = 0; i < 80; i++) {
+      const s = document.createElement('div');
+      s.className = 'star-particle';
+      const size = Math.random() * 2 + 0.5;
+      s.style.cssText = `
+        width:${size}px; height:${size}px;
+        top:${Math.random()*100}vh; left:${Math.random()*100}vw;
+        --dur:${2+Math.random()*4}s;
+        --min-op:${0.05+Math.random()*0.1};
+        --max-op:${0.3+Math.random()*0.5};
+        animation-delay:${Math.random()*4}s;
+      `;
+      container.appendChild(s);
+    }
+
+    // ── Tabs ──
+    function switchTab(btn, tab) {
+      document.querySelectorAll('.profile-tab').forEach(t => {
+        t.classList.remove('border-gold', 'text-white');
+        t.classList.add('border-transparent', 'text-stardust');
+      });
+      btn.classList.add('border-gold', 'text-white');
+      btn.classList.remove('border-transparent', 'text-stardust');
+      // In production, show/hide tab content panels here
+    }
+
+    // ── Edit review ──
+    function openEdit(id) {
+      const card = document.querySelector(`[data-id="${id}"]`);
+      const editPanel = document.getElementById(`edit-${id}`);
+      editPanel.classList.remove('hidden');
+      editPanel.classList.add('edit-panel');
+      editPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function cancelEdit(id) {
+      document.getElementById(`edit-${id}`).classList.add('hidden');
+    }
+    function saveEdit(id) {
+      // In production: AJAX POST to /api/reviews/<id>/edit with CSRF token
+      cancelEdit(id);
+      // Show a brief success toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-6 right-6 z-50 bg-space-600 border border-gold/30 text-white text-sm px-4 py-3 rounded-xl shadow-card';
+      toast.textContent = '✓ Review updated';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
+    }
+
+    // ── Delete ──
+    function confirmDelete(id) {
+      document.getElementById('deleteModal').classList.remove('hidden');
+    }
+    function closeModal() {
+      document.getElementById('deleteModal').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
