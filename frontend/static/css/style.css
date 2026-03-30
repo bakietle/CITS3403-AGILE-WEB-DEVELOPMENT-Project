@@ -1,0 +1,389 @@
+/* ============================================
+   MOVIE STAR — Global Stylesheet
+   style.css
+   ============================================ */
+
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  --gold:         #c9a84c;
+  --gold-dim:     #a07830;
+  --gold-hover:   #d4b060;
+  --dark:         #0a0a0f;
+  --dark-2:       #10101a;
+  --card-bg:      rgba(15, 15, 22, 0.92);
+  --input-bg:     rgba(255, 255, 255, 0.05);
+  --input-border: rgba(201, 168, 76, 0.25);
+  --border:       rgba(201, 168, 76, 0.15);
+  --text:         #e8e8f0;
+  --text-muted:   #8a8a9a;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Base ── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  background-color: var(--dark);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gold-dim);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* ── Film Grain Overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+.font-display {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.08em;
+}
+
+.eyebrow {
+  font-size: 0.68rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-gold {
+  color: var(--gold);
+}
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+
+.navbar-cinema {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
+  background: linear-gradient(to bottom, rgba(10,10,15,0.95), transparent);
+  transition: background 0.3s, border-bottom 0.3s;
+}
+
+.navbar-cinema.scrolled {
+  background: rgba(10, 10, 15, 0.97);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.nav-links a:hover {
+  color: var(--gold);
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.btn-primary {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--dark);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.25em;
+  padding: 14px 40px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
+}
+
+.btn-primary:hover {
+  background: var(--gold-hover);
+  box-shadow: 0 8px 32px rgba(201, 168, 76, 0.35);
+  transform: translateY(-2px);
+  color: var(--dark);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-ghost {
+  display: inline-block;
+  background: transparent;
+  color: var(--text);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.25em;
+  padding: 13px 40px;
+  border: 1px solid rgba(232, 232, 240, 0.2);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color 0.25s, color 0.25s;
+}
+
+.btn-ghost:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn-nav {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--gold);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  padding: 8px 22px;
+  border-radius: 2px;
+  transition: background 0.25s, box-shadow 0.25s;
+}
+
+.btn-nav:hover {
+  background: rgba(201, 168, 76, 0.1);
+  box-shadow: 0 0 16px rgba(201, 168, 76, 0.15);
+  color: var(--gold);
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+
+.card-cinema {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  backdrop-filter: blur(20px);
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-cinema::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card-cinema:hover {
+  border-color: rgba(201, 168, 76, 0.35);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+}
+
+.card-cinema:hover::before {
+  opacity: 1;
+}
+
+/* Movie card */
+.movie-card img {
+  display: block;
+  width: 100%;
+}
+
+/* Watchlist card */
+.watchlist-card img {
+  display: block;
+  width: 100%;
+}
+
+.watchlist-card button {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.watchlist-card button:hover {
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+
+.field-label {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.field-input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 2px;
+  color: var(--text);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.92rem;
+  padding: 12px 16px;
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  margin-bottom: 20px;
+}
+
+.field-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+}
+
+.field-input::placeholder {
+  color: rgba(138, 138, 154, 0.5);
+}
+
+/* ============================================
+   DIVIDER
+   ============================================ */
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(201, 168, 76, 0.1);
+}
+
+.divider-text {
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+}
+
+.footer-note {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.footer-stars {
+  color: var(--gold);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  opacity: 0.6;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
+  50%       { opacity: 1;   transform: scaleY(1); }
+}
+
+.animate-fadeUp {
+  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease both;
+}
