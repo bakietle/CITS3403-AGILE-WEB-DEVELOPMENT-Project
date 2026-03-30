@@ -91,18 +91,21 @@ Make sure you have the following installed:
 ## 📁 Project Structure
 
 ```
-movie-star/
-├── static/
-│   ├── css/
-│   └── js/
-├── templates/
-│   ├── login.html
-│   ├── signup.html
-│   └── index.html
-├── app.py
-├── requirements.txt
-├── .env
-└── README.md
+movie-forum/
+├─ frontend/
+│  ├─ __init__.py
+│  ├─ routes.py
+│  ├─ models.py
+│  ├─ forms.py
+│  ├─ templates/ --HTMl pages goes here--
+│  └─ static/
+│     ├─ css/ --CSS pages goes here--
+│     ├─ js/
+
+├─ migrations/
+├─ config.py
+├─ run.py
+└─ requirements.txt
 ```
 
 ---
