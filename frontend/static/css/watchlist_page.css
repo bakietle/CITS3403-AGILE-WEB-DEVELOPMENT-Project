@@ -1,0 +1,38 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #141414;
+  color: #ffffff;
+}
+
+.watchlist-card img {
+  display: block;
+}
+
+.watchlist-card button {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.watchlist-card button:hover {
+  transform: translateY(-1px);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e50914;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f40612;
+}

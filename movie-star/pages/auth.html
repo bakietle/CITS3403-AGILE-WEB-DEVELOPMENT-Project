@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Movie Star — Enter</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <!-- Google Fonts: Bebas Neue + Lato -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-dim: #a07830;
+      --dark: #0a0a0f;
+      --card-bg: rgba(15, 15, 22, 0.92);
+      --input-bg: rgba(255,255,255,0.05);
+      --input-border: rgba(201,168,76,0.25);
+      --text-muted: #8a8a9a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background-color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Cinematic background */
+    .bg-scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(100,60,180,0.08) 0%, transparent 50%),
+        linear-gradient(160deg, #0a0a0f 0%, #10101a 50%, #0a0a0f 100%);
+    }
+
+    /* Film grain overlay */
+    .bg-scene::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* Spotlight lines */
+    .spotlight {
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 140%;
+      background: linear-gradient(to bottom, rgba(201,168,76,0.15), transparent);
+      z-index: 0;
+      filter: blur(1px);
+    }
+    .spotlight-2 {
+      left: 30%;
+      opacity: 0.5;
+      transform: rotate(-15deg);
+      transform-origin: top center;
+    }
+    .spotlight-3 {
+      left: 70%;
+      opacity: 0.5;
+      transform: rotate(15deg);
+      transform-origin: top center;
+    }
+
+    /* Card */
+    .auth-card {
+      position: relative;
+      z-index: 10;
+      background: var(--card-bg);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 4px;
+      width: 100%;
+      max-width: 440px;
+      padding: 48px 44px;
+      backdrop-filter: blur(20px);
+      box-shadow:
+        0 0 0 1px rgba(201,168,76,0.05),
+        0 40px 80px rgba(0,0,0,0.7),
+        0 0 60px rgba(201,168,76,0.04);
+      animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo */
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      text-align: center;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .logo-sub {
+      text-align: center;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 36px;
+    }
+
+    /* Toggle tabs */
+    .tab-wrapper {
+      display: flex;
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+      margin-bottom: 32px;
+    }
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 10px 0 14px;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.3s;
+    }
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0; right: 0;
+      height: 2px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .tab-btn.active {
+      color: var(--gold);
+    }
+    .tab-btn.active::after {
+      transform: scaleX(1);
+    }
+
+    /* Forms */
+    .form-panel {
+      display: none;
+      animation: fadeIn 0.4s ease both;
+    }
+    .form-panel.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .field-label {
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .field-input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 2px;
+      color: #e8e8f0;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.92rem;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      margin-bottom: 20px;
+    }
+    .field-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+    }
+    .field-input::placeholder {
+      color: rgba(138,138,154,0.5);
+    }
+
+    /* Submit button */
+    .btn-cinema {
+      width: 100%;
+      background: var(--gold);
+      color: #0a0a0f;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.25em;
+      border: none;
+      border-radius: 2px;
+      padding: 14px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-cinema:hover {
+      background: #d4b060;
+      box-shadow: 0 4px 24px rgba(201,168,76,0.3);
+      transform: translateY(-1px);
+    }
+    .btn-cinema:active {
+      transform: translateY(0);
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(201,168,76,0.1);
+    }
+    .divider-text {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Forgot / extra links */
+    .link-gold {
+      color: var(--gold-dim);
+      font-size: 0.78rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .link-gold:hover { color: var(--gold); }
+
+    .bottom-note {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* Stars decoration */
+    .stars {
+      text-align: center;
+      color: var(--gold);
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      margin-bottom: 28px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="bg-scene"></div>
+  <div class="spotlight"></div>
+  <div class="spotlight spotlight-2"></div>
+  <div class="spotlight spotlight-3"></div>
+
+  <!-- Auth Card -->
+  <div class="auth-card">
+
+    <!-- Logo -->
+    <div class="logo">Movie Star</div>
+    <div class="logo-sub">Rate the world's stories</div>
+    <div class="stars">★ ★ ★ ★ ★</div>
+
+    <!-- Tabs -->
+    <div class="tab-wrapper">
+      <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+      <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div class="form-panel active" id="panel-login">
+      <form action="/login" method="POST">
+        <label class="field-label">Email</label>
+        <input class="field-input" type="email" name="email" placeholder="you@example.com" required />
+
+        <label class="field-label">Password</label>
+        <input class="field-input" type="password" name="password" placeholder="••••••••" required />
+
+        <div class="d-flex justify-content-end mb-1">
+          <a href="/forgot-password" class="link-gold">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-cinema">Enter the Stage</button>
+      </form>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="bottom-note">
+        No account yet?
+        <a href="#" class="link-gold" onclick="switchTab('signup')">Create one</a>
+      </div>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div class="form-panel" id="panel-signup">
+      <form action="/signup" method="POST">
+        <label class="field-label">Username</label>
+        <input class="field-input" type="text" name="username" placeholder="Your screen name" required />
+
+        <label class="field-label">Email</label>
+        <input class="field-input" type="email" name="email" placeholder="you@example.com" required />
+
+        <label class="field-label">Password</label>
+        <input class="field-input" type="password" name="password" placeholder="••••••••" required />
+
+        <label class="field-label">Confirm Password</label>
+        <input class="field-input" type="password" name="confirm_password" placeholder="••••••••" required />
+
+        <button type="submit" class="btn-cinema">Join Movie Star</button>
+      </form>
+
+      <div class="bottom-note" style="margin-top: 20px;">
+        Already have an account?
+        <a href="#" class="link-gold" onclick="switchTab('login')">Sign in</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.form-panel');
+
+    function switchTab(target) {
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+
+      const idx = target === 'login' ? 0 : 1;
+      tabs[idx].classList.add('active');
+
+      const panel = document.getElementById('panel-' + target);
+      panel.classList.add('active');
+    }
+  </script>
+</body>
+</html>
