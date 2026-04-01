@@ -4,114 +4,57 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Movie Star | Watchlist</title>
-
-  <!-- Tailwind for direct browser use -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-  <!-- Extra CSS file -->
+  <link rel="stylesheet" href="../static/css/style.css" />
   <link rel="stylesheet" href="../static/css/watchlist_page.css" />
 </head>
-<body class="min-h-screen bg-black text-white">
-
-  <!-- Background glow -->
-  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-    <div class="absolute -left-24 top-0 h-80 w-80 rounded-full bg-red-700/20 blur-3xl"></div>
-    <div class="absolute right-0 top-10 h-96 w-96 rounded-full bg-red-800/15 blur-3xl"></div>
-    <div class="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-red-900/10 blur-3xl"></div>
-  </div>
-
-  <!-- Navbar -->
-  <nav class="sticky top-0 z-50 border-b border-gray-900/80 bg-black/95 backdrop-blur">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-      <div class="flex items-center gap-10">
-        <a href="home_page_logged_in.html" class="flex items-center gap-3">
-          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-600 text-lg shadow-lg shadow-red-900/40">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6 text-white">
-              <path d="M5.5 3.75A1.25 1.25 0 0 0 4.25 5v14A1.25 1.25 0 0 0 5.5 20.25h13a1.25 1.25 0 0 0 1.25-1.25V5a1.25 1.25 0 0 0-1.25-1.25h-13zM6.75 6.5h10.5v3.5H6.75V6.5zm0 5.5h10.5v7H6.75v-7z" />
-            </svg>
-          </div>
-          <span class="text-3xl font-black tracking-tight">Movie Star</span>
-        </a>
-
-        <div class="flex items-center gap-2">
-          <a href="home_page_logged_in.html"
-             class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/5 hover:text-white">
-            Home
-          </a>
-
-          <a href="watchlist_empty_page.html"
-             class="rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white border border-gray-900/70">
-            My Watchlist
-          </a>
-
-          <a href="#reviews"
-             class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/5 hover:text-white">
-            Reviews
-          </a>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <a href="#" class="flex items-center gap-3 rounded-full bg-neutral-900/90 px-4 py-2 text-sm font-semibold text-white transition hover:bg-neutral-800">
-          <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white">
-            AJ
-          </span>
-          <span>Profile</span>
-        </a>
+<body>
+  <nav class="navbar-cinema">
+    <div class="page-container">
+      <a href="home_page_logged_in.html" class="nav-logo">Movie Star</a>
+      <ul class="nav-links">
+        <li><a href="home_page_logged_in.html">Home</a></li>
+        <li><a href="watchlist_empty_page.html" class="active">My Watchlist</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="#" class="btn-primary">Profile</a>
+        <a href="#" class="btn-ghost">Logout</a>
       </div>
     </div>
   </nav>
 
-  <main class="mx-auto max-w-7xl px-6 py-24">
-    <section class="rounded-[2rem] border border-gray-900/80 bg-neutral-950/90 p-12 text-center shadow-xl shadow-black/20">
-      <div class="mx-auto max-w-2xl">
-        <div class="mb-10 inline-flex items-center gap-3 rounded-full border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-300">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
-            <path d="M6 4.5A2.5 2.5 0 0 0 3.5 7v10A2.5 2.5 0 0 0 6 19.5h12a2.5 2.5 0 0 0 2.5-2.5V7A2.5 2.5 0 0 0 18 4.5H6zM5 7A1 1 0 0 1 6 6h12a1 1 0 0 1 1 1v1.5H5V7zm0 3h14V17a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V10z" />
-          </svg>
-          Watchlist empty
-        </div>
-
-        <h1 class="text-5xl font-black tracking-tight text-white sm:text-6xl">Your Watchlist is Empty</h1>
-        <p class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-400 sm:text-xl">
-          Start building your watchlist by browsing movies and adding the ones you want to watch later.
-        </p>
-
-        <div class="mx-auto mt-14 flex max-w-xs flex-col items-center gap-6">
-          <div class="flex h-32 w-32 items-center justify-center rounded-full border border-dashed border-slate-700 bg-white/5 text-red-400">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-12 w-12">
-              <path d="M12 3C7.03 3 3 6.69 3 11.25c0 2.7 1.5 5.13 3.91 6.72-.05.39-.09.8-.09 1.2 0 1.06.86 1.92 1.92 1.92h10.34c1.06 0 1.92-.86 1.92-1.92 0-.4-.04-.81-.09-1.2A8.96 8.96 0 0 0 21 11.25C21 6.69 16.97 3 12 3zm-1.28 12.72a.75.75 0 1 1 1.06 1.06l-2.5 2.5a.75.75 0 0 1-1.06 0l-1.25-1.25a.75.75 0 0 1 1.06-1.06l.72.72 1.97-1.97zm6.56-4.97a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 1.06-1.06l1.72 1.72 3.72-3.72z" />
-            </svg>
+  <main class="watchlist-empty">
+    <section class="page-section watchlist-empty-hero">
+      <div class="page-container">
+        <div class="card-cinema watchlist-empty-card">
+          <span class="empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 2a7 7 0 110 14 7 7 0 010-14zm1 3h-2v5h5v-2h-3V8z"/></svg>
+          </span>
+          <h1 class="hero-heading">Your Watchlist is Empty</h1>
+          <p class="hero-copy">Start building your watchlist by browsing movies and adding the ones you want to watch later.</p>
+          <div class="card-actions">
+            <a href="home_page_logged_in.html" class="btn-primary">Browse Movies</a>
           </div>
-
-          <a href="home_page_logged_in.html" class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-fuchsia-500 via-pink-500 to-red-500 px-8 py-4 text-base font-semibold text-white shadow-2xl shadow-fuchsia-500/20 transition hover:scale-[1.02] hover:brightness-110">
-            Browse Movies
-          </a>
         </div>
       </div>
     </section>
 
-    <section class="mt-16 rounded-[2rem] border border-gray-900/80 bg-neutral-950/90 p-8 shadow-xl shadow-black/20">
-      <div class="grid gap-6 lg:grid-cols-3">
-        <div class="rounded-3xl border border-gray-900/80 bg-black/50 p-6">
-          <h2 class="text-lg font-semibold text-white">How to build your watchlist</h2>
-          <ol class="mt-6 space-y-4 text-slate-400">
-            <li class="flex gap-3">
-              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white">1</span>
-              Browse movies from our collection on the home page.
-            </li>
-            <li class="flex gap-3">
-              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white">2</span>
-              Click any movie card for details and reviews.
-            </li>
-            <li class="flex gap-3">
-              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white">3</span>
-              Add movies to your watchlist with the button on the card.
-            </li>
+    <section class="page-section">
+      <div class="page-container card-cinema watchlist-empty-info">
+        <h2 class="section-title">How to build your watchlist</h2>
+        <div class="card-content">
+          <ol class="card-meta">
+            <li>Browse movies from our collection on the home page.</li>
+            <li>Click on any movie card for details and reviews.</li>
+            <li>Add movies to your watchlist by clicking the button on the card.</li>
           </ol>
         </div>
       </div>
     </section>
   </main>
+
+  <footer>
+    <div class="page-container footer-note">© 2026 Movie Star. Movie nights start here.</div>
+  </footer>
 </body>
 </html>
