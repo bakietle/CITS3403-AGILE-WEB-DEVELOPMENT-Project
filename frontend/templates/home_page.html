@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Star</title>
+  <link rel="stylesheet" href="../static/css/style.css" />
+  <link rel="stylesheet" href="../static/css/home_page.css" />
+</head>
+<body>
+  <nav class="navbar-cinema">
+    <div class="page-container">
+      <a href="home_page.html" class="nav-logo">Movie Star</a>
+      <ul class="nav-links">
+        <li><a href="home_page.html" class="active">Home</a></li>
+        <li><a href="watchlist_page.html">Watch List</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="#" class="btn-ghost">Login</a>
+        <a href="#" class="btn-primary">Sign Up</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="page-hero">
+    <div class="page-container hero-content">
+      <p class="eyebrow">Your space for movie reviews and discovery</p>
+      <h1 class="hero-heading">Discover & Review Your <span class="text-gold">Favorite Movies</span></h1>
+      <p class="hero-copy">Join a community of movie lovers. Explore new films, read reviews, and share your thoughts on the movies that stay in your head long after the credits roll.</p>
+      <div class="hero-search">
+        <div class="search-input-wrapper">
+          <input type="text" class="field-input" placeholder="Search for movies..." />
+          <span class="search-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16a6.471 6.471 0 004.23-1.57l.27.28v.79l5 4.99L21.49 19l-4.99-5zM10 14a4.5 4.5 0 110-9 4.5 4.5 0 010 9z" />
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="page-section">
+    <div class="page-container">
+      <div class="section-head">
+        <div class="filter-bar">
+          <a href="#" class="btn-nav">Genre</a>
+          <a href="#" class="btn-nav">Release Year</a>
+          <a href="#" class="btn-nav">Highest Rating</a>
+          <a href="#" class="btn-ghost">Clear Filters</a>
+        </div>
+        <div>
+          <h2 class="section-title">Highest Rating Movies</h2>
+          <p class="section-subtitle">Curated films with the highest score from our community.</p>
+        </div>
+      </div>
+
+      <div class="movie-grid">
+        <article class="card-cinema movie-card">
+          <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=900&q=80" alt="The Last Horizon" />
+          <div class="card-badge">★ 8.7</div>
+          <div class="card-content">
+            <h3 class="card-title">The Last Horizon</h3>
+            <div class="card-meta">
+              <span>2024</span>
+              <span>Sci-Fi</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card-cinema movie-card">
+          <img src="https://images.unsplash.com/photo-1513106580091-1d82408b8cd6?auto=format&fit=crop&w=900&q=80" alt="Midnight Chronicles" />
+          <div class="card-badge">★ 8.2</div>
+          <div class="card-content">
+            <h3 class="card-title">Midnight Chronicles</h3>
+            <div class="card-meta">
+              <span>2025</span>
+              <span>Thriller</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card-cinema movie-card">
+          <img src="https://images.unsplash.com/photo-1505685296765-3a2736de412f?auto=format&fit=crop&w=900&q=80" alt="Shadows of Fear" />
+          <div class="card-badge">★ 7.9</div>
+          <div class="card-content">
+            <h3 class="card-title">Shadows of Fear</h3>
+            <div class="card-meta">
+              <span>2024</span>
+              <span>Horror</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card-cinema movie-card">
+          <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=900&q=80" alt="Eternal Romance" />
+          <div class="card-badge">★ 8.5</div>
+          <div class="card-content">
+            <h3 class="card-title">Eternal Romance</h3>
+            <div class="card-meta">
+              <span>2025</span>
+              <span>Romance</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-section" id="reviews">
+    <div class="page-container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Popular Reviews</h2>
+          <p class="section-subtitle">Top picks and community comments on the hottest releases.</p>
+        </div>
+      </div>
+
+      <div class="movie-grid">
+        <article class="card-cinema movie-card">
+          <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=900&q=80" alt="Quantum Quest" />
+          <div class="card-badge">★ 8.9</div>
+          <div class="card-content">
+            <h3 class="card-title">Quantum Quest</h3>
+            <div class="card-meta">
+              <span>2024</span>
+              <span>Adventure</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card-cinema movie-card">
+          <img src="https://images.unsplash.com/photo-1460881680858-30d872d5b530?auto=format&fit=crop&w=900&q=80" alt="Steel Fury" />
+          <div class="card-badge">★ 8.1</div>
+          <div class="card-content">
+            <h3 class="card-title">Steel Fury</h3>
+            <div class="card-meta">
+              <span>2025</span>
+              <span>Action</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card-cinema movie-card">
+          <img src="https://images.unsplash.com/photo-1512149177596-f817c7ef5d4c?auto=format&fit=crop&w=900&q=80" alt="Mystic Realms" />
+          <div class="card-badge">★ 8.6</div>
+          <div class="card-content">
+            <h3 class="card-title">Mystic Realms</h3>
+            <div class="card-meta">
+              <span>2024</span>
+              <span>Fantasy</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="page-container footer-note">© 2026 Movie Star. Movie nights start here.</div>
+  </footer>
+</body>
+</html>
