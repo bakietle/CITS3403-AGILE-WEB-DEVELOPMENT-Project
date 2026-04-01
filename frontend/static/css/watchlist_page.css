@@ -1,38 +1,228 @@
-html {
-  scroll-behavior: smooth;
+.navbar-cinema {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
+  background: linear-gradient(to bottom, rgba(10,10,15,0.95), transparent);
 }
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #141414;
-  color: #ffffff;
+.navbar-cinema .page-container {
+  width: min(1200px, calc(100% - 48px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.watchlist-hero {
+  padding: 140px 0 24px;
+}
+
+.watchlist-hero-card {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.watchlist-intro {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  flex-wrap: wrap;
+}
+
+.watchlist-icon {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.watchlist-icon svg {
+  width: 32px;
+  height: 32px;
+  fill: var(--gold);
+}
+
+.watchlist-hero-card .hero-heading {
+  margin: 8px 0 0;
+}
+
+.watchlist-hero-card .hero-copy {
+  max-width: 680px;
+  margin-top: 12px;
+  color: var(--text-muted);
+}
+
+.watchlist-hero-card .card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.watchlist-sort-card {
+  padding: 24px;
+}
+
+.sort-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.sort-title {
+  min-width: 120px;
+}
+
+.sort-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-filter {
+  background: rgba(232, 232, 240, 0.06);
+  border: 1px solid rgba(232, 232, 240, 0.12);
+  color: var(--text);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+
+.btn-filter:hover,
+.btn-filter.active {
+  background: rgba(201, 168, 76, 0.15);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.sort-count {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.watchlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.watchlist-card {
+  overflow: hidden;
 }
 
 .watchlist-card img {
   display: block;
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
 }
 
-.watchlist-card button {
-  transition: background-color 0.2s ease, transform 0.2s ease;
+.watchlist-card .card-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.watchlist-card button:hover {
-  transform: translateY(-1px);
+.watchlist-card .card-meta {
+  display: flex;
+  gap: 14px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }
 
-::-webkit-scrollbar {
-  width: 10px;
+.watchlist-card .card-actions {
+  margin-top: auto;
 }
 
-::-webkit-scrollbar-track {
-  background: #000000;
+.watchlist-empty {
+  padding-top: 140px;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #e50914;
+.watchlist-empty-hero {
+  padding: 0 0 24px;
+}
+
+.watchlist-empty .page-container {
+  display: flex;
+  justify-content: center;
+}
+
+.watchlist-empty-card {
+  max-width: 680px;
+  padding: 60px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+}
+
+.empty-icon {
+  width: 96px;
+  height: 96px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(201, 168, 76, 0.25);
   border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.02);
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #f40612;
+.empty-icon svg {
+  width: 40px;
+  height: 40px;
+  fill: var(--gold);
+}
+
+.watchlist-empty-card .hero-copy {
+  max-width: 640px;
+  color: var(--text-muted);
+}
+
+.watchlist-empty-info {
+  padding: 32px 28px;
+}
+
+.watchlist-empty-info .section-title {
+  margin-bottom: 18px;
+}
+
+.watchlist-empty-info .card-meta {
+  display: block;
+  padding-left: 26px;
+  margin-top: 18px;
+  list-style-position: inside;
+}
+
+.watchlist-empty-info .card-meta li {
+  margin-bottom: 24px;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+.watchlist-empty-info .card-meta li::before {
+  content: none;
 }
