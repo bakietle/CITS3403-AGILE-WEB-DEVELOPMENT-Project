@@ -4,180 +4,160 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Search – Movie Star</title>
+
+  <!-- Tailwind for layout utilities -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            brand: '#F5C518',
             dark: {
               900: '#0a0a0f',
-              800: '#111118',
+              800: '#10101a',
               700: '#1a1a24',
               600: '#24242f',
               500: '#2e2e3a',
             }
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
           }
         }
       }
     }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <style>
-    body { background-color: #0a0a0f; }
-    .movie-card:hover .card-overlay { opacity: 1; }
-    .card-overlay { transition: opacity 0.25s ease; }
-    .star-rating { color: #F5C518; }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      height: 16px; width: 16px;
-      border-radius: 50%;
-      background: #F5C518;
-      cursor: pointer;
-    }
-    input[type="range"]::-webkit-slider-runnable-track {
-      background: #2e2e3a;
-      height: 4px;
-      border-radius: 2px;
-    }
-    .filter-chip.active {
-      background-color: #F5C518;
-      color: #0a0a0f;
-      font-weight: 600;
-    }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #111118; }
-    ::-webkit-scrollbar-thumb { background: #2e2e3a; border-radius: 3px; }
-  </style>
+
+  <!-- Cinema stylesheet -->
+  <link rel="stylesheet" href="../static/css/style.css" />
+  <link rel="stylesheet" href="../static/css/searchresult_page.css" />
 </head>
-<body class="text-white font-sans min-h-screen">
+<body class="searchresult-page">
 
   <!-- ═══════════ NAVBAR ═══════════ -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-dark-900/90 backdrop-blur border-b border-white/5">
-    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-16 gap-6">
+  <nav class="navbar-cinema" id="navbar">
+    <a href="home_page.html" class="nav-logo">Movie Star</a>
 
-      <!-- Logo -->
-      <a href="/" class="flex items-center gap-2 shrink-0">
-        <span class="text-brand text-2xl">★</span>
-        <span class="text-white font-bold text-xl tracking-tight">Movie<span class="text-brand">Star</span></span>
-      </a>
+    <!-- Search Bar (expanded) -->
+    <div class="flex-1 max-w-2xl mx-8 relative">
+      <span class="search-icon absolute left-3 top-1/2 -translate-y-1/2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+        </svg>
+      </span>
+      <input
+        type="text"
+        value="Inception"
+        class="field-input search-input"
+        placeholder="Search movies, genres, directors…"
+      />
+      <button class="btn-primary search-submit-btn">
+        Search
+      </button>
+    </div>
 
-      <!-- Search Bar (expanded in this page) -->
-      <div class="flex-1 max-w-2xl relative">
-        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-          </svg>
-        </span>
-        <input
-          type="text"
-          value="Inception"
-          class="w-full bg-dark-700 border border-white/10 rounded-full pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand/50 focus:ring-1 focus:ring-brand/30 transition"
-          placeholder="Search movies, genres, directors…"
-        />
-        <button class="absolute right-2 top-1/2 -translate-y-1/2 bg-brand text-dark-900 font-semibold text-xs px-4 py-1.5 rounded-full hover:bg-yellow-400 transition">
-          Search
-        </button>
-      </div>
+    <ul class="nav-links">
+      <li><a href="#">Trending</a></li>
+      <li><a href="watchlist_page.html">Watchlist</a></li>
+    </ul>
 
-      <!-- Nav Links + Auth -->
-      <div class="flex items-center gap-5 shrink-0">
-        <a href="#" class="text-sm text-gray-400 hover:text-white transition">Trending</a>
-        <a href="#" class="text-sm text-gray-400 hover:text-white transition">Watchlist</a>
-        <a href="/login" class="text-sm text-gray-300 hover:text-white transition">Log In</a>
-        <a href="/signup" class="text-sm bg-brand text-dark-900 font-semibold px-4 py-2 rounded-full hover:bg-yellow-400 transition">Sign Up</a>
-      </div>
+    <div class="search-auth-actions">
+      <a href="auth.html" class="btn-nav">Log In</a>
+      <a href="auth.html" class="btn-primary search-signup-btn">Sign Up</a>
     </div>
   </nav>
 
   <!-- ═══════════ MAIN CONTENT ═══════════ -->
-  <main class="pt-20 max-w-7xl mx-auto px-6 pb-16">
+  <main class="max-w-7xl mx-auto px-6 pb-16 pt-8">
 
-    <!-- Search meta info -->
-    <div class="mt-6 mb-5">
-      <p class="text-gray-400 text-sm">
-        Showing <span class="text-white font-medium">247 results</span> for
-        <span class="text-brand font-medium">"Inception"</span>
+    <!-- Search meta -->
+    <div class="mb-6">
+      <p class="results-meta">
+        Showing <span class="results-count">247 results</span> for
+        <span class="results-query">"Inception"</span>
       </p>
     </div>
 
-    <!-- ───── LAYOUT: SIDEBAR + RESULTS ───── -->
+    <!-- LAYOUT: SIDEBAR + RESULTS -->
     <div class="flex gap-8">
 
       <!-- ── FILTER SIDEBAR ── -->
-      <aside class="w-56 shrink-0">
-        <div class="sticky top-20 space-y-7">
+      <aside class="w-52 shrink-0">
+        <div class="sticky top-24 space-y-6">
 
           <!-- Sort by -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">Sort By</h3>
-            <div class="space-y-1">
-              <label class="flex items-center gap-2.5 cursor-pointer group">
-                <input type="radio" name="sort" checked class="accent-brand" />
-                <span class="text-sm text-gray-300 group-hover:text-white transition">Relevance</span>
+            <h3 class="filter-heading">Sort By</h3>
+            <div class="space-y-2">
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="radio" name="sort" checked />
+                <span class="filter-option-label">Relevance</span>
               </label>
-              <label class="flex items-center gap-2.5 cursor-pointer group">
-                <input type="radio" name="sort" class="accent-brand" />
-                <span class="text-sm text-gray-300 group-hover:text-white transition">Popularity</span>
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="radio" name="sort" />
+                <span class="filter-option-label">Popularity</span>
               </label>
-              <label class="flex items-center gap-2.5 cursor-pointer group">
-                <input type="radio" name="sort" class="accent-brand" />
-                <span class="text-sm text-gray-300 group-hover:text-white transition">Highest Rated</span>
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="radio" name="sort" />
+                <span class="filter-option-label">Highest Rated</span>
               </label>
-              <label class="flex items-center gap-2.5 cursor-pointer group">
-                <input type="radio" name="sort" class="accent-brand" />
-                <span class="text-sm text-gray-300 group-hover:text-white transition">Release Year</span>
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="radio" name="sort" />
+                <span class="filter-option-label">Release Year</span>
               </label>
             </div>
           </div>
+
+          <!-- Divider -->
+          <div class="sidebar-divider"></div>
 
           <!-- Genre -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">Genre</h3>
+            <h3 class="filter-heading">Genre</h3>
             <div class="flex flex-wrap gap-2">
-              <button class="filter-chip active text-xs px-3 py-1 rounded-full border border-white/10 hover:border-brand/50 transition">All</button>
-              <button class="filter-chip text-xs px-3 py-1 rounded-full border border-white/10 text-gray-300 hover:border-brand/50 hover:text-white transition">Action</button>
-              <button class="filter-chip text-xs px-3 py-1 rounded-full border border-white/10 text-gray-300 hover:border-brand/50 hover:text-white transition">Sci-Fi</button>
-              <button class="filter-chip text-xs px-3 py-1 rounded-full border border-white/10 text-gray-300 hover:border-brand/50 hover:text-white transition">Drama</button>
-              <button class="filter-chip text-xs px-3 py-1 rounded-full border border-white/10 text-gray-300 hover:border-brand/50 hover:text-white transition">Comedy</button>
-              <button class="filter-chip text-xs px-3 py-1 rounded-full border border-white/10 text-gray-300 hover:border-brand/50 hover:text-white transition">Horror</button>
-              <button class="filter-chip text-xs px-3 py-1 rounded-full border border-white/10 text-gray-300 hover:border-brand/50 hover:text-white transition">Romance</button>
-              <button class="filter-chip text-xs px-3 py-1 rounded-full border border-white/10 text-gray-300 hover:border-brand/50 hover:text-white transition">Thriller</button>
-              <button class="filter-chip text-xs px-3 py-1 rounded-full border border-white/10 text-gray-300 hover:border-brand/50 hover:text-white transition">Animation</button>
+              <button class="filter-chip active">All</button>
+              <button class="filter-chip">Action</button>
+              <button class="filter-chip">Sci-Fi</button>
+              <button class="filter-chip">Drama</button>
+              <button class="filter-chip">Comedy</button>
+              <button class="filter-chip">Horror</button>
+              <button class="filter-chip">Romance</button>
+              <button class="filter-chip">Thriller</button>
+              <button class="filter-chip">Animation</button>
             </div>
           </div>
+
+          <!-- Divider -->
+          <div class="sidebar-divider"></div>
 
           <!-- Release Year -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">Release Year</h3>
+            <h3 class="filter-heading">Release Year</h3>
             <div class="space-y-2">
-              <div class="flex justify-between text-xs text-gray-400">
+              <div class="range-summary flex justify-between">
                 <span>1980</span>
-                <span class="text-brand font-medium">2010 – 2025</span>
+                <span class="range-highlight">2010 – 2025</span>
               </div>
-              <input type="range" min="1980" max="2025" value="2010" class="w-full accent-brand h-1 appearance-none bg-dark-500 rounded cursor-pointer"/>
-              <input type="range" min="1980" max="2025" value="2025" class="w-full accent-brand h-1 appearance-none bg-dark-500 rounded cursor-pointer"/>
+              <input type="range" min="1980" max="2025" value="2010" class="w-full"/>
+              <input type="range" min="1980" max="2025" value="2025" class="w-full"/>
             </div>
           </div>
 
-          <!-- Rating -->
+          <!-- Divider -->
+          <div class="sidebar-divider"></div>
+
+          <!-- Min Rating -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">Min Rating</h3>
+            <h3 class="filter-heading">Min Rating</h3>
             <div class="flex items-center gap-2">
-              <span class="text-brand text-base">★</span>
-              <input type="range" min="1" max="10" value="7" class="flex-1 accent-brand"/>
-              <span class="text-sm text-white font-medium w-6">7+</span>
+              <span class="rating-star">★</span>
+              <input type="range" min="1" max="10" value="7" class="flex-1"/>
+              <span class="rating-threshold">7+</span>
             </div>
           </div>
+
+          <!-- Divider -->
+          <div class="sidebar-divider"></div>
 
           <!-- Reset -->
-          <button class="w-full text-sm text-gray-400 hover:text-white border border-white/10 rounded-lg py-2 hover:border-white/30 transition">
-            Reset Filters
-          </button>
+          <button class="reset-btn">Reset Filters</button>
         </div>
       </aside>
 
@@ -186,230 +166,209 @@
 
         <!-- Trending chips -->
         <div class="flex items-center gap-2 mb-6 flex-wrap">
-          <span class="text-xs text-gray-500 shrink-0">Trending:</span>
-          <button class="text-xs text-gray-400 bg-dark-700 px-3 py-1 rounded-full hover:bg-dark-600 hover:text-white transition">#Interstellar</button>
-          <button class="text-xs text-gray-400 bg-dark-700 px-3 py-1 rounded-full hover:bg-dark-600 hover:text-white transition">#Oppenheimer</button>
-          <button class="text-xs text-gray-400 bg-dark-700 px-3 py-1 rounded-full hover:bg-dark-600 hover:text-white transition">#Dune</button>
-          <button class="text-xs text-gray-400 bg-dark-700 px-3 py-1 rounded-full hover:bg-dark-600 hover:text-white transition">#Avengers</button>
-          <button class="text-xs text-gray-400 bg-dark-700 px-3 py-1 rounded-full hover:bg-dark-600 hover:text-white transition">#The Batman</button>
+          <span class="trending-label">Trending:</span>
+          <button class="trend-chip">#Interstellar</button>
+          <button class="trend-chip">#Oppenheimer</button>
+          <button class="trend-chip">#Dune</button>
+          <button class="trend-chip">#Avengers</button>
+          <button class="trend-chip">#The Batman</button>
         </div>
 
         <!-- Movie Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
 
-          <!-- Movie Card (×10 examples) -->
-          <!-- Card 1 – Inception (highlighted) -->
-          <a href="/movie/inception" class="movie-card group relative rounded-xl overflow-hidden bg-dark-700 border border-white/5 hover:border-brand/40 transition cursor-pointer">
+          <!-- Card 1 – Inception -->
+          <a href="movie_page.html" class="movie-card card-cinema group relative overflow-hidden search-card">
             <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/inception/300/450" alt="Inception" class="w-full h-full object-cover"/>
+              <img src="https://picsum.photos/seed/inception/300/450" alt="Inception" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
               <!-- Hover overlay -->
-              <div class="card-overlay opacity-0 absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/60 to-transparent flex flex-col justify-end p-3">
-                <p class="text-xs text-gray-300 line-clamp-3">A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea.</p>
-                <button class="mt-2 w-full text-xs bg-brand text-dark-900 font-bold py-1.5 rounded-lg hover:bg-yellow-400 transition">View Movie</button>
+              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
+                <p class="search-card-desc">A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea.</p>
+                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
               </div>
               <!-- Rating badge -->
-              <span class="absolute top-2 left-2 bg-dark-900/80 backdrop-blur text-brand text-xs font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
-                ★ 8.8
-              </span>
+              <span class="search-card-rating">★ 8.8</span>
               <!-- Watchlist -->
-              <button class="absolute top-2 right-2 bg-dark-900/80 backdrop-blur p-1.5 rounded-md text-gray-400 hover:text-brand transition">
+              <button class="search-card-watchlist">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                 </svg>
               </button>
             </div>
-            <div class="p-2.5">
-              <p class="text-sm font-semibold text-white truncate">Inception</p>
-              <p class="text-xs text-gray-500 mt-0.5">2010 · Sci-Fi, Thriller</p>
+            <div class="search-card-body">
+              <p class="search-card-title">Inception</p>
+              <p class="search-card-meta">2010 · Sci-Fi, Thriller</p>
             </div>
           </a>
 
           <!-- Card 2 -->
-          <a href="/movie/interstellar" class="movie-card group relative rounded-xl overflow-hidden bg-dark-700 border border-white/5 hover:border-brand/40 transition cursor-pointer">
+          <a href="/movie/interstellar" class="movie-card card-cinema group relative overflow-hidden search-card">
             <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/interstellar/300/450" alt="Interstellar" class="w-full h-full object-cover"/>
-              <div class="card-overlay opacity-0 absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/60 to-transparent flex flex-col justify-end p-3">
-                <p class="text-xs text-gray-300 line-clamp-3">A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.</p>
-                <button class="mt-2 w-full text-xs bg-brand text-dark-900 font-bold py-1.5 rounded-lg">View Movie</button>
+              <img src="https://picsum.photos/seed/interstellar/300/450" alt="Interstellar" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
+              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
+                <p class="search-card-desc">A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.</p>
+                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
               </div>
-              <span class="absolute top-2 left-2 bg-dark-900/80 backdrop-blur text-brand text-xs font-bold px-2 py-0.5 rounded-md">★ 8.7</span>
-              <button class="absolute top-2 right-2 bg-dark-900/80 backdrop-blur p-1.5 rounded-md text-gray-400 hover:text-brand transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
+              <span class="search-card-rating">★ 8.7</span>
+              <button class="search-card-watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
               </button>
             </div>
-            <div class="p-2.5">
-              <p class="text-sm font-semibold text-white truncate">Interstellar</p>
-              <p class="text-xs text-gray-500 mt-0.5">2014 · Sci-Fi, Drama</p>
+            <div class="search-card-body">
+              <p class="search-card-title">Interstellar</p>
+              <p class="search-card-meta">2014 · Sci-Fi, Drama</p>
             </div>
           </a>
 
           <!-- Card 3 -->
-          <a href="/movie/dark-knight" class="movie-card group relative rounded-xl overflow-hidden bg-dark-700 border border-white/5 hover:border-brand/40 transition cursor-pointer">
+          <a href="/movie/dark-knight" class="movie-card card-cinema group relative overflow-hidden search-card">
             <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/batman/300/450" alt="The Dark Knight" class="w-full h-full object-cover"/>
-              <div class="card-overlay opacity-0 absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/60 to-transparent flex flex-col justify-end p-3">
-                <p class="text-xs text-gray-300 line-clamp-3">Batman faces the Joker, a criminal mastermind who plunges Gotham into anarchy.</p>
-                <button class="mt-2 w-full text-xs bg-brand text-dark-900 font-bold py-1.5 rounded-lg">View Movie</button>
+              <img src="https://picsum.photos/seed/batman/300/450" alt="The Dark Knight" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
+              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
+                <p class="search-card-desc">Batman faces the Joker, a criminal mastermind who plunges Gotham into anarchy.</p>
+                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
               </div>
-              <span class="absolute top-2 left-2 bg-dark-900/80 backdrop-blur text-brand text-xs font-bold px-2 py-0.5 rounded-md">★ 9.0</span>
-              <button class="absolute top-2 right-2 bg-dark-900/80 backdrop-blur p-1.5 rounded-md text-gray-400 hover:text-brand transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
+              <span class="search-card-rating">★ 9.0</span>
+              <button class="search-card-watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
               </button>
             </div>
-            <div class="p-2.5">
-              <p class="text-sm font-semibold text-white truncate">The Dark Knight</p>
-              <p class="text-xs text-gray-500 mt-0.5">2008 · Action, Crime</p>
+            <div class="search-card-body">
+              <p class="search-card-title">The Dark Knight</p>
+              <p class="search-card-meta">2008 · Action, Crime</p>
             </div>
           </a>
 
           <!-- Card 4 -->
-          <a href="/movie/oppenheimer" class="movie-card group relative rounded-xl overflow-hidden bg-dark-700 border border-white/5 hover:border-brand/40 transition cursor-pointer">
+          <a href="/movie/oppenheimer" class="movie-card card-cinema group relative overflow-hidden search-card">
             <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/oppenheimer/300/450" alt="Oppenheimer" class="w-full h-full object-cover"/>
-              <div class="card-overlay opacity-0 absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/60 to-transparent flex flex-col justify-end p-3">
-                <p class="text-xs text-gray-300 line-clamp-3">The story of J. Robert Oppenheimer's role in the development of the atomic bomb.</p>
-                <button class="mt-2 w-full text-xs bg-brand text-dark-900 font-bold py-1.5 rounded-lg">View Movie</button>
+              <img src="https://picsum.photos/seed/oppenheimer/300/450" alt="Oppenheimer" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
+              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
+                <p class="search-card-desc">The story of J. Robert Oppenheimer's role in the development of the atomic bomb.</p>
+                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
               </div>
-              <span class="absolute top-2 left-2 bg-dark-900/80 backdrop-blur text-brand text-xs font-bold px-2 py-0.5 rounded-md">★ 8.5</span>
-              <button class="absolute top-2 right-2 bg-dark-900/80 backdrop-blur p-1.5 rounded-md text-gray-400 hover:text-brand transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
+              <span class="search-card-rating">★ 8.5</span>
+              <button class="search-card-watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
               </button>
             </div>
-            <div class="p-2.5">
-              <p class="text-sm font-semibold text-white truncate">Oppenheimer</p>
-              <p class="text-xs text-gray-500 mt-0.5">2023 · Drama, History</p>
+            <div class="search-card-body">
+              <p class="search-card-title">Oppenheimer</p>
+              <p class="search-card-meta">2023 · Drama, History</p>
             </div>
           </a>
 
           <!-- Card 5 -->
-          <a href="/movie/dune" class="movie-card group relative rounded-xl overflow-hidden bg-dark-700 border border-white/5 hover:border-brand/40 transition cursor-pointer">
+          <a href="/movie/dune" class="movie-card card-cinema group relative overflow-hidden search-card">
             <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/dune2021/300/450" alt="Dune" class="w-full h-full object-cover"/>
-              <div class="card-overlay opacity-0 absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/60 to-transparent flex flex-col justify-end p-3">
-                <p class="text-xs text-gray-300 line-clamp-3">A noble family becomes embroiled in a war for control over the galaxy's most valuable asset.</p>
-                <button class="mt-2 w-full text-xs bg-brand text-dark-900 font-bold py-1.5 rounded-lg">View Movie</button>
+              <img src="https://picsum.photos/seed/dune2021/300/450" alt="Dune" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
+              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
+                <p class="search-card-desc">A noble family becomes embroiled in a war for control over the galaxy's most valuable asset.</p>
+                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
               </div>
-              <span class="absolute top-2 left-2 bg-dark-900/80 backdrop-blur text-brand text-xs font-bold px-2 py-0.5 rounded-md">★ 8.0</span>
-              <button class="absolute top-2 right-2 bg-dark-900/80 backdrop-blur p-1.5 rounded-md text-gray-400 hover:text-brand transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
+              <span class="search-card-rating">★ 8.0</span>
+              <button class="search-card-watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
               </button>
             </div>
-            <div class="p-2.5">
-              <p class="text-sm font-semibold text-white truncate">Dune</p>
-              <p class="text-xs text-gray-500 mt-0.5">2021 · Sci-Fi, Adventure</p>
+            <div class="search-card-body">
+              <p class="search-card-title">Dune</p>
+              <p class="search-card-meta">2021 · Sci-Fi, Adventure</p>
             </div>
           </a>
 
           <!-- Card 6 -->
-          <a href="/movie/prestige" class="movie-card group relative rounded-xl overflow-hidden bg-dark-700 border border-white/5 hover:border-brand/40 transition cursor-pointer">
+          <a href="/movie/prestige" class="movie-card card-cinema group relative overflow-hidden search-card">
             <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/prestige/300/450" alt="The Prestige" class="w-full h-full object-cover"/>
-              <div class="card-overlay opacity-0 absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/60 to-transparent flex flex-col justify-end p-3">
-                <p class="text-xs text-gray-300 line-clamp-3">Two stage magicians engage in competitive one-upmanship with dangerous consequences.</p>
-                <button class="mt-2 w-full text-xs bg-brand text-dark-900 font-bold py-1.5 rounded-lg">View Movie</button>
+              <img src="https://picsum.photos/seed/prestige/300/450" alt="The Prestige" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
+              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
+                <p class="search-card-desc">Two stage magicians engage in competitive one-upmanship with dangerous consequences.</p>
+                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
               </div>
-              <span class="absolute top-2 left-2 bg-dark-900/80 backdrop-blur text-brand text-xs font-bold px-2 py-0.5 rounded-md">★ 8.5</span>
-              <button class="absolute top-2 right-2 bg-dark-900/80 backdrop-blur p-1.5 rounded-md text-gray-400 hover:text-brand transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
+              <span class="search-card-rating">★ 8.5</span>
+              <button class="search-card-watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
               </button>
             </div>
-            <div class="p-2.5">
-              <p class="text-sm font-semibold text-white truncate">The Prestige</p>
-              <p class="text-xs text-gray-500 mt-0.5">2006 · Mystery, Thriller</p>
+            <div class="search-card-body">
+              <p class="search-card-title">The Prestige</p>
+              <p class="search-card-meta">2006 · Mystery, Thriller</p>
             </div>
           </a>
 
           <!-- Card 7 -->
-          <a href="/movie/parasite" class="movie-card group relative rounded-xl overflow-hidden bg-dark-700 border border-white/5 hover:border-brand/40 transition cursor-pointer">
+          <a href="/movie/parasite" class="movie-card card-cinema group relative overflow-hidden search-card">
             <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/parasite/300/450" alt="Parasite" class="w-full h-full object-cover"/>
-              <div class="card-overlay opacity-0 absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/60 to-transparent flex flex-col justify-end p-3">
-                <p class="text-xs text-gray-300 line-clamp-3">Greed and class discrimination threaten the newly formed symbiotic relationship between two families.</p>
-                <button class="mt-2 w-full text-xs bg-brand text-dark-900 font-bold py-1.5 rounded-lg">View Movie</button>
+              <img src="https://picsum.photos/seed/parasite/300/450" alt="Parasite" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
+              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
+                <p class="search-card-desc">Greed and class discrimination threaten the newly formed symbiotic relationship between two families.</p>
+                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
               </div>
-              <span class="absolute top-2 left-2 bg-dark-900/80 backdrop-blur text-brand text-xs font-bold px-2 py-0.5 rounded-md">★ 8.5</span>
-              <button class="absolute top-2 right-2 bg-dark-900/80 backdrop-blur p-1.5 rounded-md text-gray-400 hover:text-brand transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
+              <span class="search-card-rating">★ 8.5</span>
+              <button class="search-card-watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
               </button>
             </div>
-            <div class="p-2.5">
-              <p class="text-sm font-semibold text-white truncate">Parasite</p>
-              <p class="text-xs text-gray-500 mt-0.5">2019 · Drama, Thriller</p>
+            <div class="search-card-body">
+              <p class="search-card-title">Parasite</p>
+              <p class="search-card-meta">2019 · Drama, Thriller</p>
             </div>
           </a>
 
           <!-- Card 8 -->
-          <a href="/movie/social-network" class="movie-card group relative rounded-xl overflow-hidden bg-dark-700 border border-white/5 hover:border-brand/40 transition cursor-pointer">
+          <a href="/movie/social-network" class="movie-card card-cinema group relative overflow-hidden search-card">
             <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/socialnet/300/450" alt="The Social Network" class="w-full h-full object-cover"/>
-              <div class="card-overlay opacity-0 absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/60 to-transparent flex flex-col justify-end p-3">
-                <p class="text-xs text-gray-300 line-clamp-3">The founders of Facebook sue each other as the company grows into a global social media giant.</p>
-                <button class="mt-2 w-full text-xs bg-brand text-dark-900 font-bold py-1.5 rounded-lg">View Movie</button>
+              <img src="https://picsum.photos/seed/socialnet/300/450" alt="The Social Network" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
+              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
+                <p class="search-card-desc">The founders of Facebook sue each other as the company grows into a global social media giant.</p>
+                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
               </div>
-              <span class="absolute top-2 left-2 bg-dark-900/80 backdrop-blur text-brand text-xs font-bold px-2 py-0.5 rounded-md">★ 7.7</span>
-              <button class="absolute top-2 right-2 bg-dark-900/80 backdrop-blur p-1.5 rounded-md text-gray-400 hover:text-brand transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
+              <span class="search-card-rating">★ 7.7</span>
+              <button class="search-card-watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
               </button>
             </div>
-            <div class="p-2.5">
-              <p class="text-sm font-semibold text-white truncate">The Social Network</p>
-              <p class="text-xs text-gray-500 mt-0.5">2010 · Drama, Biography</p>
+            <div class="search-card-body">
+              <p class="search-card-title">The Social Network</p>
+              <p class="search-card-meta">2010 · Drama, Biography</p>
             </div>
           </a>
 
           <!-- Card 9 -->
-          <a href="/movie/blade-runner" class="movie-card group relative rounded-xl overflow-hidden bg-dark-700 border border-white/5 hover:border-brand/40 transition cursor-pointer">
+          <a href="/movie/blade-runner" class="movie-card card-cinema group relative overflow-hidden search-card">
             <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/bladerunner/300/450" alt="Blade Runner 2049" class="w-full h-full object-cover"/>
-              <div class="card-overlay opacity-0 absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/60 to-transparent flex flex-col justify-end p-3">
-                <p class="text-xs text-gray-300 line-clamp-3">A young blade runner's discovery of a long-buried secret leads him on a quest to find Rick Deckard.</p>
-                <button class="mt-2 w-full text-xs bg-brand text-dark-900 font-bold py-1.5 rounded-lg">View Movie</button>
+              <img src="https://picsum.photos/seed/bladerunner/300/450" alt="Blade Runner 2049" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
+              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
+                <p class="search-card-desc">A young blade runner's discovery of a long-buried secret leads him on a quest to find Rick Deckard.</p>
+                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
               </div>
-              <span class="absolute top-2 left-2 bg-dark-900/80 backdrop-blur text-brand text-xs font-bold px-2 py-0.5 rounded-md">★ 8.0</span>
-              <button class="absolute top-2 right-2 bg-dark-900/80 backdrop-blur p-1.5 rounded-md text-gray-400 hover:text-brand transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
+              <span class="search-card-rating">★ 8.0</span>
+              <button class="search-card-watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
               </button>
             </div>
-            <div class="p-2.5">
-              <p class="text-sm font-semibold text-white truncate">Blade Runner 2049</p>
-              <p class="text-xs text-gray-500 mt-0.5">2017 · Sci-Fi, Thriller</p>
+            <div class="search-card-body">
+              <p class="search-card-title">Blade Runner 2049</p>
+              <p class="search-card-meta">2017 · Sci-Fi, Thriller</p>
             </div>
           </a>
 
           <!-- Card 10 -->
-          <a href="/movie/arrival" class="movie-card group relative rounded-xl overflow-hidden bg-dark-700 border border-white/5 hover:border-brand/40 transition cursor-pointer">
+          <a href="/movie/arrival" class="movie-card card-cinema group relative overflow-hidden search-card">
             <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/arrival/300/450" alt="Arrival" class="w-full h-full object-cover"/>
-              <div class="card-overlay opacity-0 absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/60 to-transparent flex flex-col justify-end p-3">
-                <p class="text-xs text-gray-300 line-clamp-3">A linguist works with the military to communicate with alien lifeforms after twelve ships appear worldwide.</p>
-                <button class="mt-2 w-full text-xs bg-brand text-dark-900 font-bold py-1.5 rounded-lg">View Movie</button>
+              <img src="https://picsum.photos/seed/arrival/300/450" alt="Arrival" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
+              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
+                <p class="search-card-desc">A linguist works with the military to communicate with alien lifeforms after twelve ships appear worldwide.</p>
+                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
               </div>
-              <span class="absolute top-2 left-2 bg-dark-900/80 backdrop-blur text-brand text-xs font-bold px-2 py-0.5 rounded-md">★ 7.9</span>
-              <button class="absolute top-2 right-2 bg-dark-900/80 backdrop-blur p-1.5 rounded-md text-gray-400 hover:text-brand transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
+              <span class="search-card-rating">★ 7.9</span>
+              <button class="search-card-watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
               </button>
             </div>
-            <div class="p-2.5">
-              <p class="text-sm font-semibold text-white truncate">Arrival</p>
-              <p class="text-xs text-gray-500 mt-0.5">2016 · Sci-Fi, Drama</p>
+            <div class="search-card-body">
+              <p class="search-card-title">Arrival</p>
+              <p class="search-card-meta">2016 · Sci-Fi, Drama</p>
             </div>
           </a>
 
@@ -417,22 +376,40 @@
 
         <!-- Pagination -->
         <div class="flex items-center justify-center gap-2 mt-10">
-          <button class="px-3 py-2 rounded-lg text-gray-400 hover:text-white bg-dark-700 hover:bg-dark-600 transition text-sm">← Prev</button>
-          <button class="px-3 py-2 rounded-lg bg-brand text-dark-900 font-bold text-sm">1</button>
-          <button class="px-3 py-2 rounded-lg text-gray-400 hover:text-white bg-dark-700 hover:bg-dark-600 transition text-sm">2</button>
-          <button class="px-3 py-2 rounded-lg text-gray-400 hover:text-white bg-dark-700 hover:bg-dark-600 transition text-sm">3</button>
-          <span class="text-gray-600 text-sm">…</span>
-          <button class="px-3 py-2 rounded-lg text-gray-400 hover:text-white bg-dark-700 hover:bg-dark-600 transition text-sm">25</button>
-          <button class="px-3 py-2 rounded-lg text-gray-400 hover:text-white bg-dark-700 hover:bg-dark-600 transition text-sm">Next →</button>
+          <button class="page-btn">← Prev</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <span class="pagination-ellipsis">…</span>
+          <button class="page-btn">25</button>
+          <button class="page-btn">Next →</button>
         </div>
       </div>
     </div>
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-white/5 py-8 text-center text-gray-600 text-sm">
-    <span class="text-brand">★</span> Movie<span class="text-brand">Star</span> · moviestar.com · © 2025
+  <footer>
+    <span class="footer-logo">Movie Star</span>
+    <span class="footer-note">moviestar.com · © 2025</span>
+    <span class="footer-stars">★ ★ ★ ★ ★</span>
   </footer>
+
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Genre filter chip toggle
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+  </script>
 
 </body>
 </html>
