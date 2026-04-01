@@ -1,0 +1,274 @@
+body.movie-page {
+  padding-top: 80px;
+}
+
+.movie-page {
+  color: var(--text);
+}
+
+.movie-nav-search-wrap {
+  min-width: 0;
+}
+
+.movie-nav-search-icon {
+  color: var(--text-muted);
+}
+
+.movie-nav-search {
+  margin-bottom: 0;
+  padding-left: 40px;
+  padding-right: 16px;
+}
+
+.movie-nav-actions {
+  display: flex;
+  gap: 12px;
+  margin-left: 24px;
+}
+
+.movie-signup-btn {
+  padding: 8px 22px;
+  font-size: 0.85rem;
+}
+
+.hero-backdrop {
+  position: relative;
+  height: 520px;
+  overflow: hidden;
+}
+
+.backdrop-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.movie-hero-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.movie-poster {
+  width: 144px;
+  border-radius: 4px;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
+}
+
+.movie-breadcrumb {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.movie-breadcrumb-current {
+  color: var(--text);
+}
+
+.movie-link:hover {
+  color: var(--gold);
+}
+
+.movie-title {
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--text);
+}
+
+.movie-meta,
+.movie-meta-text {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.movie-meta-separator,
+.movie-score-subtext {
+  color: var(--text-muted);
+}
+
+.movie-badge,
+.movie-rating-badge {
+  font-size: 0.7rem;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-muted);
+  padding: 2px 8px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.genre-tag {
+  font-size: 0.7rem;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  color: var(--gold);
+  padding: 3px 10px;
+  border-radius: 2px;
+  letter-spacing: 0.08em;
+  transition: background 0.2s;
+}
+
+.genre-tag:hover {
+  background: rgba(201, 168, 76, 0.18);
+}
+
+.movie-score-main,
+.movie-rating-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+}
+
+.movie-score-stars,
+.movie-rating-stars {
+  color: var(--gold);
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+}
+
+.movie-score-subtext,
+.movie-rating-count,
+.movie-score-caption,
+.movie-score-label {
+  font-size: 0.7rem;
+}
+
+.movie-score-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(201, 168, 76, 0.15);
+}
+
+.movie-score-stat,
+.movie-score-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.05em;
+  color: var(--text);
+}
+
+.movie-cta {
+  padding: 10px 24px;
+  font-size: 0.85rem;
+}
+
+.movie-icon-action {
+  padding: 9px 14px;
+  font-size: 0.85rem;
+}
+
+.write-review-card,
+.sidebar-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  backdrop-filter: blur(20px);
+}
+
+.write-review-card {
+  padding: 24px;
+}
+
+.sidebar-card {
+  padding: 20px;
+}
+
+.movie-review-input {
+  border-radius: 2px;
+}
+
+.movie-review-textarea {
+  min-height: 120px;
+  resize: none;
+}
+
+.movie-submit-btn {
+  padding: 10px 28px;
+  font-size: 0.85rem;
+}
+
+.review-card {
+  border-radius: 4px;
+}
+
+.helpful-btn {
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.helpful-btn:hover {
+  color: var(--gold);
+  border-color: rgba(201, 168, 76, 0.4);
+}
+
+.star-btn {
+  transition: color 0.1s;
+  cursor: pointer;
+}
+
+.star-btn:hover,
+.star-btn.active {
+  color: var(--gold);
+}
+
+.rating-bar-55 {
+  width: 55%;
+}
+
+.rating-bar-22 {
+  width: 22%;
+}
+
+.rating-bar-12 {
+  width: 12%;
+}
+
+.rating-bar-6 {
+  width: 6%;
+}
+
+.rating-bar-5 {
+  width: 5%;
+}
+
+@media (max-width: 1024px) {
+  .movie-page main > div {
+    flex-direction: column;
+  }
+
+  .movie-page aside {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-cinema {
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .movie-nav-actions {
+    margin-left: 0;
+  }
+
+  .hero-backdrop {
+    height: auto;
+    min-height: 540px;
+  }
+
+  .movie-hero-shell {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .movie-title {
+    font-size: 2.3rem;
+  }
+
+  .movie-score-row,
+  .movie-hero-actions {
+    flex-wrap: wrap;
+  }
+}
