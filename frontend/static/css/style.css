@@ -1,12 +1,12 @@
 /* ============================================
-   MOVIE STAR â€” Global Stylesheet
+   MOVIE STAR — Global Stylesheet
    style.css
    ============================================ */
 
-/* â”€â”€ Google Fonts â”€â”€ */
+/* ── Google Fonts ── */
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap');
 
-/* â”€â”€ CSS Variables â”€â”€ */
+/* ── CSS Variables ── */
 :root {
   --gold:         #c9a84c;
   --gold-dim:     #a07830;
@@ -21,14 +21,14 @@
   --text-muted:   #8a8a9a;
 }
 
-/* â”€â”€ Reset â”€â”€ */
+/* ── Reset ── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* â”€â”€ Base â”€â”€ */
+/* ── Base ── */
 html {
   scroll-behavior: smooth;
 }
@@ -51,7 +51,7 @@ a {
   transition: color 0.2s;
 }
 
-/* â”€â”€ Scrollbar â”€â”€ */
+/* ── Scrollbar ── */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -66,7 +66,7 @@ a {
   background: var(--gold);
 }
 
-/* â”€â”€ Film Grain Overlay â”€â”€ */
+/* ── Film Grain Overlay ── */
 body::before {
   content: '';
   position: fixed;
