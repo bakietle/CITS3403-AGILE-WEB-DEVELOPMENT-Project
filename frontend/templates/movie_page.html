@@ -2,219 +2,122 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Inception – Movie Star</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Star | Inception</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: '#F5C518',
-            dark: {
-              900: '#0a0a0f',
-              800: '#111118',
-              700: '#1a1a24',
-              600: '#24242f',
-              500: '#2e2e3a',
-            }
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
   <link rel="stylesheet" href="../static/css/style.css" />
   <link rel="stylesheet" href="../static/css/movie_page.css" />
 </head>
 <body class="movie-page min-h-screen">
-
-  <!-- ═══════════ NAVBAR ═══════════ -->
   <nav class="navbar-cinema" id="navbar">
-    <a href="home_page.html" class="nav-logo">Movie Star</a>
+    <div class="page-container movie-nav-wrap">
+      <a href="home_page.html" class="nav-logo">Movie Star</a>
 
-    <div class="movie-nav-search-wrap flex-1 max-w-xl mx-8 relative">
-      <span class="movie-nav-search-icon absolute left-4 top-1/2 -translate-y-1/2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-          </svg>
-        </span>
-        <input type="text" class="field-input movie-nav-search" placeholder="Search movies…"/>
-    </div>
+      <ul class="nav-links">
+        <li><a href="home_page.html">Home</a></li>
+        <li><a href="watchlist_page.html">Watchlist</a></li>
+      </ul>
 
-    <ul class="nav-links">
-      <li><a href="#">Trending</a></li>
-      <li><a href="watchlist_page.html">Watchlist</a></li>
-    </ul>
-
-    <div class="movie-nav-actions">
-      <a href="auth.html" class="btn-nav">Log In</a>
-      <a href="auth.html" class="btn-primary movie-signup-btn">Sign Up</a>
+      <div class="nav-actions movie-nav-actions">
+        <a href="my_profile.html" class="btn-primary">Profile</a>
+        <a href="home_page.html" id="movie-logout-btn" class="btn-ghost">Logout</a>
+      </div>
     </div>
   </nav>
 
-  <!-- ═══════════ HERO / BACKDROP ═══════════ -->
-  <div class="hero-backdrop">
-    <!-- Backdrop image -->
-    <img src="https://picsum.photos/seed/inception-wide/1400/600" alt="Inception Backdrop" class="w-full h-full object-cover object-center"/>
-    <!-- Gradient overlays -->
-    <div class="absolute inset-0 bg-gradient-to-r from-dark-900 via-dark-900/70 to-transparent"></div>
-    <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-dark-900/40"></div>
+  <header class="hero-backdrop">
+    <img src="https://picsum.photos/seed/inception-wide/1400/600" alt="Inception backdrop" class="w-full h-full object-cover object-center" />
+    <div class="hero-overlay hero-overlay-primary"></div>
+    <div class="hero-overlay hero-overlay-secondary"></div>
 
-    <!-- Hero content -->
     <div class="absolute inset-0 flex items-end">
-      <div class="max-w-7xl mx-auto px-6 pb-10 flex gap-8 items-end w-full movie-hero-shell">
-
-        <!-- Movie Poster -->
-        <div class="shrink-0 hidden sm:block">
-          <img src="https://picsum.photos/seed/inception-poster/200/300" alt="Inception Poster"
-               class="movie-poster"/>
+      <div class="page-container movie-hero-shell">
+        <div class="movie-poster-wrap">
+          <img src="https://picsum.photos/seed/inception-poster/220/330" alt="Inception poster" class="movie-poster" />
         </div>
 
-        <!-- Movie Info -->
-        <div class="flex-1 pb-1">
-          <!-- Breadcrumb -->
-          <p class="movie-breadcrumb">
-            <a href="/" class="movie-link">Home</a>
-            <span class="mx-1.5">›</span>
-            <a href="/search" class="movie-link">Search</a>
-            <span class="mx-1.5">›</span>
-            <span class="movie-breadcrumb-current">Inception</span>
-          </p>
-
+        <div class="movie-hero-copy">
+          <p class="eyebrow">Featured Film</p>
           <h1 class="movie-title font-display">Inception</h1>
 
-          <div class="flex flex-wrap items-center gap-3 mt-3">
+          <div class="movie-meta-row">
             <span class="movie-meta">2010</span>
-            <span class="movie-meta-separator">·</span>
+            <span class="movie-meta-separator">/</span>
             <span class="movie-meta">2h 28m</span>
-            <span class="movie-meta-separator">·</span>
+            <span class="movie-meta-separator">/</span>
             <span class="movie-badge">PG-13</span>
-            <span class="movie-meta-separator">·</span>
-            <!-- Genre tags -->
-            <a href="#" class="genre-tag">Sci-Fi</a>
-            <a href="#" class="genre-tag">Action</a>
-            <a href="#" class="genre-tag">Thriller</a>
+            <span class="movie-meta-separator">/</span>
+            <span class="movie-meta">Sci-Fi, Action, Thriller</span>
           </div>
 
-          <!-- Rating row -->
-          <div class="movie-score-row flex items-center gap-6 mt-4">
-            <div class="flex items-center gap-2">
-              <span class="movie-score-main">8.8</span>
-              <div>
-                <div class="movie-score-stars">★★★★★</div>
-                <p class="movie-score-subtext">2.4M ratings</p>
-              </div>
-            </div>
-            <div class="movie-score-divider"></div>
-            <div class="text-center">
-              <p class="movie-score-stat">98%</p>
-              <p class="movie-score-caption">Critics Score</p>
-            </div>
-            <div class="movie-score-divider"></div>
-            <div class="text-center">
-              <p class="movie-score-stat">94%</p>
-              <p class="movie-score-caption">Audience</p>
-            </div>
+          <div class="movie-rating-summary">
+            <span class="movie-rating-value">&#9733; 8.8</span>
+            <span class="movie-rating-copy">2.4M ratings</span>
           </div>
 
-          <!-- Action buttons -->
-          <div class="flex items-center gap-3 mt-5 movie-hero-actions">
-            <button class="btn-primary movie-cta flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-              </svg>
-              Add to Watchlist
-            </button>
-            <button onclick="document.getElementById('write-review').scrollIntoView({behavior:'smooth'})"
-                    class="btn-ghost movie-cta flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-              </svg>
-              Write a Review
-            </button>
-            <button class="btn-ghost movie-icon-action">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-              </svg>
-            </button>
+          <div class="movie-hero-actions">
+            <button class="btn-primary movie-cta" type="button">Add to Watchlist</button>
+            <button id="write-review-trigger" class="btn-ghost movie-cta" type="button">Write a Review</button>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- ═══════════ MAIN CONTENT ═══════════ -->
-  <main class="max-w-7xl mx-auto px-6 pb-20">
-    <div class="flex gap-10 mt-10">
-
-      <!-- ── LEFT: Main Info + Reviews ── -->
-      <div class="flex-1 min-w-0">
-
-        <!-- Synopsis -->
+  <main class="movie-main">
+    <div class="page-container movie-layout">
+      <div class="movie-content-column">
         <section>
-          <h2 class="text-lg font-bold text-white mb-3">Synopsis</h2>
-          <p class="text-gray-400 leading-relaxed text-sm">
-            Dom Cobb is a skilled thief, the absolute best in the dangerous art of extraction — stealing valuable secrets from deep within the subconscious during the dream state, when the mind is at its most vulnerable. Cobb's rare ability has made him a coveted player in this treacherous new world of corporate espionage, but it has also made him an international fugitive and cost him everything he has ever loved.
+          <h2 class="content-title">Synopsis</h2>
+          <p class="content-copy">
+            Dom Cobb is a skilled thief who steals valuable secrets from deep within the subconscious during the dream state. His rare ability has made him a coveted player in the world of corporate espionage, but it has also turned him into a fugitive who has lost almost everything that matters to him.
           </p>
-          <p class="text-gray-400 leading-relaxed text-sm mt-3">
-            Now Cobb is being offered a chance at redemption. One last job could give him his life back but only if he can accomplish the impossible — inception. Instead of the perfect heist, Cobb and his team of specialists have to pull off the reverse: their task is not to steal an idea, but to plant one.
+          <p class="content-copy">
+            Cobb is offered one last chance at redemption if he can pull off the impossible: inception. Instead of stealing an idea, he and his team must plant one. What starts as a high-stakes mission becomes an emotional journey through layered dreams, memory, and guilt.
           </p>
         </section>
 
-        <!-- Divider -->
-        <hr class="border-white/5 my-8"/>
+        <hr class="section-divider" />
 
-        <!-- ── WRITE A REVIEW ── -->
         <section id="write-review">
-          <h2 class="text-lg font-bold text-white mb-5">Write a Review</h2>
+          <h2 class="content-title">Write a Review</h2>
           <div class="write-review-card">
-            <!-- Star selector -->
-            <div class="mb-4">
-              <p class="text-sm text-gray-400 mb-2">Your Rating</p>
-              <div class="flex gap-1 text-3xl text-gray-600" id="star-container">
-                <span class="star-btn" data-val="1">★</span>
-                <span class="star-btn" data-val="2">★</span>
-                <span class="star-btn" data-val="3">★</span>
-                <span class="star-btn" data-val="4">★</span>
-                <span class="star-btn" data-val="5">★</span>
-                <span class="star-btn" data-val="6">★</span>
-                <span class="star-btn" data-val="7">★</span>
-                <span class="star-btn" data-val="8">★</span>
-                <span class="star-btn" data-val="9">★</span>
-                <span class="star-btn" data-val="10">★</span>
+            <div class="review-field-block">
+              <p class="review-field-label">Your Rating</p>
+              <div class="star-row" id="star-container" aria-label="Choose a rating from 1 to 10">
+                <button class="star-btn" type="button" data-val="1" aria-label="Rate 1 out of 10">&#9733;</button>
+                <button class="star-btn" type="button" data-val="2" aria-label="Rate 2 out of 10">&#9733;</button>
+                <button class="star-btn" type="button" data-val="3" aria-label="Rate 3 out of 10">&#9733;</button>
+                <button class="star-btn" type="button" data-val="4" aria-label="Rate 4 out of 10">&#9733;</button>
+                <button class="star-btn" type="button" data-val="5" aria-label="Rate 5 out of 10">&#9733;</button>
+                <button class="star-btn" type="button" data-val="6" aria-label="Rate 6 out of 10">&#9733;</button>
+                <button class="star-btn" type="button" data-val="7" aria-label="Rate 7 out of 10">&#9733;</button>
+                <button class="star-btn" type="button" data-val="8" aria-label="Rate 8 out of 10">&#9733;</button>
+                <button class="star-btn" type="button" data-val="9" aria-label="Rate 9 out of 10">&#9733;</button>
+                <button class="star-btn" type="button" data-val="10" aria-label="Rate 10 out of 10">&#9733;</button>
               </div>
-              <p class="text-xs text-gray-600 mt-1" id="rating-label">Click to rate</p>
+              <p class="review-rating-label" id="rating-label">Click to rate</p>
             </div>
-            <!-- Title -->
-            <input type="text" placeholder="Review title (optional)"
-                   class="field-input movie-review-input"/>
-            <!-- Body -->
-            <textarea rows="4" placeholder="Share your thoughts about this movie…"
-                      class="field-input movie-review-input movie-review-textarea"></textarea>
-            <!-- Spoiler toggle + submit -->
-            <div class="flex items-center justify-between mt-3">
-              <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-400">
-                <input type="checkbox" class="accent-brand w-4 h-4"/>
-                Contains spoilers
+
+            <input type="text" placeholder="Review title (optional)" class="field-input movie-review-input" />
+            <textarea rows="4" placeholder="Share your thoughts about this movie..." class="field-input movie-review-input movie-review-textarea"></textarea>
+
+            <div class="review-actions-row">
+              <label class="review-checkbox-row">
+                <input type="checkbox" class="accent-yellow-500 w-4 h-4" />
+                <span>Contains spoilers</span>
               </label>
-              <button class="btn-primary movie-submit-btn">
-                Submit Review
-              </button>
+              <button class="btn-primary movie-submit-btn" type="button">Submit Review</button>
             </div>
           </div>
         </section>
 
-        <!-- Divider -->
-        <hr class="border-white/5 my-8"/>
+        <hr class="section-divider" />
 
-        <!-- ── REVIEWS LIST ── -->
         <section>
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-bold text-white">Community Reviews <span class="text-gray-500 font-normal text-base ml-1">(1,284)</span></h2>
-            <select class="bg-dark-700 border border-white/10 text-sm text-gray-400 px-3 py-1.5 rounded-lg focus:outline-none focus:border-brand/30">
+          <div class="community-reviews-header">
+            <h2 class="content-title content-title-tight">Community Reviews <span class="content-title-sub">(1,284)</span></h2>
+            <select class="review-sort-select" aria-label="Sort community reviews">
               <option>Most Helpful</option>
               <option>Most Recent</option>
               <option>Highest Rated</option>
@@ -222,285 +125,102 @@
             </select>
           </div>
 
-          <div class="space-y-4">
-
-            <!-- Review 1 -->
-            <div class="review-card card-cinema p-5">
-              <div class="flex items-start justify-between gap-4">
-                <div class="flex items-center gap-3">
-                  <img src="https://picsum.photos/seed/user1/40/40" alt="User" class="w-10 h-10 rounded-full object-cover ring-2 ring-white/10"/>
+          <div class="review-list">
+            <article class="review-card card-cinema">
+              <div class="review-top-row">
+                <div class="review-user-row">
+                  <img src="https://picsum.photos/seed/user1/40/40" alt="filmcritic99 avatar" class="review-avatar" />
                   <div>
-                    <a href="/user/filmcritic99" class="text-sm font-semibold text-white hover:text-brand transition">filmcritic99</a>
-                    <p class="text-xs text-gray-500 mt-0.5">March 12, 2025</p>
+                    <a href="other_profile.html" class="review-user-link">filmcritic99</a>
+                    <p class="review-date">March 12, 2025</p>
                   </div>
                 </div>
-                <div class="flex items-center gap-1 text-brand text-sm shrink-0">
-                  ★★★★★★★★★★
-                  <span class="text-white font-bold ml-1">10/10</span>
-                </div>
+                <div class="review-score">&#9733; 10/10</div>
               </div>
-
-              <h3 class="text-sm font-semibold text-white mt-4">A masterclass in storytelling and visual effects</h3>
-              <p class="text-sm text-gray-400 leading-relaxed mt-1.5">
-                Christopher Nolan has crafted something truly extraordinary here. The layers of the dream world are meticulously constructed, and each level carries its own visual identity. Hans Zimmer's score is haunting and perfectly complements the escalating tension. DiCaprio delivers one of his finest performances, carrying the emotional weight of the entire film on his shoulders.
-              </p>
-
-              <!-- Spoiler toggle example -->
-              <div class="mt-3">
-                <button class="text-xs text-brand hover:text-yellow-400 transition">▶ Show spoiler section</button>
+              <h3 class="review-title">A masterclass in storytelling and visual effects</h3>
+              <p class="review-copy">Christopher Nolan crafts something extraordinary here. The dream layers feel distinct without becoming confusing, the emotional stakes stay grounded, and the score drives every scene forward.</p>
+              <div class="review-footer-row">
+                <button class="helpful-btn" type="button">Helpful (342)</button>
+                <button class="review-link-btn" type="button">Reply</button>
+                <button class="review-link-btn review-link-btn-end" type="button">Report</button>
               </div>
+            </article>
 
-              <div class="flex items-center gap-4 mt-4 pt-4 border-t border-white/5">
-                <button class="helpful-btn flex items-center gap-1.5 text-xs text-gray-500 border border-white/10 rounded-full px-3 py-1 transition">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
-                  </svg>
-                  Helpful (342)
-                </button>
-                <button class="text-xs text-gray-600 hover:text-gray-400 transition">Reply</button>
-                <button class="text-xs text-gray-600 hover:text-gray-400 transition ml-auto">Report</button>
-              </div>
-            </div>
-
-            <!-- Review 2 -->
-            <div class="review-card card-cinema p-5">
-              <div class="flex items-start justify-between gap-4">
-                <div class="flex items-center gap-3">
-                  <img src="https://picsum.photos/seed/user2/40/40" alt="User" class="w-10 h-10 rounded-full object-cover ring-2 ring-white/10"/>
+            <article class="review-card card-cinema">
+              <div class="review-top-row">
+                <div class="review-user-row">
+                  <img src="https://picsum.photos/seed/user2/40/40" alt="nolanfan2024 avatar" class="review-avatar" />
                   <div>
-                    <a href="/user/nolanfan2024" class="text-sm font-semibold text-white hover:text-brand transition">nolanfan2024</a>
-                    <p class="text-xs text-gray-500 mt-0.5">January 5, 2025</p>
+                    <a href="other_profile.html" class="review-user-link">nolanfan2024</a>
+                    <p class="review-date">January 5, 2025</p>
                   </div>
                 </div>
-                <div class="flex items-center gap-1 text-brand text-sm shrink-0">
-                  ★★★★★★★★<span class="text-gray-600">★★</span>
-                  <span class="text-white font-bold ml-1">8/10</span>
-                </div>
+                <div class="review-score">&#9733; 8/10</div>
               </div>
-              <h3 class="text-sm font-semibold text-white mt-4">Mind-bending but emotionally distant</h3>
-              <p class="text-sm text-gray-400 leading-relaxed mt-1.5">
-                Inception is undeniably impressive in its technical execution and ambition. The concept is brilliantly original and the action sequences are breathtaking. However, I found it difficult to emotionally connect with the characters beyond Cobb himself. The film prioritises spectacle over depth, but what spectacle it is.
-              </p>
-              <div class="flex items-center gap-4 mt-4 pt-4 border-t border-white/5">
-                <button class="helpful-btn flex items-center gap-1.5 text-xs text-gray-500 border border-white/10 rounded-full px-3 py-1 transition">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
-                  </svg>
-                  Helpful (187)
-                </button>
-                <button class="text-xs text-gray-600 hover:text-gray-400 transition">Reply</button>
-                <button class="text-xs text-gray-600 hover:text-gray-400 transition ml-auto">Report</button>
+              <h3 class="review-title">Mind-bending but emotionally distant</h3>
+              <p class="review-copy">The concept is brilliant and the action is exceptional, but the emotional connection is strongest only with Cobb. Even so, the craft level is so high that the film remains intensely watchable.</p>
+              <div class="review-footer-row">
+                <button class="helpful-btn" type="button">Helpful (187)</button>
+                <button class="review-link-btn" type="button">Reply</button>
+                <button class="review-link-btn review-link-btn-end" type="button">Report</button>
               </div>
-            </div>
+            </article>
 
-            <!-- Review 3 -->
-            <div class="review-card card-cinema p-5">
-              <div class="flex items-start justify-between gap-4">
-                <div class="flex items-center gap-3">
-                  <img src="https://picsum.photos/seed/user3/40/40" alt="User" class="w-10 h-10 rounded-full object-cover ring-2 ring-white/10"/>
+            <article class="review-card card-cinema">
+              <div class="review-top-row">
+                <div class="review-user-row">
+                  <img src="https://picsum.photos/seed/user3/40/40" alt="cinephile_aus avatar" class="review-avatar" />
                   <div>
-                    <a href="/user/cinephile_aus" class="text-sm font-semibold text-white hover:text-brand transition">cinephile_aus</a>
-                    <p class="text-xs text-gray-500 mt-0.5">December 28, 2024</p>
+                    <a href="other_profile.html" class="review-user-link">cinephile_aus</a>
+                    <p class="review-date">December 28, 2024</p>
                   </div>
                 </div>
-                <div class="flex items-center gap-1 text-brand text-sm shrink-0">
-                  ★★★★★★★<span class="text-gray-600">★★★</span>
-                  <span class="text-white font-bold ml-1">7/10</span>
-                </div>
+                <div class="review-score">&#9733; 7/10</div>
               </div>
-              <h3 class="text-sm font-semibold text-white mt-4">Great but slightly overhyped</h3>
-              <p class="text-sm text-gray-400 leading-relaxed mt-1.5">
-                Don't get me wrong — this is a very good film. The zero-gravity corridor fight alone is worth the price of admission. But after the third rewatch, the cracks start to show. Some of the exposition is clunky and the film leans too heavily on explaining its own rules. Still, Nolan's ambition is commendable.
-              </p>
-              <div class="flex items-center gap-4 mt-4 pt-4 border-t border-white/5">
-                <button class="helpful-btn flex items-center gap-1.5 text-xs text-gray-500 border border-white/10 rounded-full px-3 py-1 transition">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
-                  </svg>
-                  Helpful (94)
-                </button>
-                <button class="text-xs text-gray-600 hover:text-gray-400 transition">Reply</button>
-                <button class="text-xs text-gray-600 hover:text-gray-400 transition ml-auto">Report</button>
+              <h3 class="review-title">Great but slightly overhyped</h3>
+              <p class="review-copy">The zero-gravity corridor fight is still incredible, but some exposition feels heavy on repeat viewings. It remains ambitious, polished, and memorable even when it over-explains itself.</p>
+              <div class="review-footer-row">
+                <button class="helpful-btn" type="button">Helpful (94)</button>
+                <button class="review-link-btn" type="button">Reply</button>
+                <button class="review-link-btn review-link-btn-end" type="button">Report</button>
               </div>
-            </div>
-
+            </article>
           </div>
 
-          <!-- Load More -->
-          <button class="btn-load-more mt-6">
-            Load More Reviews
-          </button>
+          <button class="btn-load-more" type="button">Load More Reviews</button>
         </section>
       </div>
 
-      <!-- ── RIGHT: Sidebar ── -->
-      <aside class="w-64 shrink-0">
-        <div class="sticky top-20 space-y-6">
-
-          <!-- Movie Details Card -->
-          <div class="sidebar-card">
-            <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">Movie Details</h3>
-            <dl class="space-y-3 text-sm">
-              <div>
-                <dt class="text-gray-500 text-xs">Director</dt>
-                <dd class="text-white font-medium mt-0.5">
-                  <a href="#" class="hover:text-brand transition">Christopher Nolan</a>
-                </dd>
-              </div>
-              <div>
-                <dt class="text-gray-500 text-xs">Writers</dt>
-                <dd class="text-white mt-0.5">Christopher Nolan</dd>
-              </div>
-              <div>
-                <dt class="text-gray-500 text-xs">Stars</dt>
-                <dd class="text-white mt-0.5 space-y-0.5">
-                  <a href="#" class="block hover:text-brand transition">Leonardo DiCaprio</a>
-                  <a href="#" class="block hover:text-brand transition">Joseph Gordon-Levitt</a>
-                  <a href="#" class="block hover:text-brand transition">Elliot Page</a>
-                </dd>
-              </div>
-              <div>
-                <dt class="text-gray-500 text-xs">Release Date</dt>
-                <dd class="text-white mt-0.5">16 July 2010</dd>
-              </div>
-              <div>
-                <dt class="text-gray-500 text-xs">Box Office</dt>
-                <dd class="text-white mt-0.5">$836.8 million</dd>
-              </div>
-              <div>
-                <dt class="text-gray-500 text-xs">Country</dt>
-                <dd class="text-white mt-0.5">United States, UK</dd>
-              </div>
-              <div>
-                <dt class="text-gray-500 text-xs">Language</dt>
-                <dd class="text-white mt-0.5">English, Japanese, French</dd>
-              </div>
-            </dl>
-          </div>
-
-          <!-- Rating Breakdown -->
-          <div class="sidebar-card">
-            <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">Rating Breakdown</h3>
-            <div class="space-y-2">
-              <!-- Rating bars -->
-              <div class="flex items-center gap-2 text-xs">
-                <span class="text-gray-400 w-5 text-right">10</span>
-                <div class="flex-1 h-2 bg-dark-500 rounded-full overflow-hidden">
-                  <div class="h-full bg-brand rounded-full rating-bar-55"></div>
-                </div>
-                <span class="text-gray-500 w-8">55%</span>
-              </div>
-              <div class="flex items-center gap-2 text-xs">
-                <span class="text-gray-400 w-5 text-right">9</span>
-                <div class="flex-1 h-2 bg-dark-500 rounded-full overflow-hidden">
-                  <div class="h-full bg-brand rounded-full rating-bar-22"></div>
-                </div>
-                <span class="text-gray-500 w-8">22%</span>
-              </div>
-              <div class="flex items-center gap-2 text-xs">
-                <span class="text-gray-400 w-5 text-right">8</span>
-                <div class="flex-1 h-2 bg-dark-500 rounded-full overflow-hidden">
-                  <div class="h-full bg-brand rounded-full rating-bar-12"></div>
-                </div>
-                <span class="text-gray-500 w-8">12%</span>
-              </div>
-              <div class="flex items-center gap-2 text-xs">
-                <span class="text-gray-400 w-5 text-right">7</span>
-                <div class="flex-1 h-2 bg-dark-500 rounded-full overflow-hidden">
-                  <div class="h-full bg-brand/60 rounded-full rating-bar-6"></div>
-                </div>
-                <span class="text-gray-500 w-8">6%</span>
-              </div>
-              <div class="flex items-center gap-2 text-xs">
-                <span class="text-gray-400 w-5 text-right">≤6</span>
-                <div class="flex-1 h-2 bg-dark-500 rounded-full overflow-hidden">
-                  <div class="h-full bg-gray-600 rounded-full rating-bar-5"></div>
-                </div>
-                <span class="text-gray-500 w-8">5%</span>
-              </div>
+      <aside class="movie-sidebar">
+        <div class="sidebar-card">
+          <h3 class="sidebar-title">Movie Details</h3>
+          <dl class="details-list">
+            <div>
+              <dt>Director</dt>
+              <dd>Christopher Nolan</dd>
             </div>
-          </div>
-
-          <!-- Related Movies -->
-          <div class="sidebar-card">
-            <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">You Might Also Like</h3>
-            <div class="space-y-3">
-              <a href="#" class="flex gap-3 items-center group">
-                <img src="https://picsum.photos/seed/interstellar2/48/72" class="w-10 rounded-lg object-cover aspect-[2/3]" alt="Interstellar"/>
-                <div>
-                  <p class="text-sm text-white group-hover:text-brand transition font-medium">Interstellar</p>
-                  <p class="text-xs text-gray-500">2014 · ★ 8.7</p>
-                </div>
-              </a>
-              <a href="#" class="flex gap-3 items-center group">
-                <img src="https://picsum.photos/seed/prestige2/48/72" class="w-10 rounded-lg object-cover aspect-[2/3]" alt="The Prestige"/>
-                <div>
-                  <p class="text-sm text-white group-hover:text-brand transition font-medium">The Prestige</p>
-                  <p class="text-xs text-gray-500">2006 · ★ 8.5</p>
-                </div>
-              </a>
-              <a href="#" class="flex gap-3 items-center group">
-                <img src="https://picsum.photos/seed/bladerunner2/48/72" class="w-10 rounded-lg object-cover aspect-[2/3]" alt="Blade Runner 2049"/>
-                <div>
-                  <p class="text-sm text-white group-hover:text-brand transition font-medium">Blade Runner 2049</p>
-                  <p class="text-xs text-gray-500">2017 · ★ 8.0</p>
-                </div>
-              </a>
-              <a href="#" class="flex gap-3 items-center group">
-                <img src="https://picsum.photos/seed/arrival2/48/72" class="w-10 rounded-lg object-cover aspect-[2/3]" alt="Arrival"/>
-                <div>
-                  <p class="text-sm text-white group-hover:text-brand transition font-medium">Arrival</p>
-                  <p class="text-xs text-gray-500">2016 · ★ 7.9</p>
-                </div>
-              </a>
+            <div>
+              <dt>Cast</dt>
+              <dd>Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page</dd>
             </div>
-          </div>
-
+            <div>
+              <dt>Release Date</dt>
+              <dd>16 July 2010</dd>
+            </div>
+            <div>
+              <dt>Runtime</dt>
+              <dd>2h 28m</dd>
+            </div>
+          </dl>
         </div>
       </aside>
-
     </div>
   </main>
 
-  <!-- Footer -->
   <footer>
-    <span class="footer-logo">Movie Star</span>
-    <span class="footer-note">moviestar.com · © 2025</span>
-    <span class="footer-stars">★ ★ ★ ★ ★</span>
+    <div class="page-container footer-note">&copy; 2026 Movie Star. Movie nights start here.</div>
   </footer>
 
-  <!-- ── Star rating JS ── -->
-  <script>
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 40);
-    });
-
-    const stars = document.querySelectorAll('.star-btn');
-    const label = document.getElementById('rating-label');
-    let selected = 0;
-
-    stars.forEach(star => {
-      star.addEventListener('mouseenter', () => {
-        const val = +star.dataset.val;
-        stars.forEach((s, i) => {
-          s.style.color = i < val ? '#F5C518' : '#4b5563';
-        });
-        label.textContent = `${val} / 10`;
-      });
-      star.addEventListener('click', () => {
-        selected = +star.dataset.val;
-        label.textContent = `Selected: ${selected} / 10`;
-      });
-    });
-
-    document.getElementById('star-container').addEventListener('mouseleave', () => {
-      stars.forEach((s, i) => {
-        s.style.color = i < selected ? '#F5C518' : '#4b5563';
-      });
-      label.textContent = selected ? `Selected: ${selected} / 10` : 'Click to rate';
-    });
-  </script>
-
+  <script src="../static/js/movie_page.js" defer></script>
 </body>
 </html>
