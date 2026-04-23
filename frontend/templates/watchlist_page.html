@@ -4,126 +4,200 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Movie Star | Watchlist</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <link rel="stylesheet" href="../static/css/style.css" />
   <link rel="stylesheet" href="../static/css/watchlist_page.css" />
 </head>
-<body>
+<body class="watchlist-page">
   <nav class="navbar-cinema">
     <div class="page-container">
-      <a href="watchlist_page.html" class="nav-logo">Movie Star</a>
+      <a href="home_page.html" class="nav-logo">Movie Star</a>
       <ul class="nav-links">
-        <li><a href="home_page_logged_in.html">Home</a></li>
+        <li><a href="home_page.html">Home</a></li>
         <li><a href="watchlist_page.html" class="active">Watch List</a></li>
-        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="home_page.html#reviews">Reviews</a></li>
       </ul>
+
       <div class="nav-actions">
-        <a href="#" class="btn-primary">Profile</a>
-        <a href="#" class="btn-ghost">Logout</a>
+        <a href="auth.html" class="btn-ghost auth-guest-only">Login</a>
+        <a href="auth.html" class="btn-primary auth-guest-only">Sign Up</a>
+
+        <a href="my_profile.html" class="btn-primary auth-loggedin-only hidden">Profile</a>
+        <a href="watchlist_page.html" id="watchlist-logout-btn" class="btn-ghost auth-loggedin-only hidden">Logout</a>
       </div>
     </div>
   </nav>
 
-  <main>
-    <section class="page-section watchlist-hero">
-      <div class="page-container watchlist-hero-card card-cinema">
-        <div class="watchlist-intro">
-          <span class="watchlist-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2zm-6.5 3.5h-3v1h3v3h1v-3h3v-1h-3v-3h-1v3z"/></svg>
-          </span>
-          <div>
-            <p class="eyebrow">Watchlist</p>
-            <h1 class="hero-heading">My Watchlist</h1>
-            <p class="hero-copy">Keep track of the films you want to watch, sort by rating or release year, and jump back into the queue with one click.</p>
+  <main class="watchlist-main">
+    <!-- EMPTY / GUEST WATCHLIST STATE -->
+    <div id="watchlist-empty-state" class="watchlist-state">
+      <section class="page-section watchlist-empty-hero">
+        <div class="page-container">
+          <div class="card-cinema watchlist-empty-card">
+            <span class="empty-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 2a7 7 0 110 14 7 7 0 010-14zm1 3h-2v5h5v-2h-3V8z"/>
+              </svg>
+            </span>
+            <h1 id="watchlist-empty-title" class="hero-heading">Your Watchlist is Empty</h1>
+            <p id="watchlist-empty-copy" class="hero-copy">
+              Start building your watchlist by browsing movies and adding the ones you want to watch later.
+            </p>
+            <div class="card-actions">
+              <a id="watchlist-empty-cta" href="home_page.html" class="btn-primary">Browse Movies</a>
+            </div>
           </div>
         </div>
-        <div class="card-actions">
-          <a href="#" class="btn-nav">Add more titles</a>
-          <a href="#" class="btn-nav">Open recommendations</a>
+      </section>
+
+      <section id="watchlist-empty-info-section" class="page-section">
+        <div class="page-container card-cinema watchlist-empty-info">
+          <h2 class="section-title">How to build your watchlist</h2>
+          <div class="card-content">
+            <ol class="card-meta">
+              <li>Browse movies from our collection on the home page.</li>
+              <li>Click on any movie card for details and reviews.</li>
+              <li>Add movies to your watchlist by clicking the button on the card.</li>
+            </ol>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
 
-    <section class="page-section">
-      <div class="page-container watchlist-sort-card card-cinema">
-        <div class="sort-bar">
-          <div class="sort-label">
-            <span class="eyebrow">Sort by</span>
-          </div>
-          <div class="sort-options">
-            <a href="#" class="btn-filter active">Date Added</a>
-            <a href="#" class="btn-filter">Rating</a>
-            <a href="#" class="btn-filter">Title</a>
-            <a href="#" class="btn-filter">Year</a>
-          </div>
-          <div class="sort-count">3 movies</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="page-section">
-      <div class="page-container watchlist-grid">
-        <article class="card-cinema watchlist-card">
-          <img src="https://images.unsplash.com/photo-1517602302552-471fe67acf66?auto=format&fit=crop&w=900&q=80" alt="Hidden Truth" />
-          <div class="card-badge">★ 8.9</div>
-          <div class="card-content">
-            <h3 class="card-title">Hidden Truth</h3>
-            <div class="card-meta">
-              <span>2025</span>
-              <span>Mystery</span>
-            </div>
-            <div class="card-actions">
-              <a href="#" class="btn-ghost">Remove</a>
+    <!-- FILLED WATCHLIST STATE -->
+    <div id="watchlist-filled-state" class="watchlist-state hidden">
+      <section class="page-section watchlist-hero">
+        <div class="page-container watchlist-hero-card card-cinema">
+          <div class="watchlist-intro">
+            <span class="watchlist-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2zm-6.5 3.5h-3v1h3v3h1v-3h3v-1h-3v-3h-1v3z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="eyebrow">Watchlist</p>
+              <h1 class="hero-heading">My Watchlist</h1>
+              <p class="hero-copy">
+                Keep track of the films you want to watch, sort by rating or release year, and jump back
+                into the queue with one click.
+              </p>
             </div>
           </div>
-        </article>
-
-        <article class="card-cinema watchlist-card">
-          <img src="https://images.unsplash.com/photo-1517602302552-471fe67acf66?auto=format&fit=crop&w=900&q=80" alt="Flight of Rebels" />
-          <div class="card-badge">★ 8.5</div>
-          <div class="card-content">
-            <h3 class="card-title">Flight of Rebels</h3>
-            <div class="card-meta">
-              <span>2024</span>
-              <span>Action</span>
-            </div>
-            <div class="card-actions">
-              <a href="#" class="btn-ghost">Remove</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="card-cinema watchlist-card">
-          <img src="https://images.unsplash.com/photo-1505685296765-3a2736de412f?auto=format&fit=crop&w=900&q=80" alt="Nightfall" />
-          <div class="card-badge">★ 8.6</div>
-          <div class="card-content">
-            <h3 class="card-title">Nightfall</h3>
-            <div class="card-meta">
-              <span>2023</span>
-              <span>Drama</span>
-            </div>
-            <div class="card-actions">
-              <a href="#" class="btn-ghost">Remove</a>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="page-section">
-      <div class="page-container card-cinema">
-        <div class="card-content">
-          <h2 class="section-title">Need viewing inspiration?</h2>
-          <p class="hero-copy">Keep your watchlist full with curated movie picks and reminders for the next great watch night.</p>
           <div class="card-actions">
-            <a href="#" class="btn-primary">Browse recommendations</a>
+            <a href="#" class="btn-nav">Add more titles</a>
+            <a href="#" class="btn-nav">Open recommendations</a>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section class="page-section">
+        <div class="page-container watchlist-sort-card card-cinema">
+          <div class="sort-bar">
+            <div class="sort-label">
+              <span class="eyebrow">Sort by</span>
+            </div>
+            <div class="sort-options">
+              <a href="#" class="btn-filter active">Date Added</a>
+              <a href="#" class="btn-filter">Rating</a>
+              <a href="#" class="btn-filter">Title</a>
+              <a href="#" class="btn-filter">Year</a>
+            </div>
+            <div class="sort-count">3 movies</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-section">
+        <div class="page-container watchlist-grid">
+          <article class="card-cinema watchlist-card">
+            <img src="https://images.unsplash.com/photo-1517602302552-471fe67acf66?auto=format&fit=crop&w=900&q=80" alt="Hidden Truth" />
+            <div class="card-badge">★ 8.9</div>
+            <div class="card-content">
+              <h3 class="card-title">Hidden Truth</h3>
+              <div class="card-meta">
+                <span>2025</span>
+                <span>Mystery</span>
+              </div>
+              <div class="card-actions">
+                <a href="#" class="btn-ghost">Remove</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="card-cinema watchlist-card">
+            <img src="https://images.unsplash.com/photo-1517602302552-471fe67acf66?auto=format&fit=crop&w=900&q=80" alt="Flight of Rebels" />
+            <div class="card-badge">★ 8.5</div>
+            <div class="card-content">
+              <h3 class="card-title">Flight of Rebels</h3>
+              <div class="card-meta">
+                <span>2024</span>
+                <span>Action</span>
+              </div>
+              <div class="card-actions">
+                <a href="#" class="btn-ghost">Remove</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="card-cinema watchlist-card">
+            <img src="https://images.unsplash.com/photo-1505685296765-3a2736de412f?auto=format&fit=crop&w=900&q=80" alt="Nightfall" />
+            <div class="card-badge">★ 8.6</div>
+            <div class="card-content">
+              <h3 class="card-title">Nightfall</h3>
+              <div class="card-meta">
+                <span>2023</span>
+                <span>Drama</span>
+              </div>
+              <div class="card-actions">
+                <a href="#" class="btn-ghost">Remove</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page-section">
+        <div class="page-container card-cinema">
+          <div class="card-content">
+            <h2 class="section-title">Need viewing inspiration?</h2>
+            <p class="hero-copy">Keep your watchlist full with curated movie picks and reminders for the next great watch night.</p>
+            <div class="card-actions">
+              <a href="#" class="btn-primary">Browse recommendations</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 
   <footer>
     <div class="page-container footer-note">© 2026 Movie Star. Movie nights start here.</div>
   </footer>
+
+  <!-- Demo State Switcher -->
+  <div id="demo-state-switcher" class="demo-state-panel">
+    <button id="demo-toggle-btn" class="demo-toggle-btn" type="button" title="Toggle demo state controls">⚙️</button>
+    <div id="demo-controls" class="demo-controls hidden">
+      <div class="demo-control-group">
+        <label class="demo-label" for="auth-state-select">Auth State</label>
+        <select id="auth-state-select" class="demo-select">
+          <option value="guest">Guest</option>
+          <option value="logged-in">Logged In</option>
+        </select>
+      </div>
+      <div class="demo-control-group">
+        <label class="demo-label" for="watchlist-state-select">Watchlist State</label>
+        <select id="watchlist-state-select" class="demo-select">
+          <option value="empty">Empty</option>
+          <option value="filled">Filled</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <script src="../static/js/watchlist_page.js" defer></script>
 </body>
 </html>

@@ -480,3 +480,79 @@ footer {
 .animate-fadeIn {
   animation: fadeIn 0.4s ease both;
 }
+
+/* ============================================
+   DEMO STATE SWITCHER
+   ============================================ */
+
+.demo-state-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1200;
+}
+
+.demo-toggle-btn {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: rgba(15, 15, 22, 0.96);
+  color: var(--gold);
+  font-size: 1.15rem;
+  cursor: pointer;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.demo-toggle-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(201, 168, 76, 0.35);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+}
+
+.demo-controls {
+  width: 230px;
+  margin-top: 12px;
+  padding: 16px;
+  background: rgba(15, 15, 22, 0.96);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
+}
+
+.demo-control-group + .demo-control-group {
+  margin-top: 14px;
+}
+
+.demo-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.demo-select {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.92rem;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.demo-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+}
+
+.demo-select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

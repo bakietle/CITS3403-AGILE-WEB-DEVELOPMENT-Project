@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Movie Star</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <link rel="stylesheet" href="../static/css/style.css" />
   <link rel="stylesheet" href="../static/css/home_page.css" />
 </head>
@@ -16,9 +20,12 @@
         <li><a href="watchlist_page.html">Watch List</a></li>
         <li><a href="#reviews">Reviews</a></li>
       </ul>
-      <div class="nav-actions">
-        <a href="#" class="btn-ghost">Login</a>
-        <a href="#" class="btn-primary">Sign Up</a>
+      <div class="nav-actions" id="nav-actions">
+        <a href="auth.html" class="btn-ghost auth-guest-only">Login</a>
+        <a href="auth.html" class="btn-primary auth-guest-only">Sign Up</a>
+
+        <a href="my_profile.html" class="btn-primary auth-loggedin-only hidden">Profile</a>
+        <a href="home_page.html" id="home-logout-btn" class="btn-ghost auth-loggedin-only hidden">Logout</a>
       </div>
     </div>
   </nav>
@@ -27,7 +34,10 @@
     <div class="page-container hero-content">
       <p class="eyebrow">Your space for movie reviews and discovery</p>
       <h1 class="hero-heading">Discover & Review Your <span class="text-gold">Favorite Movies</span></h1>
-      <p class="hero-copy">Join a community of movie lovers. Explore new films, read reviews, and share your thoughts on the movies that stay in your head long after the credits roll.</p>
+      <p class="hero-copy">
+        Join a community of movie lovers. Explore new films, read reviews, and share your thoughts on the
+        movies that stay in your head long after the credits roll.
+      </p>
       <div class="hero-search">
         <div class="search-input-wrapper">
           <input type="text" class="field-input" placeholder="Search for movies..." />
@@ -160,5 +170,21 @@
   <footer>
     <div class="page-container footer-note">© 2026 Movie Star. Movie nights start here.</div>
   </footer>
+
+  <!-- Demo State Switcher -->
+  <div id="demo-state-switcher" class="demo-state-panel">
+    <button id="demo-toggle-btn" class="demo-toggle-btn" type="button" title="Toggle demo state controls">⚙️</button>
+    <div id="demo-controls" class="demo-controls hidden">
+      <div class="demo-control-group">
+        <label class="demo-label" for="auth-state-select">Auth State</label>
+        <select id="auth-state-select" class="demo-select">
+          <option value="guest">Guest</option>
+          <option value="logged-in">Logged In</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <script src="../static/js/home_page.js" defer></script>
 </body>
 </html>

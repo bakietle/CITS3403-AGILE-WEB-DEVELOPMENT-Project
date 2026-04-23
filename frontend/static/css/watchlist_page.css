@@ -158,17 +158,8 @@
   margin-top: auto;
 }
 
-.watchlist-empty {
-  padding-top: 140px;
-}
-
 .watchlist-empty-hero {
   padding: 0 0 24px;
-}
-
-.watchlist-empty .page-container {
-  display: flex;
-  justify-content: center;
 }
 
 .watchlist-empty-card {
@@ -225,4 +216,53 @@
 
 .watchlist-empty-info .card-meta li::before {
   content: none;
+}
+.watchlist-state.hidden {
+  display: none;
+}
+
+#watchlist-empty-state {
+  padding-top: 140px;
+}
+
+#watchlist-empty-state > .page-section:first-child .page-container {
+  display: flex;
+  justify-content: center;
+}
+
+.page-section {
+  padding: 8px 0 80px;
+}
+.watchlist-page .watchlist-main {
+  padding-top: 96px;
+}
+
+.watchlist-page .navbar-cinema {
+  background: rgba(10, 10, 15, 0.96);
+  border-bottom: 1px solid var(--border);
+}
+
+.watchlist-hero {
+  padding: 24px 0 24px;
+}
+
+#watchlist-empty-state {
+  padding-top: 0;
+}
+
+#watchlist-empty-state > .page-section:first-child .page-container {
+  display: flex;
+  justify-content: center;
+}
+
+.watchlist-empty-hero {
+  padding: 24px 0 24px;
+}
+
+.page-section {
+  padding: 8px 0 56px;
+}
+
+.watchlist-grid {
+  margin-top: 8px;
 }
