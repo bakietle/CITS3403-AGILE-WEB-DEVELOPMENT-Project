@@ -1,605 +1,345 @@
-/* ============================================
-   MOVIE STAR — Global Stylesheet
-   other_profile.css
-   ============================================ */
-
-/* ── Google Fonts ── */
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap');
-
-/* ── CSS Variables ── */
-:root {
-  --gold:         #c9a84c;
-  --gold-dim:     #a07830;
-  --gold-hover:   #d4b060;
-  --dark:         #0a0a0f;
-  --dark-2:       #10101a;
-  --card-bg:      rgba(15, 15, 22, 0.92);
-  --input-bg:     rgba(255, 255, 255, 0.05);
-  --input-border: rgba(201, 168, 76, 0.25);
-  --border:       rgba(201, 168, 76, 0.15);
-  --text:         #e8e8f0;
-  --text-muted:   #8a8a9a;
+.profile-page {
+  min-height: 100vh;
 }
 
-/* ── Reset ── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+.page-container {
+  width: min(1200px, calc(100% - 48px));
+  margin: 0 auto;
 }
 
-/* ── Base ── */
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Lato', sans-serif;
-  background-color: var(--dark);
-  color: var(--text);
-  overflow-x: hidden;
-}
-
-img {
-  display: block;
-  max-width: 100%;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-  transition: color 0.2s;
-}
-
-/* ── Scrollbar ── */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: #000000;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--gold-dim);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--gold);
-}
-
-/* ── Film Grain Overlay ── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: 0.35;
-  pointer-events: none;
-  z-index: 999;
-}
-
-/* ============================================
-   TYPOGRAPHY
-   ============================================ */
-
-.font-display {
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 0.08em;
-}
-
-.eyebrow {
-  font-size: 0.68rem;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-
-.text-muted {
-  color: var(--text-muted);
-}
-
-.text-gold {
-  color: var(--gold);
-}
-
-/* ============================================
-   NAVBAR
-   ============================================ */
-
-.navbar-cinema {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
+.navbar-cinema .page-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 48px;
-  background: linear-gradient(to bottom, rgba(10,10,15,0.95), transparent);
-  transition: background 0.3s, border-bottom 0.3s;
+  gap: 24px;
 }
 
-.navbar-cinema.scrolled {
-  background: rgba(10, 10, 15, 0.97);
-  border-bottom: 1px solid var(--border);
-}
-
-.nav-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.8rem;
-  letter-spacing: 0.1em;
-  color: var(--gold);
-}
-
-.nav-links {
+.nav-actions {
   display: flex;
   align-items: center;
-  gap: 32px;
-  list-style: none;
+  gap: 16px;
 }
 
-.nav-links a {
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.nav-links a:hover {
-  color: var(--gold);
-}
-
-/* ============================================
-   BUTTONS
-   ============================================ */
-
-.btn-primary {
-  display: inline-block;
-  background: var(--gold);
-  color: var(--dark);
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1rem;
-  letter-spacing: 0.25em;
-  padding: 14px 40px;
-  border: none;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
-}
-
-.btn-primary:hover {
-  background: var(--gold-hover);
-  box-shadow: 0 8px 32px rgba(201, 168, 76, 0.35);
-  transform: translateY(-2px);
-  color: var(--dark);
-}
-
-.btn-primary:active {
-  transform: translateY(0);
-}
-
-.btn-ghost {
-  display: inline-block;
-  background: transparent;
-  color: var(--text);
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1rem;
-  letter-spacing: 0.25em;
-  padding: 13px 40px;
-  border: 1px solid rgba(232, 232, 240, 0.2);
-  border-radius: 2px;
-  cursor: pointer;
-  transition: border-color 0.25s, color 0.25s;
-}
-
-.btn-ghost:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
-.btn-nav {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--gold);
-  font-family: 'Bebas Neue', sans-serif;
+.profile-nav-actions .btn-primary,
+.profile-nav-actions .btn-ghost {
+  padding: 10px 20px;
   font-size: 0.85rem;
   letter-spacing: 0.2em;
-  padding: 8px 22px;
-  border-radius: 2px;
-  transition: background 0.25s, box-shadow 0.25s;
 }
 
-.btn-nav:hover {
-  background: rgba(201, 168, 76, 0.1);
-  box-shadow: 0 0 16px rgba(201, 168, 76, 0.15);
-  color: var(--gold);
+.profile-main {
+  padding: 120px 0 72px;
 }
 
-/* ============================================
-   CARDS
-   ============================================ */
-
-.card-cinema {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  backdrop-filter: blur(20px);
-  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-  position: relative;
-  overflow: hidden;
+.profile-hero {
+  padding-bottom: 28px;
 }
 
-.card-cinema::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(to right, transparent, var(--gold), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
+.profile-hero-card {
+  padding: 32px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 28px;
+  align-items: start;
 }
 
-.card-cinema:hover {
-  border-color: rgba(201, 168, 76, 0.35);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+.profile-avatar-wrap {
+  flex-shrink: 0;
 }
 
-.card-cinema:hover::before {
-  opacity: 1;
+.profile-avatar {
+  width: 112px;
+  height: 112px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 3px solid rgba(201, 168, 76, 0.28);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
 }
 
-/* Movie card */
-.movie-card img {
-  display: block;
-  width: 100%;
+.profile-name {
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  line-height: 0.95;
+  margin-top: 8px;
 }
 
-/* Watchlist card */
-.watchlist-card img {
-  display: block;
-  width: 100%;
-}
-
-.watchlist-card button {
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.watchlist-card button:hover {
-  transform: translateY(-1px);
-}
-
-/* ============================================
-   FORM ELEMENTS
-   ============================================ */
-
-.field-label {
-  display: block;
-  font-size: 0.68rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+.profile-meta {
+  margin-top: 12px;
   color: var(--text-muted);
-  margin-bottom: 8px;
-}
-
-.field-input {
-  width: 100%;
-  background: var(--input-bg);
-  border: 1px solid var(--input-border);
-  border-radius: 2px;
-  color: var(--text);
-  font-family: 'Lato', sans-serif;
   font-size: 0.92rem;
-  padding: 12px 16px;
-  outline: none;
-  transition: border-color 0.25s, box-shadow 0.25s;
-  margin-bottom: 20px;
 }
 
-.field-input:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
-}
-
-.field-input::placeholder {
-  color: rgba(138, 138, 154, 0.5);
-}
-
-/* ============================================
-   DIVIDER
-   ============================================ */
-
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 24px 0;
-}
-
-.divider-line {
-  flex: 1;
-  height: 1px;
-  background: rgba(201, 168, 76, 0.1);
-}
-
-.divider-text {
-  font-size: 0.68rem;
-  letter-spacing: 0.15em;
+.profile-bio {
+  max-width: 640px;
+  margin-top: 12px;
   color: var(--text-muted);
-  text-transform: uppercase;
+  font-size: 0.98rem;
+  line-height: 1.8;
 }
 
-/* ============================================
-   FOOTER
-   ============================================ */
-
-footer {
-  border-top: 1px solid var(--border);
-  padding: 40px 48px;
+.profile-hero-actions {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+}
+
+.profile-stats {
+  grid-column: 1 / -1;
+  display: flex;
   flex-wrap: wrap;
   gap: 16px;
 }
 
-.footer-logo {
+.profile-stat {
+  min-width: 112px;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  border-radius: 12px;
+}
+
+.profile-stat-value {
+  display: block;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.4rem;
-  letter-spacing: 0.1em;
+  font-size: 2rem;
+  letter-spacing: 0.08em;
   color: var(--gold);
 }
 
-.footer-note {
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
+.profile-stat-label {
+  display: block;
+  margin-top: 6px;
   color: var(--text-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 }
 
-.footer-stars {
+.profile-content {
+  padding-top: 8px;
+}
+
+.profile-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.profile-primary-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-heading {
+  margin-bottom: 22px;
+}
+
+.section-title {
+  font-size: clamp(2rem, 4vw, 2.7rem);
+  margin-top: 8px;
+}
+
+.section-copy {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.profile-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.profile-review-card {
+  display: flex;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 12px;
+}
+
+.profile-review-poster-wrap {
+  flex-shrink: 0;
+}
+
+.profile-review-poster {
+  width: 74px;
+  border-radius: 10px;
+  object-fit: cover;
+  aspect-ratio: 2 / 3;
+}
+
+.profile-review-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-review-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+  flex-wrap: wrap;
+}
+
+.profile-review-title {
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.profile-review-meta {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.profile-review-rating {
   color: var(--gold);
-  font-size: 0.7rem;
-  letter-spacing: 0.3em;
-  opacity: 0.6;
+  font-size: 0.88rem;
+  font-weight: 700;
 }
 
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
+.profile-review-copy {
+  margin-top: 14px;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.7;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+.profile-review-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-@keyframes scrollPulse {
-  0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
-  50%       { opacity: 1;   transform: scaleY(1); }
+.profile-review-date {
+  color: #6b7280;
+  font-size: 0.8rem;
 }
 
-.animate-fadeUp {
-  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.4s ease both;
-}
-
-/* ============================================
-   OTHER PROFILE PAGE — TAILWIND CLASS OVERRIDES
-   Apply style.css design tokens to the Tailwind
-   utility classes used in other_profile.html
-   ============================================ */
-
-/* ── Typography ── */
-body,
-.font-body {
-  font-family: 'Lato', sans-serif !important;
-  color: var(--text) !important;
-}
-
-.font-display {
-  font-family: 'Bebas Neue', sans-serif !important;
-  letter-spacing: 0.08em !important;
-}
-
-/* ── Colour tokens ── */
-.text-gold {
-  color: var(--gold) !important;
-}
-
-.text-stardust {
-  color: var(--text-muted) !important;
-}
-
-.text-stardust-light {
-  color: #b0b0cc !important;
-}
-
-.text-stardust-faint {
-  color: #44445a !important;
-}
-
-.text-white {
-  color: var(--text) !important;
-}
-
-.text-gray-100 {
-  color: var(--text) !important;
-}
-
-/* ── Navbar ── */
-nav {
-  background: rgba(10, 10, 15, 0.97) !important;
-  border-bottom: 1px solid var(--border) !important;
-  backdrop-filter: blur(20px) !important;
-}
-
-nav .font-display {
-  font-family: 'Bebas Neue', sans-serif !important;
-  color: var(--gold) !important;
-  letter-spacing: 0.1em !important;
-}
-
-nav a {
-  transition: color 0.2s !important;
-}
-
-nav a:hover {
-  color: var(--gold) !important;
-}
-
-/* ── Card backgrounds ── */
-.bg-space-700\/80,
-.bg-space-700\/60,
-.bg-space-800\/80,
-.bg-space-600\/80 {
-  background: var(--card-bg) !important;
-}
-
-/* ── Borders ── */
-.border-space-500\/50,
-.border-space-400\/50,
-.border-space-400\/60,
-.border-space-300\/50 {
-  border-color: var(--border) !important;
-}
-
-.border-gold\/40,
-.border-gold\/20,
-.border-gold\/30 {
-  border-color: var(--input-border) !important;
-}
-
-.border-gold {
-  border-color: var(--gold) !important;
-}
-
-/* ── Review cards ── */
-.bg-space-700\/80.rounded-2xl {
-  background: var(--card-bg) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 4px !important;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s !important;
-}
-
-.bg-space-700\/80.rounded-2xl::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(to right, transparent, var(--gold), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.bg-space-700\/80.rounded-2xl:hover {
-  border-color: rgba(201, 168, 76, 0.35) !important;
-  transform: translateY(-4px) !important;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4) !important;
-}
-
-.bg-space-700\/80.rounded-2xl:hover::before {
-  opacity: 1;
-}
-
-/* ── Primary button (Follow / bg-gold) ── */
-.bg-gold {
-  background: var(--gold) !important;
-  color: var(--dark) !important;
-  font-family: 'Bebas Neue', sans-serif !important;
-  letter-spacing: 0.2em !important;
-  border-radius: 2px !important;
-  transition: background 0.25s, transform 0.15s, box-shadow 0.25s !important;
-}
-
-.bg-gold:hover,
-.hover\:bg-gold-dim:hover {
-  background: var(--gold-hover) !important;
-  box-shadow: 0 8px 32px rgba(201, 168, 76, 0.35) !important;
-  transform: translateY(-2px) !important;
-}
-
-/* ── Ghost buttons ── */
-button.border-space-400\/60,
-button.border-space-400\/50 {
-  font-family: 'Bebas Neue', sans-serif !important;
-  letter-spacing: 0.15em !important;
-  border-radius: 2px !important;
-  color: var(--text-muted) !important;
-  border-color: var(--border) !important;
-  transition: background 0.25s, border-color 0.25s, color 0.25s !important;
-}
-
-button.border-space-400\/60:hover,
-button.border-space-400\/50:hover {
-  color: var(--text) !important;
-  border-color: rgba(201, 168, 76, 0.35) !important;
-}
-
-/* ── Like button ── */
 .like-btn {
-  color: var(--text-muted) !important;
-  transition: color 0.2s !important;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
 
 .like-btn:hover,
-.like-btn.liked {
-  color: var(--gold) !important;
+.like-btn.is-liked {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
-.like-btn.liked svg {
-  fill: var(--gold) !important;
+.like-btn-label {
+  margin-right: 8px;
 }
 
-/* ── Profile tabs ── */
-.profile-tab {
-  font-family: 'Bebas Neue', sans-serif !important;
-  letter-spacing: 0.15em !important;
-  font-size: 0.88rem !important;
-  text-transform: uppercase !important;
-  border-radius: 0 !important;
+.profile-side-card {
+  padding: 22px;
+  border-radius: 12px;
 }
 
-/* ── Genre progress bars — track ── */
-.bg-space-500 {
-  background: rgba(201, 168, 76, 0.08) !important;
-  border: 1px solid var(--border);
+.sidebar-title {
+  margin-top: 8px;
+  font-size: 1.25rem;
 }
 
-/* ── Genre progress bars — fill ── */
-.bg-gold.rounded-full {
-  background: var(--gold) !important;
+.sidebar-rating-row {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  margin-top: 18px;
 }
 
-/* ── Followers list ── */
-#followToast {
-  background: var(--card-bg) !important;
-  border: 1px solid var(--border) !important;
-  font-family: 'Lato', sans-serif;
+.sidebar-rating-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  line-height: 0.95;
+  color: var(--gold);
 }
 
-/* ── Load more button ── */
-button.border-space-400\/50 {
-  color: var(--text-muted) !important;
-  border-color: var(--border) !important;
-  font-family: 'Bebas Neue', sans-serif !important;
-  letter-spacing: 0.15em !important;
-  border-radius: 2px !important;
+.sidebar-rating-total {
+  font-size: 1rem;
+  color: var(--gold);
 }
 
-button.border-space-400\/50:hover {
-  color: var(--text) !important;
-  border-color: rgba(201, 168, 76, 0.35) !important;
+.sidebar-copy {
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
-/* ── Scrollbar override ── */
-::-webkit-scrollbar       { width: 10px !important; }
-::-webkit-scrollbar-track { background: #000 !important; }
-::-webkit-scrollbar-thumb { background: var(--gold-dim) !important; border-radius: 9999px !important; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold) !important; }
+@media (max-width: 1024px) {
+  .profile-layout {
+    flex-direction: column;
+  }
+
+  .profile-sidebar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    width: min(1200px, calc(100% - 32px));
+  }
+
+  .navbar-cinema {
+    padding: 18px 0;
+  }
+
+  .navbar-cinema .page-container {
+    flex-wrap: wrap;
+  }
+
+  .nav-links {
+    width: 100%;
+    order: 3;
+    justify-content: flex-start;
+    gap: 20px;
+  }
+
+  .profile-main {
+    padding-top: 144px;
+  }
+
+  .profile-hero-card {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-hero-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .profile-nav-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .profile-nav-actions .btn-primary,
+  .profile-nav-actions .btn-ghost {
+    flex: 1;
+    text-align: center;
+  }
+
+  .profile-review-card {
+    flex-direction: column;
+  }
+}
