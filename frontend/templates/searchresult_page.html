@@ -2,414 +2,348 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Search – Movie Star</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Star | Search Results</title>
 
-  <!-- Tailwind for layout utilities -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            dark: {
-              900: '#0a0a0f',
-              800: '#10101a',
-              700: '#1a1a24',
-              600: '#24242f',
-              500: '#2e2e3a',
-            }
-          }
-        }
-      }
-    }
-  </script>
 
-  <!-- Cinema stylesheet -->
   <link rel="stylesheet" href="../static/css/style.css" />
   <link rel="stylesheet" href="../static/css/searchresult_page.css" />
 </head>
 <body class="searchresult-page">
-
-  <!-- ═══════════ NAVBAR ═══════════ -->
   <nav class="navbar-cinema" id="navbar">
-    <a href="home_page.html" class="nav-logo">Movie Star</a>
+    <div class="page-container search-nav-wrap">
+      <a href="home_page.html" class="nav-logo">Movie Star</a>
 
-    <!-- Search Bar (expanded) -->
-    <div class="flex-1 max-w-2xl mx-8 relative">
-      <span class="search-icon absolute left-3 top-1/2 -translate-y-1/2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-        </svg>
-      </span>
-      <input
-        type="text"
-        value="Inception"
-        class="field-input search-input"
-        placeholder="Search movies, genres, directors…"
-      />
-      <button class="btn-primary search-submit-btn">
-        Search
-      </button>
-    </div>
+      <ul class="nav-links">
+        <li><a href="home_page.html">Home</a></li>
+        <li><a href="watchlist_page.html">Watch List</a></li>
+      </ul>
 
-    <ul class="nav-links">
-      <li><a href="#">Trending</a></li>
-      <li><a href="watchlist_page.html">Watchlist</a></li>
-    </ul>
-
-    <div class="search-auth-actions">
-      <a href="auth.html" class="btn-nav">Log In</a>
-      <a href="auth.html" class="btn-primary search-signup-btn">Sign Up</a>
+      <div class="nav-actions search-nav-actions">
+        <a href="my_profile.html" class="btn-primary">Profile</a>
+        <a href="home_page.html" class="btn-ghost">Logout</a>
+      </div>
     </div>
   </nav>
 
-  <!-- ═══════════ MAIN CONTENT ═══════════ -->
-  <main class="max-w-7xl mx-auto px-6 pb-16 pt-8">
-
-    <!-- Search meta -->
-    <div class="mb-6">
-      <p class="results-meta">
-        Showing <span class="results-count">247 results</span> for
-        <span class="results-query">"Inception"</span>
-      </p>
-    </div>
-
-    <!-- LAYOUT: SIDEBAR + RESULTS -->
-    <div class="flex gap-8">
-
-      <!-- ── FILTER SIDEBAR ── -->
-      <aside class="w-52 shrink-0">
-        <div class="sticky top-24 space-y-6">
-
-          <!-- Sort by -->
-          <div>
-            <h3 class="filter-heading">Sort By</h3>
-            <div class="space-y-2">
-              <label class="flex items-center gap-2.5 cursor-pointer">
-                <input type="radio" name="sort" checked />
-                <span class="filter-option-label">Relevance</span>
-              </label>
-              <label class="flex items-center gap-2.5 cursor-pointer">
-                <input type="radio" name="sort" />
-                <span class="filter-option-label">Popularity</span>
-              </label>
-              <label class="flex items-center gap-2.5 cursor-pointer">
-                <input type="radio" name="sort" />
-                <span class="filter-option-label">Highest Rated</span>
-              </label>
-              <label class="flex items-center gap-2.5 cursor-pointer">
-                <input type="radio" name="sort" />
-                <span class="filter-option-label">Release Year</span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Divider -->
-          <div class="sidebar-divider"></div>
-
-          <!-- Genre -->
-          <div>
-            <h3 class="filter-heading">Genre</h3>
-            <div class="flex flex-wrap gap-2">
-              <button class="filter-chip active">All</button>
-              <button class="filter-chip">Action</button>
-              <button class="filter-chip">Sci-Fi</button>
-              <button class="filter-chip">Drama</button>
-              <button class="filter-chip">Comedy</button>
-              <button class="filter-chip">Horror</button>
-              <button class="filter-chip">Romance</button>
-              <button class="filter-chip">Thriller</button>
-              <button class="filter-chip">Animation</button>
-            </div>
-          </div>
-
-          <!-- Divider -->
-          <div class="sidebar-divider"></div>
-
-          <!-- Release Year -->
-          <div>
-            <h3 class="filter-heading">Release Year</h3>
-            <div class="space-y-2">
-              <div class="range-summary flex justify-between">
-                <span>1980</span>
-                <span class="range-highlight">2010 – 2025</span>
-              </div>
-              <input type="range" min="1980" max="2025" value="2010" class="w-full"/>
-              <input type="range" min="1980" max="2025" value="2025" class="w-full"/>
-            </div>
-          </div>
-
-          <!-- Divider -->
-          <div class="sidebar-divider"></div>
-
-          <!-- Min Rating -->
-          <div>
-            <h3 class="filter-heading">Min Rating</h3>
-            <div class="flex items-center gap-2">
-              <span class="rating-star">★</span>
-              <input type="range" min="1" max="10" value="7" class="flex-1"/>
-              <span class="rating-threshold">7+</span>
-            </div>
-          </div>
-
-          <!-- Divider -->
-          <div class="sidebar-divider"></div>
-
-          <!-- Reset -->
-          <button class="reset-btn">Reset Filters</button>
-        </div>
-      </aside>
-
-      <!-- ── RESULTS GRID ── -->
-      <div class="flex-1">
-
-        <!-- Trending chips -->
-        <div class="flex items-center gap-2 mb-6 flex-wrap">
-          <span class="trending-label">Trending:</span>
-          <button class="trend-chip">#Interstellar</button>
-          <button class="trend-chip">#Oppenheimer</button>
-          <button class="trend-chip">#Dune</button>
-          <button class="trend-chip">#Avengers</button>
-          <button class="trend-chip">#The Batman</button>
+  <main class="search-main">
+    <section class="search-page-header">
+      <div class="page-container">
+        <div class="search-header-copy">
+          <p class="eyebrow">Search</p>
+          <h1 class="search-page-title">Results for <span class="text-gold">"Inception"</span></h1>
         </div>
 
-        <!-- Movie Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div class="search-toolbar">
+          <div class="search-input-shell">
+            <span class="search-icon" aria-hidden="true">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+              </svg>
+            </span>
+            <input
+              type="text"
+              value="Inception"
+              class="field-input search-input"
+              placeholder="Search movies, genres, directors..."
+            />
+          </div>
+          <button class="btn-primary search-submit-btn" type="button">Search</button>
+        </div>
 
-          <!-- Card 1 – Inception -->
-          <a href="movie_page.html" class="movie-card card-cinema group relative overflow-hidden search-card">
-            <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/inception/300/450" alt="Inception" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
-              <!-- Hover overlay -->
-              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
-                <p class="search-card-desc">A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea.</p>
-                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
+        <p class="results-meta">
+          Showing <span class="results-count">247 results</span> for
+          <span class="results-query">"Inception"</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="search-results-section">
+      <div class="page-container search-layout">
+        <aside class="search-sidebar">
+          <div class="card-cinema filter-panel">
+            <div>
+              <h2 class="filter-panel-title">Filters</h2>
+              <p class="filter-panel-copy">Refine the current result list without leaving the page.</p>
+            </div>
+
+            <div class="filter-section">
+              <h3 class="filter-heading">Genre</h3>
+              <div class="filter-chip-group" id="genre-filter-group">
+                <button class="filter-chip active" type="button" data-genre="All">All</button>
+                <button class="filter-chip" type="button" data-genre="Action">Action</button>
+                <button class="filter-chip" type="button" data-genre="Sci-Fi">Sci-Fi</button>
+                <button class="filter-chip" type="button" data-genre="Drama">Drama</button>
+                <button class="filter-chip" type="button" data-genre="Comedy">Comedy</button>
+                <button class="filter-chip" type="button" data-genre="Thriller">Thriller</button>
+                <button class="filter-chip" type="button" data-genre="Animation">Animation</button>
               </div>
-              <!-- Rating badge -->
-              <span class="search-card-rating">★ 8.8</span>
-              <!-- Watchlist -->
-              <button class="search-card-watchlist">
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="filter-section">
+              <label class="filter-heading" for="release-year">Release Year</label>
+              <input
+                id="release-year"
+                type="number"
+                class="field-input filter-input"
+                placeholder="e.g. 2010"
+              />
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="filter-section">
+              <label class="filter-heading" for="min-rating">Minimum Rating</label>
+              <select id="min-rating" class="filter-select" aria-label="Minimum rating">
+                <option value="Any" selected>Any</option>
+                <option value="5+">5+</option>
+                <option value="6+">6+</option>
+                <option value="7+">7+</option>
+                <option value="8+">8+</option>
+                <option value="9+">9+</option>
+              </select>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <button class="reset-btn" id="reset-filters-btn" type="button">Reset Filters</button>
+          </div>
+        </aside>
+
+        <div class="search-results-column">
+          <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+            <article class="movie-card card-cinema search-card">
+              <button class="search-card-watchlist" type="button" aria-label="Add Inception to watchlist">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </button>
-            </div>
-            <div class="search-card-body">
-              <p class="search-card-title">Inception</p>
-              <p class="search-card-meta">2010 · Sci-Fi, Thriller</p>
-            </div>
-          </a>
+              <a href="movie_page.html" class="search-card-link">
+                <div class="search-card-media">
+                  <img src="https://picsum.photos/seed/inception/300/450" alt="Inception poster" class="search-card-image" />
+                  <span class="search-card-rating">&#9733; 8.8</span>
+                </div>
+                <div class="search-card-body">
+                  <p class="search-card-title">Inception</p>
+                  <div class="search-card-meta">
+                    <span>2010</span>
+                    <span>Sci-Fi</span>
+                  </div>
+                </div>
+              </a>
+            </article>
 
-          <!-- Card 2 -->
-          <a href="/movie/interstellar" class="movie-card card-cinema group relative overflow-hidden search-card">
-            <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/interstellar/300/450" alt="Interstellar" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
-              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
-                <p class="search-card-desc">A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.</p>
-                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
-              </div>
-              <span class="search-card-rating">★ 8.7</span>
-              <button class="search-card-watchlist">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <article class="movie-card card-cinema search-card">
+              <button class="search-card-watchlist" type="button" aria-label="Add Interstellar to watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
               </button>
-            </div>
-            <div class="search-card-body">
-              <p class="search-card-title">Interstellar</p>
-              <p class="search-card-meta">2014 · Sci-Fi, Drama</p>
-            </div>
-          </a>
+              <a href="movie_page.html" class="search-card-link">
+                <div class="search-card-media">
+                  <img src="https://picsum.photos/seed/interstellar/300/450" alt="Interstellar poster" class="search-card-image" />
+                  <span class="search-card-rating">&#9733; 8.7</span>
+                </div>
+                <div class="search-card-body">
+                  <p class="search-card-title">Interstellar</p>
+                  <div class="search-card-meta">
+                    <span>2014</span>
+                    <span>Sci-Fi</span>
+                  </div>
+                </div>
+              </a>
+            </article>
 
-          <!-- Card 3 -->
-          <a href="/movie/dark-knight" class="movie-card card-cinema group relative overflow-hidden search-card">
-            <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/batman/300/450" alt="The Dark Knight" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
-              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
-                <p class="search-card-desc">Batman faces the Joker, a criminal mastermind who plunges Gotham into anarchy.</p>
-                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
-              </div>
-              <span class="search-card-rating">★ 9.0</span>
-              <button class="search-card-watchlist">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <article class="movie-card card-cinema search-card">
+              <button class="search-card-watchlist" type="button" aria-label="Add The Dark Knight to watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
               </button>
-            </div>
-            <div class="search-card-body">
-              <p class="search-card-title">The Dark Knight</p>
-              <p class="search-card-meta">2008 · Action, Crime</p>
-            </div>
-          </a>
+              <a href="movie_page.html" class="search-card-link">
+                <div class="search-card-media">
+                  <img src="https://picsum.photos/seed/batman/300/450" alt="The Dark Knight poster" class="search-card-image" />
+                  <span class="search-card-rating">&#9733; 9.0</span>
+                </div>
+                <div class="search-card-body">
+                  <p class="search-card-title">The Dark Knight</p>
+                  <div class="search-card-meta">
+                    <span>2008</span>
+                    <span>Action</span>
+                  </div>
+                </div>
+              </a>
+            </article>
 
-          <!-- Card 4 -->
-          <a href="/movie/oppenheimer" class="movie-card card-cinema group relative overflow-hidden search-card">
-            <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/oppenheimer/300/450" alt="Oppenheimer" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
-              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
-                <p class="search-card-desc">The story of J. Robert Oppenheimer's role in the development of the atomic bomb.</p>
-                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
-              </div>
-              <span class="search-card-rating">★ 8.5</span>
-              <button class="search-card-watchlist">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <article class="movie-card card-cinema search-card">
+              <button class="search-card-watchlist" type="button" aria-label="Add Oppenheimer to watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
               </button>
-            </div>
-            <div class="search-card-body">
-              <p class="search-card-title">Oppenheimer</p>
-              <p class="search-card-meta">2023 · Drama, History</p>
-            </div>
-          </a>
+              <a href="movie_page.html" class="search-card-link">
+                <div class="search-card-media">
+                  <img src="https://picsum.photos/seed/oppenheimer/300/450" alt="Oppenheimer poster" class="search-card-image" />
+                  <span class="search-card-rating">&#9733; 8.5</span>
+                </div>
+                <div class="search-card-body">
+                  <p class="search-card-title">Oppenheimer</p>
+                  <div class="search-card-meta">
+                    <span>2023</span>
+                    <span>Drama</span>
+                  </div>
+                </div>
+              </a>
+            </article>
 
-          <!-- Card 5 -->
-          <a href="/movie/dune" class="movie-card card-cinema group relative overflow-hidden search-card">
-            <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/dune2021/300/450" alt="Dune" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
-              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
-                <p class="search-card-desc">A noble family becomes embroiled in a war for control over the galaxy's most valuable asset.</p>
-                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
-              </div>
-              <span class="search-card-rating">★ 8.0</span>
-              <button class="search-card-watchlist">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <article class="movie-card card-cinema search-card">
+              <button class="search-card-watchlist" type="button" aria-label="Add Dune to watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
               </button>
-            </div>
-            <div class="search-card-body">
-              <p class="search-card-title">Dune</p>
-              <p class="search-card-meta">2021 · Sci-Fi, Adventure</p>
-            </div>
-          </a>
+              <a href="movie_page.html" class="search-card-link">
+                <div class="search-card-media">
+                  <img src="https://picsum.photos/seed/dune2021/300/450" alt="Dune poster" class="search-card-image" />
+                  <span class="search-card-rating">&#9733; 8.0</span>
+                </div>
+                <div class="search-card-body">
+                  <p class="search-card-title">Dune</p>
+                  <div class="search-card-meta">
+                    <span>2021</span>
+                    <span>Adventure</span>
+                  </div>
+                </div>
+              </a>
+            </article>
 
-          <!-- Card 6 -->
-          <a href="/movie/prestige" class="movie-card card-cinema group relative overflow-hidden search-card">
-            <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/prestige/300/450" alt="The Prestige" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
-              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
-                <p class="search-card-desc">Two stage magicians engage in competitive one-upmanship with dangerous consequences.</p>
-                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
-              </div>
-              <span class="search-card-rating">★ 8.5</span>
-              <button class="search-card-watchlist">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <article class="movie-card card-cinema search-card">
+              <button class="search-card-watchlist" type="button" aria-label="Add The Prestige to watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
               </button>
-            </div>
-            <div class="search-card-body">
-              <p class="search-card-title">The Prestige</p>
-              <p class="search-card-meta">2006 · Mystery, Thriller</p>
-            </div>
-          </a>
+              <a href="movie_page.html" class="search-card-link">
+                <div class="search-card-media">
+                  <img src="https://picsum.photos/seed/prestige/300/450" alt="The Prestige poster" class="search-card-image" />
+                  <span class="search-card-rating">&#9733; 8.5</span>
+                </div>
+                <div class="search-card-body">
+                  <p class="search-card-title">The Prestige</p>
+                  <div class="search-card-meta">
+                    <span>2006</span>
+                    <span>Mystery</span>
+                  </div>
+                </div>
+              </a>
+            </article>
 
-          <!-- Card 7 -->
-          <a href="/movie/parasite" class="movie-card card-cinema group relative overflow-hidden search-card">
-            <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/parasite/300/450" alt="Parasite" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
-              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
-                <p class="search-card-desc">Greed and class discrimination threaten the newly formed symbiotic relationship between two families.</p>
-                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
-              </div>
-              <span class="search-card-rating">★ 8.5</span>
-              <button class="search-card-watchlist">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <article class="movie-card card-cinema search-card">
+              <button class="search-card-watchlist" type="button" aria-label="Add Parasite to watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
               </button>
-            </div>
-            <div class="search-card-body">
-              <p class="search-card-title">Parasite</p>
-              <p class="search-card-meta">2019 · Drama, Thriller</p>
-            </div>
-          </a>
+              <a href="movie_page.html" class="search-card-link">
+                <div class="search-card-media">
+                  <img src="https://picsum.photos/seed/parasite/300/450" alt="Parasite poster" class="search-card-image" />
+                  <span class="search-card-rating">&#9733; 8.5</span>
+                </div>
+                <div class="search-card-body">
+                  <p class="search-card-title">Parasite</p>
+                  <div class="search-card-meta">
+                    <span>2019</span>
+                    <span>Drama</span>
+                  </div>
+                </div>
+              </a>
+            </article>
 
-          <!-- Card 8 -->
-          <a href="/movie/social-network" class="movie-card card-cinema group relative overflow-hidden search-card">
-            <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/socialnet/300/450" alt="The Social Network" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
-              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
-                <p class="search-card-desc">The founders of Facebook sue each other as the company grows into a global social media giant.</p>
-                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
-              </div>
-              <span class="search-card-rating">★ 7.7</span>
-              <button class="search-card-watchlist">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <article class="movie-card card-cinema search-card">
+              <button class="search-card-watchlist" type="button" aria-label="Add The Social Network to watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
               </button>
-            </div>
-            <div class="search-card-body">
-              <p class="search-card-title">The Social Network</p>
-              <p class="search-card-meta">2010 · Drama, Biography</p>
-            </div>
-          </a>
+              <a href="movie_page.html" class="search-card-link">
+                <div class="search-card-media">
+                  <img src="https://picsum.photos/seed/socialnet/300/450" alt="The Social Network poster" class="search-card-image" />
+                  <span class="search-card-rating">&#9733; 7.7</span>
+                </div>
+                <div class="search-card-body">
+                  <p class="search-card-title">The Social Network</p>
+                  <div class="search-card-meta">
+                    <span>2010</span>
+                    <span>Drama</span>
+                  </div>
+                </div>
+              </a>
+            </article>
 
-          <!-- Card 9 -->
-          <a href="/movie/blade-runner" class="movie-card card-cinema group relative overflow-hidden search-card">
-            <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/bladerunner/300/450" alt="Blade Runner 2049" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
-              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
-                <p class="search-card-desc">A young blade runner's discovery of a long-buried secret leads him on a quest to find Rick Deckard.</p>
-                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
-              </div>
-              <span class="search-card-rating">★ 8.0</span>
-              <button class="search-card-watchlist">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <article class="movie-card card-cinema search-card">
+              <button class="search-card-watchlist" type="button" aria-label="Add Blade Runner 2049 to watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
               </button>
-            </div>
-            <div class="search-card-body">
-              <p class="search-card-title">Blade Runner 2049</p>
-              <p class="search-card-meta">2017 · Sci-Fi, Thriller</p>
-            </div>
-          </a>
+              <a href="movie_page.html" class="search-card-link">
+                <div class="search-card-media">
+                  <img src="https://picsum.photos/seed/bladerunner/300/450" alt="Blade Runner 2049 poster" class="search-card-image" />
+                  <span class="search-card-rating">&#9733; 8.0</span>
+                </div>
+                <div class="search-card-body">
+                  <p class="search-card-title">Blade Runner 2049</p>
+                  <div class="search-card-meta">
+                    <span>2017</span>
+                    <span>Sci-Fi</span>
+                  </div>
+                </div>
+              </a>
+            </article>
 
-          <!-- Card 10 -->
-          <a href="/movie/arrival" class="movie-card card-cinema group relative overflow-hidden search-card">
-            <div class="relative aspect-[2/3]">
-              <img src="https://picsum.photos/seed/arrival/300/450" alt="Arrival" class="w-full h-full object-cover transition duration-500 group-hover:scale-105"/>
-              <div class="card-overlay opacity-0 absolute inset-0 flex flex-col justify-end p-3">
-                <p class="search-card-desc">A linguist works with the military to communicate with alien lifeforms after twelve ships appear worldwide.</p>
-                <button class="btn-primary w-full mt-2 search-card-btn">View Movie</button>
-              </div>
-              <span class="search-card-rating">★ 7.9</span>
-              <button class="search-card-watchlist">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <article class="movie-card card-cinema search-card">
+              <button class="search-card-watchlist" type="button" aria-label="Add Arrival to watchlist">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
               </button>
-            </div>
-            <div class="search-card-body">
-              <p class="search-card-title">Arrival</p>
-              <p class="search-card-meta">2016 · Sci-Fi, Drama</p>
-            </div>
-          </a>
+              <a href="movie_page.html" class="search-card-link">
+                <div class="search-card-media">
+                  <img src="https://picsum.photos/seed/arrival/300/450" alt="Arrival poster" class="search-card-image" />
+                  <span class="search-card-rating">&#9733; 7.9</span>
+                </div>
+                <div class="search-card-body">
+                  <p class="search-card-title">Arrival</p>
+                  <div class="search-card-meta">
+                    <span>2016</span>
+                    <span>Drama</span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          </div>
 
-        </div>
-
-        <!-- Pagination -->
-        <div class="flex items-center justify-center gap-2 mt-10">
-          <button class="page-btn">← Prev</button>
-          <button class="page-btn active">1</button>
-          <button class="page-btn">2</button>
-          <button class="page-btn">3</button>
-          <span class="pagination-ellipsis">…</span>
-          <button class="page-btn">25</button>
-          <button class="page-btn">Next →</button>
+          <div class="pagination-wrap">
+            <button class="page-btn" type="button">Prev</button>
+            <button class="page-btn active" type="button">1</button>
+            <button class="page-btn" type="button">2</button>
+            <button class="page-btn" type="button">3</button>
+            <span class="pagination-ellipsis">...</span>
+            <button class="page-btn" type="button">25</button>
+            <button class="page-btn" type="button">Next</button>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   </main>
 
-  <!-- Footer -->
   <footer>
-    <span class="footer-logo">Movie Star</span>
-    <span class="footer-note">moviestar.com · © 2025</span>
-    <span class="footer-stars">★ ★ ★ ★ ★</span>
+    <div class="page-container footer-note">(c) 2026 Movie Star. Movie nights start here.</div>
   </footer>
 
-  <script>
-    // Navbar scroll effect
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 40);
-    });
-
-    // Genre filter chip toggle
-    document.querySelectorAll('.filter-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-      });
-    });
-  </script>
-
+  <script src="../static/js/searchresult_page.js" defer></script>
 </body>
 </html>
