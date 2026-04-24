@@ -3,535 +3,179 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sarah K. — Movie Star</title>
-  <link rel="stylesheet" href="../static/css/other_profile.css" />
+  <title>Movie Star | Sarah K.</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            space: {
-              950: '#05050d',
-              900: '#0a0a0f',
-              800: '#0f0f1a',
-              700: '#13131f',
-              600: '#1a1a2e',
-              500: '#22223d',
-              400: '#2e2e50',
-            },
-            gold: {
-              DEFAULT: '#f5c518',
-              dim:     '#c9a214',
-              faint:   '#7a6010',
-            },
-            stardust: {
-              DEFAULT: '#8888aa',
-              light:   '#b0b0cc',
-              faint:   '#44445a',
-            },
-          },
-          fontFamily: {
-            display: ['Georgia', 'serif'],
-            body:    ['system-ui', 'sans-serif'],
-          },
-          boxShadow: {
-            'gold-glow': '0 0 0 1px rgba(245,197,24,0.25), 0 4px 24px rgba(245,197,24,0.08)',
-            'card':      '0 2px 16px rgba(0,0,0,0.5)',
-          },
-        },
-      },
-    }
-  </script>
-  <style>
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #2e2e50; border-radius: 3px; }
-    body {
-      background:
-        radial-gradient(ellipse 70% 40% at 80% 10%, rgba(60,20,120,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 20% 80%, rgba(245,197,24,0.04) 0%, transparent 60%),
-        #0a0a0f;
-    }
-    .star-particle {
-      position: fixed; border-radius: 50%;
-      background: white; pointer-events: none; z-index: 0;
-      animation: twinkle var(--dur, 3s) ease-in-out infinite;
-    }
-    @keyframes twinkle {
-      0%,100% { opacity: var(--min-op, 0.1); }
-      50%      { opacity: var(--max-op, 0.6); }
-    }
-    /* Follow button state animation */
-    .follow-btn { transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    .follow-btn.following { animation: followPop 0.3s ease-out; }
-    @keyframes followPop {
-      0%  { transform: scale(1); }
-      50% { transform: scale(1.08); }
-      100%{ transform: scale(1); }
-    }
-    /* Thumbs up like button */
-    .like-btn { transition: all 0.2s; }
-    .like-btn.liked { color: #f5c518; }
-    .like-btn.liked svg { fill: #f5c518; }
-  </style>
+  <link rel="stylesheet" href="../static/css/style.css" />
+  <link rel="stylesheet" href="../static/css/other_profile.css" />
 </head>
-<body class="text-gray-100 font-body min-h-screen relative overflow-x-hidden">
+<body class="profile-page">
+  <nav class="navbar-cinema" id="navbar">
+    <div class="page-container profile-nav-wrap">
+      <a href="home_page.html" class="nav-logo">Movie Star</a>
 
-  <div id="stars" class="pointer-events-none" aria-hidden="true"></div>
+      <ul class="nav-links">
+        <li><a href="home_page.html" data-auth-nav="logged-in">Home</a></li>
+        <li><a href="watchlist_page.html" data-auth-nav="logged-in">Watchlist</a></li>
+      </ul>
 
-  <!-- ── NAVBAR ── -->
-  <nav class="sticky top-0 z-50 border-b border-space-500/50 bg-space-900/90 backdrop-blur-md">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
-      <a href="#" class="font-display text-xl tracking-widest text-gold flex items-center gap-1">
-        ★ <span class="text-white">Movie</span>Star
-      </a>
-      <div class="hidden md:flex items-center gap-6 text-sm text-stardust">
-        <a href="#" class="hover:text-white transition-colors">Home</a>
-        <a href="#" class="hover:text-white transition-colors">Explore</a>
-        <a href="my_profile.html" class="hover:text-white transition-colors">My Feed</a>
-      </div>
-      <div class="flex items-center gap-3">
-        <button class="text-stardust hover:text-white transition-colors p-1" aria-label="Search">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        </button>
-        <button class="text-stardust hover:text-white transition-colors p-1" aria-label="Watchlist">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-        </button>
-        <!-- Your own avatar in nav -->
-        <a href="my_profile.html">
-          <img src="https://i.pravatar.cc/36?img=12" class="w-8 h-8 rounded-full border-2 border-gold/40 object-cover" alt="My avatar">
-        </a>
+      <div class="nav-actions profile-nav-actions">
+        <a href="my_profile.html" class="btn-primary" data-auth-nav="logged-in">Profile</a>
+        <a href="home_page.html" id="other-profile-logout-btn" class="btn-ghost">Logout</a>
       </div>
     </div>
   </nav>
 
-  <!-- ── PROFILE BANNER ── -->
-  <div class="relative h-36 overflow-hidden z-10">
-    <div class="absolute inset-0"
-      style="background: linear-gradient(135deg, #0a1a3e 0%, #1a0838 50%, #0a2a3e 100%)">
-    </div>
-    <svg class="absolute inset-0 w-full h-full opacity-20" xmlns="http://www.w3.org/2000/svg">
-      <line x1="5%"  y1="70%" x2="20%" y2="30%" stroke="#f5c518" stroke-width="0.5" stroke-dasharray="2 5"/>
-      <line x1="20%" y1="30%" x2="40%" y2="65%" stroke="#f5c518" stroke-width="0.5" stroke-dasharray="2 5"/>
-      <line x1="40%" y1="65%" x2="60%" y2="25%" stroke="#f5c518" stroke-width="0.5" stroke-dasharray="2 5"/>
-      <line x1="60%" y1="25%" x2="85%" y2="55%" stroke="#f5c518" stroke-width="0.5" stroke-dasharray="2 5"/>
-      <circle cx="5%"  cy="70%" r="2"   fill="#f5c518"/>
-      <circle cx="20%" cy="30%" r="1.5" fill="#f5c518"/>
-      <circle cx="40%" cy="65%" r="2.5" fill="#f5c518"/>
-      <circle cx="60%" cy="25%" r="1.5" fill="#f5c518"/>
-      <circle cx="85%" cy="55%" r="2"   fill="#f5c518"/>
-    </svg>
-    <div class="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-space-900 to-transparent"></div>
-  </div>
+  <main class="profile-main">
+    <section class="profile-hero">
+      <div class="page-container">
+        <div class="card-cinema profile-hero-card">
+          <div class="profile-avatar-wrap">
+            <img src="https://i.pravatar.cc/120?img=5" alt="Sarah K. avatar" class="profile-avatar" />
+          </div>
 
-  <!-- ── MAIN ── -->
-  <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pb-16">
-
-    <!-- Profile header -->
-    <div class="flex flex-col md:flex-row md:items-end gap-4 -mt-14 mb-8">
-      <!-- Avatar -->
-      <div class="relative flex-shrink-0">
-        <img src="https://i.pravatar.cc/100?img=5" alt="Sarah K"
-          class="w-24 h-24 rounded-full border-4 border-space-900 object-cover shadow-card">
-        <div class="absolute inset-0 rounded-full ring-2 ring-gold/30"></div>
-      </div>
-      <!-- Info -->
-      <div class="flex-1 pt-2">
-        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div>
-            <h1 class="font-display text-2xl tracking-wide text-white">Sarah K.</h1>
-            <p class="text-stardust text-sm">@sarah_k · Joined January 2023</p>
-            <p class="text-stardust-light text-sm mt-1 max-w-md">
-              Film obsessive. Sucker for slow cinema and anything by Villeneuve. Perth, WA.
+          <div class="profile-hero-copy">
+            <p class="eyebrow">Community Member</p>
+            <h1 class="profile-name">Sarah K.</h1>
+            <p class="profile-meta">@sarah_k / Joined January 2023</p>
+            <p class="profile-bio">
+              Film obsessive, slow-cinema defender, and frequent reviewer. Usually writing about science fiction,
+              character drama, and ambitious auteur releases.
             </p>
-            <!-- Followed by mutual friends -->
-            <div class="flex items-center gap-2 mt-2">
-              <div class="flex -space-x-1">
-                <img src="https://i.pravatar.cc/20?img=33" class="w-5 h-5 rounded-full border border-space-900" alt="">
-                <img src="https://i.pravatar.cc/20?img=44" class="w-5 h-5 rounded-full border border-space-900" alt="">
-                <img src="https://i.pravatar.cc/20?img=22" class="w-5 h-5 rounded-full border border-space-900" alt="">
-              </div>
-              <p class="text-stardust text-xs">Followed by <span class="text-stardust-light">marcus_t</span> and 2 others you follow</p>
+          </div>
+
+          <div class="profile-hero-actions">
+            <button id="follow-btn" class="btn-primary" type="button">Follow</button>
+          </div>
+
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <span class="profile-stat-value">142</span>
+              <span class="profile-stat-label">Reviews</span>
             </div>
-          </div>
-          <!-- Follow + actions -->
-          <div class="flex items-center gap-2 flex-wrap">
-            <button id="followBtn" onclick="toggleFollow()"
-              class="follow-btn flex items-center gap-2 px-5 py-2 bg-gold text-black text-sm font-semibold rounded-lg hover:bg-gold-dim">
-              <svg id="followIcon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                <line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
-              </svg>
-              <span id="followText">Follow</span>
-            </button>
-            <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-space-400/60 text-stardust text-sm hover:text-white hover:border-space-300/50 transition-colors">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
-              Message
-            </button>
-            <!-- Share / more -->
-            <button class="p-2 rounded-lg border border-space-400/60 text-stardust hover:text-white hover:border-space-300/50 transition-colors" aria-label="More options">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
-            </button>
-          </div>
-        </div>
-        <!-- Stats -->
-        <div class="flex gap-4 mt-4 flex-wrap">
-          <div class="bg-space-700/60 border border-space-500/50 rounded-xl px-4 py-2.5 text-center min-w-[80px]">
-            <div class="text-gold font-display text-xl leading-none">142</div>
-            <div class="text-stardust text-xs uppercase tracking-widest mt-1">Reviews</div>
-          </div>
-          <div class="bg-space-700/60 border border-space-500/50 rounded-xl px-4 py-2.5 text-center min-w-[80px]">
-            <div class="text-gold font-display text-xl leading-none">381</div>
-            <div class="text-stardust text-xs uppercase tracking-widest mt-1">Following</div>
-          </div>
-          <div class="bg-space-700/60 border border-space-500/50 rounded-xl px-4 py-2.5 text-center min-w-[80px]">
-            <div class="text-gold font-display text-xl leading-none" id="followerCount">924</div>
-            <div class="text-stardust text-xs uppercase tracking-widest mt-1">Followers</div>
+            <div class="profile-stat">
+              <span class="profile-stat-value">381</span>
+              <span class="profile-stat-label">Following</span>
+            </div>
+            <div class="profile-stat">
+              <span id="follower-count" class="profile-stat-value">924</span>
+              <span class="profile-stat-label">Followers</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Tab bar -->
-    <div class="border-b border-space-500/50 mb-6 flex gap-0">
-      <button onclick="switchTab(this,'reviews')"
-        class="profile-tab px-5 py-3 text-sm font-medium border-b-2 border-gold text-white transition-all">
-        Reviews (142)
-      </button>
-      <button onclick="switchTab(this,'watchlist')"
-        class="profile-tab px-5 py-3 text-sm font-medium border-b-2 border-transparent text-stardust hover:text-white transition-all">
-        Watchlist (38)
-      </button>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-      <!-- ── REVIEWS LIST ── -->
-      <div id="tab-reviews" class="lg:col-span-2 flex flex-col gap-4">
-
-        <!-- Review card 1 -->
-        <div class="bg-space-700/80 border border-space-500/50 rounded-2xl p-4 sm:p-5 shadow-card hover:shadow-gold-glow transition-all">
-          <div class="flex gap-4">
-            <a href="#" class="flex-shrink-0">
-              <img src="https://image.tmdb.org/t/p/w92/AmR3JG1VQVxU8TfAvljUhfSFUOx.jpg"
-                class="w-14 rounded-lg object-cover aspect-[2/3] border border-space-400/50" alt="Dune">
-            </a>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-2 flex-wrap">
-                <div>
-                  <h3 class="font-semibold text-white leading-tight">Dune: Part Two</h3>
-                  <p class="text-stardust text-xs mt-0.5">2024 · Sci-Fi</p>
-                </div>
-                <div class="flex gap-0.5 text-gold text-base flex-shrink-0">★★★★★</div>
-              </div>
-              <p class="text-stardust-light text-sm mt-2 leading-relaxed">
-                "Villeneuve has outdone himself. The sandworm sequences are jaw-dropping and Zendaya finally gets the role she deserves. This is the kind of blockbuster that reminds you why cinema matters."
-              </p>
-              <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
-                <span class="text-stardust text-xs">10 March 2024</span>
-                <!-- Like button (read-only interaction) -->
-                <button onclick="toggleLike(this)"
-                  class="like-btn flex items-center gap-1.5 text-stardust text-xs hover:text-gold transition-colors px-2 py-1 rounded-lg hover:bg-gold/5">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
-                  </svg>
-                  <span class="like-count">24</span>
-                </button>
-              </div>
+    <section class="profile-content">
+      <div class="page-container profile-layout">
+        <div class="profile-primary-column">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Public Activity</p>
+              <h2 class="section-title">Recent Reviews</h2>
             </div>
+            <p class="section-copy">A simplified public review feed for this user profile prototype.</p>
+          </div>
+
+          <div class="profile-review-list">
+            <article class="card-cinema profile-review-card">
+              <div class="profile-review-poster-wrap">
+                <img src="https://image.tmdb.org/t/p/w92/AmR3JG1VQVxU8TfAvljUhfSFUOx.jpg" alt="Dune: Part Two poster" class="profile-review-poster" />
+              </div>
+              <div class="profile-review-body">
+                <div class="profile-review-top">
+                  <div>
+                    <h3 class="profile-review-title">Dune: Part Two</h3>
+                    <p class="profile-review-meta">2024 / Sci-Fi</p>
+                  </div>
+                  <span class="profile-review-rating">&#9733; 5/5</span>
+                </div>
+                <p class="profile-review-copy">
+                  Villeneuve has outdone himself. The scale is immense, but the character work still lands.
+                  This is blockbuster filmmaking with real control and confidence.
+                </p>
+                <div class="profile-review-footer">
+                  <span class="profile-review-date">10 March 2024</span>
+                  <button class="like-btn" type="button" data-like-btn>
+                    <span class="like-btn-label">Like</span>
+                    <span class="like-count">24</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card-cinema profile-review-card">
+              <div class="profile-review-poster-wrap">
+                <img src="https://image.tmdb.org/t/p/w92/wTnV3PCVW5O92JMrFvvrRcV39RU.jpg" alt="Past Lives poster" class="profile-review-poster" />
+              </div>
+              <div class="profile-review-body">
+                <div class="profile-review-top">
+                  <div>
+                    <h3 class="profile-review-title">Past Lives</h3>
+                    <p class="profile-review-meta">2023 / Romance</p>
+                  </div>
+                  <span class="profile-review-rating">&#9733; 5/5</span>
+                </div>
+                <p class="profile-review-copy">
+                  One of the most quietly devastating films in years. Nothing is overstated, and that restraint is exactly
+                  what makes the ending hit so hard.
+                </p>
+                <div class="profile-review-footer">
+                  <span class="profile-review-date">4 February 2024</span>
+                  <button class="like-btn" type="button" data-like-btn>
+                    <span class="like-btn-label">Like</span>
+                    <span class="like-count">31</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card-cinema profile-review-card">
+              <div class="profile-review-poster-wrap">
+                <img src="https://image.tmdb.org/t/p/w92/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg" alt="Interstellar poster" class="profile-review-poster" />
+              </div>
+              <div class="profile-review-body">
+                <div class="profile-review-top">
+                  <div>
+                    <h3 class="profile-review-title">Interstellar</h3>
+                    <p class="profile-review-meta">2014 / Sci-Fi</p>
+                  </div>
+                  <span class="profile-review-rating">&#9733; 5/5</span>
+                </div>
+                <p class="profile-review-copy">
+                  Still one of the clearest examples of spectacle and feeling working together. I revisit it often and it
+                  still feels huge, sincere, and emotionally direct.
+                </p>
+                <div class="profile-review-footer">
+                  <span class="profile-review-date">15 December 2023</span>
+                  <button class="like-btn" type="button" data-like-btn>
+                    <span class="like-btn-label">Like</span>
+                    <span class="like-count">48</span>
+                  </button>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
 
-        <!-- Review card 2 -->
-        <div class="bg-space-700/80 border border-space-500/50 rounded-2xl p-4 sm:p-5 shadow-card hover:shadow-gold-glow transition-all">
-          <div class="flex gap-4">
-            <a href="#" class="flex-shrink-0">
-              <img src="https://image.tmdb.org/t/p/w92/wTnV3PCVW5O92JMrFvvrRcV39RU.jpg"
-                class="w-14 rounded-lg object-cover aspect-[2/3] border border-space-400/50" alt="Past Lives">
-            </a>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-2 flex-wrap">
-                <div>
-                  <h3 class="font-semibold text-white leading-tight">Past Lives</h3>
-                  <p class="text-stardust text-xs mt-0.5">2023 · Romance</p>
-                </div>
-                <div class="flex gap-0.5 text-gold text-base flex-shrink-0">★★★★★</div>
-              </div>
-              <p class="text-stardust-light text-sm mt-2 leading-relaxed">
-                "One of the most quietly devastating films I've ever seen. The final scene is perfect. Understated, patient, and utterly heartbreaking. Celine Song announces herself as a major filmmaker."
-              </p>
-              <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
-                <span class="text-stardust text-xs">4 February 2024</span>
-                <button onclick="toggleLike(this)"
-                  class="like-btn flex items-center gap-1.5 text-stardust text-xs hover:text-gold transition-colors px-2 py-1 rounded-lg hover:bg-gold/5">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
-                  </svg>
-                  <span class="like-count">31</span>
-                </button>
-              </div>
+        <aside class="profile-sidebar">
+          <div class="card-cinema profile-side-card">
+            <p class="eyebrow">Overview</p>
+            <h2 class="sidebar-title">Average Rating</h2>
+            <div class="sidebar-rating-row">
+              <span class="sidebar-rating-value">4.4</span>
+              <span class="sidebar-rating-total">/ 5</span>
             </div>
+            <p class="sidebar-copy">Based on 142 public reviews.</p>
           </div>
-        </div>
-
-        <!-- Review card 3 -->
-        <div class="bg-space-700/80 border border-space-500/50 rounded-2xl p-4 sm:p-5 shadow-card hover:shadow-gold-glow transition-all">
-          <div class="flex gap-4">
-            <a href="#" class="flex-shrink-0">
-              <img src="https://image.tmdb.org/t/p/w92/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg"
-                class="w-14 rounded-lg object-cover aspect-[2/3] border border-space-400/50" alt="Poor Things">
-            </a>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-2 flex-wrap">
-                <div>
-                  <h3 class="font-semibold text-white leading-tight">Poor Things</h3>
-                  <p class="text-stardust text-xs mt-0.5">2023 · Drama</p>
-                </div>
-                <div class="flex gap-0.5 text-gold text-base flex-shrink-0">
-                  ★★★<span class="text-stardust-faint">★★</span>
-                </div>
-              </div>
-              <p class="text-stardust-light text-sm mt-2 leading-relaxed">
-                "Gorgeous to look at and Emma Stone is extraordinary. But the relentless quirkiness wore me down by the second act. Still worth watching — just not the masterpiece critics claim."
-              </p>
-              <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
-                <span class="text-stardust text-xs">20 January 2024</span>
-                <button onclick="toggleLike(this)"
-                  class="like-btn flex items-center gap-1.5 text-stardust text-xs hover:text-gold transition-colors px-2 py-1 rounded-lg hover:bg-gold/5">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
-                  </svg>
-                  <span class="like-count">9</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Review card 4 -->
-        <div class="bg-space-700/80 border border-space-500/50 rounded-2xl p-4 sm:p-5 shadow-card hover:shadow-gold-glow transition-all">
-          <div class="flex gap-4">
-            <a href="#" class="flex-shrink-0">
-              <img src="https://image.tmdb.org/t/p/w92/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg"
-                class="w-14 rounded-lg object-cover aspect-[2/3] border border-space-400/50" alt="Interstellar">
-            </a>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-2 flex-wrap">
-                <div>
-                  <h3 class="font-semibold text-white leading-tight">Interstellar</h3>
-                  <p class="text-stardust text-xs mt-0.5">2014 · Sci-Fi</p>
-                </div>
-                <div class="flex gap-0.5 text-gold text-base flex-shrink-0">★★★★★</div>
-              </div>
-              <p class="text-stardust-light text-sm mt-2 leading-relaxed">
-                "Still the greatest film ever made about love and time. I rewatch this every year and cry every single time. The docking scene is pure cinema."
-              </p>
-              <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
-                <span class="text-stardust text-xs">15 December 2023</span>
-                <button onclick="toggleLike(this)"
-                  class="like-btn flex items-center gap-1.5 text-stardust text-xs hover:text-gold transition-colors px-2 py-1 rounded-lg hover:bg-gold/5">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
-                  </svg>
-                  <span class="like-count">48</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Load more -->
-        <button class="w-full py-3 rounded-xl border border-space-400/50 text-stardust text-sm hover:text-white hover:border-space-300/50 transition-colors">
-          Load more reviews (138 remaining)
-        </button>
+        </aside>
       </div>
+    </section>
+  </main>
 
-      <!-- ── SIDEBAR ── -->
-      <div class="flex flex-col gap-4">
-        <!-- Average rating -->
-        <div class="bg-space-700/80 border border-space-500/50 rounded-2xl p-5">
-          <p class="text-xs text-stardust uppercase tracking-widest mb-3">Average rating given</p>
-          <div class="flex items-end gap-2 mb-1">
-            <span class="font-display text-4xl text-gold leading-none">4.4</span>
-            <span class="text-gold text-lg mb-1">/ 5</span>
-          </div>
-          <div class="flex gap-0.5 text-gold text-lg mb-2">★★★★<span class="text-gold opacity-40">★</span></div>
-          <p class="text-stardust text-xs">Based on 142 reviews</p>
-        </div>
+  <footer>
+    <div class="page-container footer-note">&copy; 2026 Movie Star. Movie nights start here.</div>
+  </footer>
 
-        <!-- Favourite genres -->
-        <div class="bg-space-700/80 border border-space-500/50 rounded-2xl p-5">
-          <p class="text-xs text-stardust uppercase tracking-widest mb-4">Favourite genres</p>
-          <div class="flex flex-col gap-3">
-            <div>
-              <div class="flex justify-between text-xs mb-1"><span class="text-stardust-light">Sci-Fi</span><span class="text-stardust">41</span></div>
-              <div class="h-1.5 bg-space-500 rounded-full overflow-hidden"><div class="h-full bg-gold rounded-full" style="width:72%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-xs mb-1"><span class="text-stardust-light">Drama</span><span class="text-stardust">36</span></div>
-              <div class="h-1.5 bg-space-500 rounded-full overflow-hidden"><div class="h-full bg-gold rounded-full" style="width:63%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-xs mb-1"><span class="text-stardust-light">Thriller</span><span class="text-stardust">28</span></div>
-              <div class="h-1.5 bg-space-500 rounded-full overflow-hidden"><div class="h-full bg-gold rounded-full" style="width:49%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-xs mb-1"><span class="text-stardust-light">Romance</span><span class="text-stardust">22</span></div>
-              <div class="h-1.5 bg-space-500 rounded-full overflow-hidden"><div class="h-full bg-gold rounded-full" style="width:39%"></div></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Followers list -->
-        <div class="bg-space-700/80 border border-space-500/50 rounded-2xl p-5">
-          <p class="text-xs text-stardust uppercase tracking-widest mb-4">Some followers</p>
-          <div class="flex flex-col gap-3">
-            <div class="flex items-center gap-3">
-              <img src="https://i.pravatar.cc/36?img=8" class="w-8 h-8 rounded-full border border-gold/20" alt="">
-              <div class="flex-1 min-w-0">
-                <p class="text-sm text-white truncate">Marcus T.</p>
-                <p class="text-xs text-stardust">@marcust · 98 reviews</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-3">
-              <img src="https://i.pravatar.cc/36?img=15" class="w-8 h-8 rounded-full border border-gold/20" alt="">
-              <div class="flex-1 min-w-0">
-                <p class="text-sm text-white truncate">Priya R.</p>
-                <p class="text-xs text-stardust">@priya_r · 54 reviews</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-3">
-              <img src="https://i.pravatar.cc/36?img=22" class="w-8 h-8 rounded-full border border-gold/20" alt="">
-              <div class="flex-1 min-w-0">
-                <p class="text-sm text-white truncate">James O.</p>
-                <p class="text-xs text-stardust">@james_o · 77 reviews</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-3">
-              <img src="https://i.pravatar.cc/36?img=33" class="w-8 h-8 rounded-full border border-gold/20" alt="">
-              <div class="flex-1 min-w-0">
-                <p class="text-sm text-white truncate">Alex M.</p>
-                <p class="text-xs text-stardust">@alex_m · 120 reviews</p>
-              </div>
-            </div>
-          </div>
-          <button class="w-full mt-3 text-xs text-gold hover:text-gold-dim transition-colors text-center py-1">
-            See all 924 followers →
-          </button>
-        </div>
-
-        <!-- Back to my profile (demo link) -->
-        <a href="my_profile.html"
-          class="bg-space-600/80 border border-gold/20 rounded-2xl p-4 flex items-center gap-3 hover:border-gold/40 transition-colors group">
-          <img src="https://i.pravatar.cc/36?img=12" class="w-9 h-9 rounded-full border border-gold/30" alt="">
-          <div>
-            <p class="text-xs text-stardust group-hover:text-white transition-colors">← Back to my profile</p>
-            <p class="text-xs text-stardust-faint">See my_profile.html</p>
-          </div>
-        </a>
-      </div>
-
-    </div>
-
-    <!-- Watchlist tab (hidden) -->
-    <div id="tab-watchlist" class="hidden">
-      <p class="text-stardust text-sm">This user's public watchlist would appear here.</p>
-    </div>
-
-  </div>
-
-  <!-- Follow toast notification -->
-  <div id="followToast" class="hidden fixed bottom-6 right-6 z-50 bg-space-600 border border-gold/30 text-white text-sm px-4 py-3 rounded-xl shadow-card flex items-center gap-2">
-    <span class="text-gold">★</span>
-    <span id="toastMsg"></span>
-  </div>
-
-  <script>
-    // ── Star particles ──
-    const container = document.getElementById('stars');
-    for (let i = 0; i < 80; i++) {
-      const s = document.createElement('div');
-      s.className = 'star-particle';
-      const size = Math.random() * 2 + 0.5;
-      s.style.cssText = `
-        width:${size}px; height:${size}px;
-        top:${Math.random()*100}vh; left:${Math.random()*100}vw;
-        --dur:${2+Math.random()*4}s;
-        --min-op:${0.05+Math.random()*0.1};
-        --max-op:${0.3+Math.random()*0.5};
-        animation-delay:${Math.random()*4}s;
-      `;
-      container.appendChild(s);
-    }
-
-    // ── Follow toggle ──
-    let isFollowing = false;
-    function toggleFollow() {
-      const btn = document.getElementById('followBtn');
-      const text = document.getElementById('followText');
-      const icon = document.getElementById('followIcon');
-      const countEl = document.getElementById('followerCount');
-
-      isFollowing = !isFollowing;
-      btn.classList.add('following');
-      setTimeout(() => btn.classList.remove('following'), 300);
-
-      if (isFollowing) {
-        // Following state
-        btn.className = 'follow-btn flex items-center gap-2 px-5 py-2 bg-space-500 border border-gold/30 text-gold text-sm font-semibold rounded-lg hover:bg-red-900/30 hover:border-red-700/40 hover:text-red-400 transition-all';
-        icon.innerHTML = '<path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
-        text.textContent = 'Following';
-        countEl.textContent = parseInt(countEl.textContent) + 1;
-        showToast('You are now following Sarah K.');
-      } else {
-        // Unfollow state
-        btn.className = 'follow-btn flex items-center gap-2 px-5 py-2 bg-gold text-black text-sm font-semibold rounded-lg hover:bg-gold-dim';
-        icon.innerHTML = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>';
-        text.textContent = 'Follow';
-        countEl.textContent = parseInt(countEl.textContent) - 1;
-        showToast('Unfollowed Sarah K.');
-      }
-      // In production: $.ajax({ url: '/api/users/sarah_k/follow', method: 'POST', headers: { 'X-CSRFToken': csrfToken } });
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById('followToast');
-      document.getElementById('toastMsg').textContent = msg;
-      toast.classList.remove('hidden');
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 2800);
-    }
-
-    // ── Like toggle ──
-    function toggleLike(btn) {
-      const count = btn.querySelector('.like-count');
-      const svg   = btn.querySelector('svg');
-      const liked = btn.classList.contains('liked');
-      if (liked) {
-        btn.classList.remove('liked');
-        btn.classList.remove('text-gold');
-        svg.setAttribute('fill', 'none');
-        count.textContent = parseInt(count.textContent) - 1;
-      } else {
-        btn.classList.add('liked', 'text-gold');
-        svg.setAttribute('fill', '#f5c518');
-        count.textContent = parseInt(count.textContent) + 1;
-      }
-      // In production: AJAX POST to /api/reviews/<id>/like
-    }
-
-    // ── Tabs ──
-    function switchTab(btn, tab) {
-      document.querySelectorAll('.profile-tab').forEach(t => {
-        t.classList.remove('border-gold', 'text-white');
-        t.classList.add('border-transparent', 'text-stardust');
-      });
-      btn.classList.add('border-gold', 'text-white');
-      btn.classList.remove('border-transparent', 'text-stardust');
-    }
-  </script>
+  <script src="../static/js/other_profile.js" defer></script>
 </body>
 </html>

@@ -4,11 +4,20 @@ const genreFilterGroup = document.getElementById('genre-filter-group');
 const releaseYearInput = document.getElementById('release-year');
 const minRatingSelect = document.getElementById('min-rating');
 const resetFiltersButton = document.getElementById('reset-filters-btn');
+const loggedInNavLinks = Array.from(document.querySelectorAll('[data-auth-nav="logged-in"]'));
 
 const setActiveGenre = (selectedChip) => {
   genreChips.forEach((chip) => {
     chip.classList.toggle('active', chip === selectedChip);
   });
+};
+
+const preserveLoggedInState = () => {
+  try {
+    localStorage.setItem('movieStarDemoAuth', 'logged-in');
+  } catch (error) {
+    // Ignore storage failures in static preview and continue navigation.
+  }
 };
 
 if (navbar) {
@@ -42,3 +51,7 @@ if (resetFiltersButton) {
     }
   });
 }
+
+loggedInNavLinks.forEach((link) => {
+  link.addEventListener('click', preserveLoggedInState);
+});

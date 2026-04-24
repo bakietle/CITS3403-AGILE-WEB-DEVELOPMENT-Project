@@ -5,6 +5,7 @@ const writeReviewSection = document.getElementById('write-review');
 const starContainer = document.getElementById('star-container');
 const stars = Array.from(document.querySelectorAll('.star-btn'));
 const ratingLabel = document.getElementById('rating-label');
+const loggedInNavLinks = Array.from(document.querySelectorAll('[data-auth-nav="logged-in"]'));
 
 let selectedRating = 0;
 
@@ -12,6 +13,14 @@ const paintStars = (value) => {
   stars.forEach((star, index) => {
     star.classList.toggle('active', index < value);
   });
+};
+
+const preserveLoggedInState = () => {
+  try {
+    localStorage.setItem('movieStarDemoAuth', 'logged-in');
+  } catch (error) {
+    // Ignore storage failures in static preview and continue navigation.
+  }
 };
 
 if (navbar) {
@@ -33,6 +42,10 @@ if (logoutButton) {
     window.location.href = 'home_page.html';
   });
 }
+
+loggedInNavLinks.forEach((link) => {
+  link.addEventListener('click', preserveLoggedInState);
+});
 
 if (writeReviewTrigger && writeReviewSection) {
   writeReviewTrigger.addEventListener('click', () => {
