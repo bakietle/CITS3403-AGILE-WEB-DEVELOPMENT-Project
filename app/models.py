@@ -138,6 +138,11 @@ class Movie(db.Model):
     reviews = db.relationship(
         "Review", back_populates="movie", cascade="all, delete-orphan"
     )
+
+    watchlist_items = db.relationship(
+        "WatchlistItem", back_populates="movie", cascade="all, delete-orphan"
+    )
+
     genres = db.relationship(
         "Genre", secondary=movie_genres, back_populates="movies"
     )
@@ -267,9 +272,10 @@ class WatchlistItem(db.Model):
         db.Integer, db.ForeignKey("movies.id"), nullable=False, index=True
     )
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    notes = db.Column(db.String(280), nullable=True)
 
     user = db.relationship("User", back_populates="watchlist")
-    movie = db.relationship("Movie")
+    movie = db.relationship("Movie", back_populates = "watchlist_items")
 
     __table_args__ = (
         UniqueConstraint("user_id", "movie_id", name="uq_watchlist_user_movie"),
