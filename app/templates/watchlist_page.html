@@ -8,24 +8,24 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <link rel="stylesheet" href="../static/css/style.css" />
-  <link rel="stylesheet" href="../static/css/watchlist_page.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/watchlist_page.css') }}" />
 </head>
 <body class="watchlist-page">
   <nav class="navbar-cinema">
     <div class="page-container">
-      <a href="home_page.html" class="nav-logo">Movie Star</a>
+      <a href="{{ url_for('home') }}" class="nav-logo">Movie Star</a>
       <ul class="nav-links">
-        <li><a href="home_page.html">Home</a></li>
-        <li><a href="watchlist_page.html" class="active">Watch List</a></li>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('watchlist') }}" class="active">Watch List</a></li>
       </ul>
 
       <div class="nav-actions">
-        <a href="auth.html" class="btn-ghost auth-guest-only">Login</a>
-        <a href="auth.html" class="btn-primary auth-guest-only">Sign Up</a>
+        <a href="{{ url_for('auth') }}" class="btn-ghost auth-guest-only">Login</a>
+        <a href="{{ url_for('auth') }}" class="btn-primary auth-guest-only">Sign Up</a>
 
-        <a href="my_profile.html" class="btn-primary auth-loggedin-only hidden">Profile</a>
-        <a href="watchlist_page.html" id="watchlist-logout-btn" class="btn-ghost auth-loggedin-only hidden">Logout</a>
+        <a href="{{ url_for('profile') }}" class="btn-primary auth-loggedin-only hidden">Profile</a>
+        <a href="{{ url_for('logout') }}" id="watchlist-logout-btn" class="btn-ghost auth-loggedin-only hidden">Logout</a>
       </div>
     </div>
   </nav>
@@ -46,7 +46,7 @@
               Start building your watchlist by browsing movies and adding the ones you want to watch later.
             </p>
             <div class="card-actions">
-              <a id="watchlist-empty-cta" href="home_page.html" class="btn-primary">Browse Movies</a>
+              <a id="watchlist-empty-cta" href="{{ url_for('home') }}" class="btn-primary">Browse Movies</a>
             </div>
           </div>
         </div>
@@ -197,6 +197,6 @@
     </div>
   </div>
 
-  <script src="../static/js/watchlist_page.js" defer></script>
+  <script src="{{ url_for('static', filename='js/watchlist_page.js') }}" defer></script>
 </body>
 </html>

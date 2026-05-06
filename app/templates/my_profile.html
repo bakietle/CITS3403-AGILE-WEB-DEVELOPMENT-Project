@@ -5,22 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Movie Star | My Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../static/css/style.css" />
-  <link rel="stylesheet" href="../static/css/my_profile.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/my_profile.css') }}" />
 </head>
 <body class="profile-page">
   <nav class="navbar-cinema" id="navbar">
     <div class="page-container profile-nav-wrap">
-      <a href="home_page.html" class="nav-logo">Movie Star</a>
+      <a href="{{ url_for('home') }}" class="nav-logo">Movie Star</a>
 
       <ul class="nav-links">
-        <li><a href="home_page.html" data-auth-nav="logged-in">Home</a></li>
-        <li><a href="watchlist_page.html" data-auth-nav="logged-in">Watchlist</a></li>
+        <li><a href="{{ url_for('home') }}" data-auth-nav="logged-in">Home</a></li>
+        <li><a href="{{ url_for('watchlist') }}" data-auth-nav="logged-in">Watchlist</a></li>
       </ul>
 
       <div class="nav-actions profile-nav-actions">
-        <a href="my_profile.html" class="btn-primary" data-auth-nav="logged-in">Profile</a>
-        <a href="home_page.html" id="my-profile-logout-btn" class="btn-ghost">Logout</a>
+        <a href="{{ url_for('profile') }}" class="btn-primary" data-auth-nav="logged-in">Profile</a>
+        <a href="{{ url_for('logout') }}" id="my-profile-logout-btn" class="btn-ghost">Logout</a>
       </div>
     </div>
   </nav>
@@ -185,6 +185,6 @@
     <div class="page-container footer-note">&copy; 2026 Movie Star. Movie nights start here.</div>
   </footer>
 
-  <script src="../static/js/my_profile.js" defer></script>
+  <script src="{{ url_for('static', filename='js/my_profile.js') }}" defer></script>
 </body>
 </html>

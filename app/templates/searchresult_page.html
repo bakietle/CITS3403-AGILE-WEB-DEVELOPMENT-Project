@@ -7,22 +7,22 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <link rel="stylesheet" href="../static/css/style.css" />
-  <link rel="stylesheet" href="../static/css/searchresult_page.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/searchresult_page.css') }}" />
 </head>
 <body class="searchresult-page">
   <nav class="navbar-cinema" id="navbar">
     <div class="page-container search-nav-wrap">
-      <a href="home_page.html" class="nav-logo">Movie Star</a>
+      <a href="{{ url_for('home') }}" class="nav-logo">Movie Star</a>
 
       <ul class="nav-links">
-        <li><a href="home_page.html" data-auth-nav="logged-in">Home</a></li>
-        <li><a href="watchlist_page.html" data-auth-nav="logged-in">Watch List</a></li>
+        <li><a href="{{ url_for('home') }}" data-auth-nav="logged-in">Home</a></li>
+        <li><a href="{{ url_for('watchlist') }}" data-auth-nav="logged-in">Watch List</a></li>
       </ul>
 
       <div class="nav-actions search-nav-actions">
-        <a href="my_profile.html" class="btn-primary" data-auth-nav="logged-in">Profile</a>
-        <a href="home_page.html" class="btn-ghost">Logout</a>
+        <a href="{{ url_for('profile') }}" class="btn-primary" data-auth-nav="logged-in">Profile</a>
+        <a href="{{ url_for('logout') }}" class="btn-ghost">Logout</a>
       </div>
     </div>
   </nav>
@@ -121,7 +121,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </button>
-              <a href="movie_page.html" class="search-card-link">
+              <a href="{{ url_for('movie', movie_id=1) }}" class="search-card-link">
                 <div class="search-card-media">
                   <img src="https://picsum.photos/seed/inception/300/450" alt="Inception poster" class="search-card-image" />
                   <span class="search-card-rating">&#9733; 8.8</span>
@@ -142,7 +142,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </button>
-              <a href="movie_page.html" class="search-card-link">
+              <a href="{{ url_for('movie', movie_id=2) }}" class="search-card-link">
                 <div class="search-card-media">
                   <img src="https://picsum.photos/seed/interstellar/300/450" alt="Interstellar poster" class="search-card-image" />
                   <span class="search-card-rating">&#9733; 8.7</span>
@@ -163,7 +163,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </button>
-              <a href="movie_page.html" class="search-card-link">
+              <a href="{{ url_for('movie', movie_id=3) }}" class="search-card-link">
                 <div class="search-card-media">
                   <img src="https://picsum.photos/seed/batman/300/450" alt="The Dark Knight poster" class="search-card-image" />
                   <span class="search-card-rating">&#9733; 9.0</span>
@@ -184,7 +184,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </button>
-              <a href="movie_page.html" class="search-card-link">
+              <a href="{{ url_for('movie', movie_id=4) }}" class="search-card-link">
                 <div class="search-card-media">
                   <img src="https://picsum.photos/seed/oppenheimer/300/450" alt="Oppenheimer poster" class="search-card-image" />
                   <span class="search-card-rating">&#9733; 8.5</span>
@@ -205,7 +205,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </button>
-              <a href="movie_page.html" class="search-card-link">
+              <a href="{{ url_for('movie', movie_id=5) }}" class="search-card-link">
                 <div class="search-card-media">
                   <img src="https://picsum.photos/seed/dune2021/300/450" alt="Dune poster" class="search-card-image" />
                   <span class="search-card-rating">&#9733; 8.0</span>
@@ -226,7 +226,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </button>
-              <a href="movie_page.html" class="search-card-link">
+              <a href="{{ url_for('movie', movie_id=6) }}" class="search-card-link">
                 <div class="search-card-media">
                   <img src="https://picsum.photos/seed/prestige/300/450" alt="The Prestige poster" class="search-card-image" />
                   <span class="search-card-rating">&#9733; 8.5</span>
@@ -247,7 +247,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </button>
-              <a href="movie_page.html" class="search-card-link">
+              <a href="{{ url_for('movie', movie_id=7) }}" class="search-card-link">
                 <div class="search-card-media">
                   <img src="https://picsum.photos/seed/parasite/300/450" alt="Parasite poster" class="search-card-image" />
                   <span class="search-card-rating">&#9733; 8.5</span>
@@ -268,7 +268,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </button>
-              <a href="movie_page.html" class="search-card-link">
+              <a href="{{ url_for('movie', movie_id=8) }}" class="search-card-link">
                 <div class="search-card-media">
                   <img src="https://picsum.photos/seed/socialnet/300/450" alt="The Social Network poster" class="search-card-image" />
                   <span class="search-card-rating">&#9733; 7.7</span>
@@ -289,7 +289,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </button>
-              <a href="movie_page.html" class="search-card-link">
+              <a href="{{ url_for('movie', movie_id=9) }}" class="search-card-link">
                 <div class="search-card-media">
                   <img src="https://picsum.photos/seed/bladerunner/300/450" alt="Blade Runner 2049 poster" class="search-card-image" />
                   <span class="search-card-rating">&#9733; 8.0</span>
@@ -310,7 +310,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </button>
-              <a href="movie_page.html" class="search-card-link">
+              <a href="{{ url_for('movie', movie_id=10) }}" class="search-card-link">
                 <div class="search-card-media">
                   <img src="https://picsum.photos/seed/arrival/300/450" alt="Arrival poster" class="search-card-image" />
                   <span class="search-card-rating">&#9733; 7.9</span>
@@ -344,6 +344,6 @@
     <div class="page-container footer-note">(c) 2026 Movie Star. Movie nights start here.</div>
   </footer>
 
-  <script src="../static/js/searchresult_page.js" defer></script>
+  <script src="{{ url_for('static', filename='js/searchresult_page.js') }}" defer></script>
 </body>
 </html>

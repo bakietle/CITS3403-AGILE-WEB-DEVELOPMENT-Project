@@ -8,23 +8,23 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <link rel="stylesheet" href="../static/css/style.css" />
-  <link rel="stylesheet" href="../static/css/home_page.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home_page.css') }}" />
 </head>
 <body>
   <nav class="navbar-cinema">
     <div class="page-container">
-      <a href="home_page.html" class="nav-logo">Movie Star</a>
+      <a href="{{ url_for('home') }}" class="nav-logo">Movie Star</a>
       <ul class="nav-links">
-        <li><a href="home_page.html" class="active">Home</a></li>
-        <li><a href="watchlist_page.html">Watch List</a></li>
+        <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
+        <li><a href="{{ url_for('watchlist') }}">Watch List</a></li>
       </ul>
       <div class="nav-actions" id="nav-actions">
-        <a href="auth.html" class="btn-ghost auth-guest-only">Login</a>
-        <a href="auth.html" class="btn-primary auth-guest-only">Sign Up</a>
+        <a href="{{ url_for('auth') }}" class="btn-ghost auth-guest-only">Login</a>
+        <a href="{{ url_for('auth') }}" class="btn-primary auth-guest-only">Sign Up</a>
 
-        <a href="my_profile.html" class="btn-primary auth-loggedin-only hidden">Profile</a>
-        <a href="home_page.html" id="home-logout-btn" class="btn-ghost auth-loggedin-only hidden">Logout</a>
+        <a href="{{ url_for('profile') }}" class="btn-primary auth-loggedin-only hidden">Profile</a>
+        <a href="{{ url_for('logout') }}" id="home-logout-btn" class="btn-ghost auth-loggedin-only hidden">Logout</a>
       </div>
     </div>
   </nav>
@@ -184,6 +184,6 @@
     </div>
   </div>
 
-  <script src="../static/js/home_page.js" defer></script>
+  <script src="{{ url_for('static', filename='js/home_page.js') }}" defer></script>
 </body>
 </html>

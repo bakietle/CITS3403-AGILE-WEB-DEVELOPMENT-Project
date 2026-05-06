@@ -22,16 +22,12 @@ if (navbar) {
 }
 
 if (logoutButton) {
-  logoutButton.addEventListener('click', (event) => {
-    event.preventDefault();
-
+  logoutButton.addEventListener('click', () => {
     try {
       localStorage.setItem('movieStarDemoAuth', 'guest');
     } catch (error) {
       // Ignore storage failures in static preview.
     }
-
-    window.location.href = 'home_page.html';
   });
 }
 

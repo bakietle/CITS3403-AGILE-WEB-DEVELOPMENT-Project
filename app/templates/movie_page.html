@@ -5,22 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Movie Star | Inception</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../static/css/style.css" />
-  <link rel="stylesheet" href="../static/css/movie_page.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/movie_page.css') }}" />
 </head>
 <body class="movie-page min-h-screen">
   <nav class="navbar-cinema" id="navbar">
     <div class="page-container movie-nav-wrap">
-      <a href="home_page.html" class="nav-logo">Movie Star</a>
+      <a href="{{ url_for('home') }}" class="nav-logo">Movie Star</a>
 
       <ul class="nav-links">
-        <li><a href="home_page.html" data-auth-nav="logged-in">Home</a></li>
-        <li><a href="watchlist_page.html" data-auth-nav="logged-in">Watchlist</a></li>
+        <li><a href="{{ url_for('home') }}" data-auth-nav="logged-in">Home</a></li>
+        <li><a href="{{ url_for('watchlist') }}" data-auth-nav="logged-in">Watchlist</a></li>
       </ul>
 
       <div class="nav-actions movie-nav-actions">
-        <a href="my_profile.html" class="btn-primary" data-auth-nav="logged-in">Profile</a>
-        <a href="home_page.html" id="movie-logout-btn" class="btn-ghost">Logout</a>
+        <a href="{{ url_for('profile') }}" class="btn-primary" data-auth-nav="logged-in">Profile</a>
+        <a href="{{ url_for('logout') }}" id="movie-logout-btn" class="btn-ghost">Logout</a>
       </div>
     </div>
   </nav>
@@ -131,7 +131,7 @@
                 <div class="review-user-row">
                   <img src="https://picsum.photos/seed/user1/40/40" alt="filmcritic99 avatar" class="review-avatar" />
                   <div>
-                    <a href="other_profile.html" class="review-user-link">filmcritic99</a>
+                    <a href="{{ url_for('user_profile', user_id=1) }}" class="review-user-link">filmcritic99</a>
                     <p class="review-date">March 12, 2025</p>
                   </div>
                 </div>
@@ -151,7 +151,7 @@
                 <div class="review-user-row">
                   <img src="https://picsum.photos/seed/user2/40/40" alt="nolanfan2024 avatar" class="review-avatar" />
                   <div>
-                    <a href="other_profile.html" class="review-user-link">nolanfan2024</a>
+                    <a href="{{ url_for('user_profile', user_id=2) }}" class="review-user-link">nolanfan2024</a>
                     <p class="review-date">January 5, 2025</p>
                   </div>
                 </div>
@@ -171,7 +171,7 @@
                 <div class="review-user-row">
                   <img src="https://picsum.photos/seed/user3/40/40" alt="cinephile_aus avatar" class="review-avatar" />
                   <div>
-                    <a href="other_profile.html" class="review-user-link">cinephile_aus</a>
+                    <a href="{{ url_for('user_profile', user_id=3) }}" class="review-user-link">cinephile_aus</a>
                     <p class="review-date">December 28, 2024</p>
                   </div>
                 </div>
@@ -221,6 +221,6 @@
     <div class="page-container footer-note">&copy; 2026 Movie Star. Movie nights start here.</div>
   </footer>
 
-  <script src="../static/js/movie_page.js" defer></script>
+  <script src="{{ url_for('static', filename='js/movie_page.js') }}" defer></script>
 </body>
 </html>
