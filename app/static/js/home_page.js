@@ -48,8 +48,7 @@ function setupLogoutButton() {
     return;
   }
 
-  logoutBtn.addEventListener('click', (event) => {
-    event.preventDefault();
+  logoutBtn.addEventListener('click', () => {
     setAuthState('guest');
   });
 }

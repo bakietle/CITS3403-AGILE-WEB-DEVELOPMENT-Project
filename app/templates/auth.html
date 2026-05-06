@@ -8,8 +8,8 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <link rel="stylesheet" href="../static/css/style.css" />
-  <link rel="stylesheet" href="../static/css/auth.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
 </head>
 <body class="min-h-screen flex items-center justify-center relative auth-page">
 
@@ -87,6 +87,6 @@
 
   </div>
 
-  <script src="../static/js/auth.js" defer></script>
+  <script src="{{ url_for('static', filename='js/auth.js') }}" defer></script>
 </body>
 </html>

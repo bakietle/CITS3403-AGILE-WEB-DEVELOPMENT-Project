@@ -63,12 +63,12 @@ function updateEmptyStateContent(authState) {
     title.textContent = 'Log in to save your watchlist';
     copy.textContent = 'Create an account or sign in to save movies and access your watchlist across the app.';
     cta.textContent = 'Log In / Sign Up';
-    cta.setAttribute('href', 'auth.html');
+    cta.setAttribute('href', '/auth');
   } else {
     title.textContent = 'Your Watchlist is Empty';
     copy.textContent = 'Start building your watchlist by browsing movies and adding the ones you want to watch later.';
     cta.textContent = 'Browse Movies';
-    cta.setAttribute('href', 'home_page.html');
+    cta.setAttribute('href', '/home');
   }
 }
 
@@ -123,8 +123,7 @@ function setupLogoutButton() {
     return;
   }
 
-  logoutBtn.addEventListener('click', (event) => {
-    event.preventDefault();
+  logoutBtn.addEventListener('click', () => {
     setAuthState('guest');
   });
 }
