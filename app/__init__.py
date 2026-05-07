@@ -15,4 +15,4 @@ migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = "auth"
 
-from app import auth, models, routes
+from app import auth, models, routes, seed
