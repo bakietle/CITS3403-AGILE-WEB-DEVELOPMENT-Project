@@ -1,3 +1,9 @@
+// Search results page interactions.
+// Filter chips, year input, and min-rating select all live inside a single
+// GET <form>. Genre chips also sync a hidden input so the form submits the
+// chosen genre, and clicking a chip auto-submits the form for instant
+// feedback. Reset button restores defaults without submitting.
+
 const navbar = document.getElementById('navbar');
 const genreChips = Array.from(document.querySelectorAll('.filter-chip'));
 const genreFilterGroup = document.getElementById('genre-filter-group');
@@ -5,7 +11,6 @@ const genreHiddenInput = document.getElementById('genre-hidden');
 const releaseYearInput = document.getElementById('release-year');
 const minRatingSelect = document.getElementById('min-rating');
 const resetFiltersButton = document.getElementById('reset-filters-btn');
-const loggedInNavLinks = Array.from(document.querySelectorAll('[data-auth-nav="logged-in"]'));
 
 const setActiveGenre = (selectedChip) => {
   genreChips.forEach((chip) => {
@@ -15,14 +20,6 @@ const setActiveGenre = (selectedChip) => {
   // Sync the hidden form field so the GET form submits the chosen genre.
   if (genreHiddenInput && selectedChip) {
     genreHiddenInput.value = selectedChip.dataset.genre || 'All';
-  }
-};
-
-const preserveLoggedInState = () => {
-  try {
-    localStorage.setItem('movieStarDemoAuth', 'logged-in');
-  } catch (error) {
-    // Ignore storage failures in static preview and continue navigation.
   }
 };
 
@@ -63,7 +60,3 @@ if (resetFiltersButton) {
     }
   });
 }
-
-loggedInNavLinks.forEach((link) => {
-  link.addEventListener('click', preserveLoggedInState);
-});
