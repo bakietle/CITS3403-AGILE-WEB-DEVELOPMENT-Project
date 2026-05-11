@@ -97,7 +97,12 @@
         </div>
       </section>
 
-      {# Sort buttons are placeholders for now — wired up in a follow-up commit. #}
+      {#
+        Sort options. Each button is a normal anchor with ?sort=...; the
+        active option is highlighted from `active_sort` passed by the route.
+        SSR over AJAX here is fine — switching sort is rare, and a full
+        page reload preserves the URL so the user can bookmark / share it.
+      #}
       <section class="page-section">
         <div class="page-container watchlist-sort-card card-cinema">
           <div class="sort-bar">
@@ -105,10 +110,14 @@
               <span class="eyebrow">Sort by</span>
             </div>
             <div class="sort-options">
-              <a href="#" class="btn-filter active">Date Added</a>
-              <a href="#" class="btn-filter">Rating</a>
-              <a href="#" class="btn-filter">Title</a>
-              <a href="#" class="btn-filter">Year</a>
+              <a href="{{ url_for('watchlist', sort='date') }}"
+                 class="btn-filter {% if active_sort == 'date' %}active{% endif %}">Date Added</a>
+              <a href="{{ url_for('watchlist', sort='rating') }}"
+                 class="btn-filter {% if active_sort == 'rating' %}active{% endif %}">Rating</a>
+              <a href="{{ url_for('watchlist', sort='title') }}"
+                 class="btn-filter {% if active_sort == 'title' %}active{% endif %}">Title</a>
+              <a href="{{ url_for('watchlist', sort='year') }}"
+                 class="btn-filter {% if active_sort == 'year' %}active{% endif %}">Year</a>
             </div>
             <div class="sort-count">{{ watchlist_count }} movie{{ 's' if watchlist_count != 1 else '' }}</div>
           </div>

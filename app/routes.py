@@ -188,19 +188,47 @@ def movie(movie_id):
 # URL is what the user wants to add/remove; the user themselves comes
 # from the session.
 
+WATCHLIST_SORTS = ("date", "rating", "title", "year")
+
+
+def _sorted_watchlist_items(items, sort):
+    """Sort watchlist items in Python.
+
+    Average rating is a derived property over related Review rows, so doing
+    this in Python keeps the route simple and avoids per-sort SQL changes.
+    Watchlists are per-user and typically small, so the cost is negligible.
+    """
+    if sort == "title":
+        items.sort(key=lambda i: (i.movie.title or "").lower())
+    elif sort == "year":
+        items.sort(key=lambda i: i.movie.release_year or 0, reverse=True)
+    elif sort == "rating":
+        items.sort(key=lambda i: i.movie.average_rating or -1, reverse=True)
+    else:  # "date" — default. Newest additions first.
+        items.sort(key=lambda i: i.created_at, reverse=True)
+    return items
+
+
 @app.route("/watchlist")
 @login_required
 def watchlist():
-    """Render the current user's watchlist."""
-    items = (
-        WatchlistItem.query.filter_by(user_id=current_user.id)
-        .order_by(WatchlistItem.created_at.desc())
-        .all()
-    )
+    """Render the current user's watchlist.
+
+    Supports ?sort=date|rating|title|year to reorder the cards. Unknown
+    values fall back to date (newest first).
+    """
+    sort = (request.args.get("sort") or "date").strip().lower()
+    if sort not in WATCHLIST_SORTS:
+        sort = "date"
+
+    items = WatchlistItem.query.filter_by(user_id=current_user.id).all()
+    items = _sorted_watchlist_items(items, sort)
+
     return render_template(
         "watchlist_page.html",
         watchlist_items=items,
         watchlist_count=len(items),
+        active_sort=sort,
     )
 
 
