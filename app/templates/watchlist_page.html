@@ -21,18 +21,23 @@
       </ul>
 
       <div class="nav-actions">
-        <a href="{{ url_for('auth') }}" class="btn-ghost auth-guest-only">Login</a>
-        <a href="{{ url_for('auth') }}" class="btn-primary auth-guest-only">Sign Up</a>
-
-        <a href="{{ url_for('profile') }}" class="btn-primary auth-loggedin-only hidden">Profile</a>
-        <a href="{{ url_for('logout') }}" id="watchlist-logout-btn" class="btn-ghost auth-loggedin-only hidden">Logout</a>
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('profile') }}" class="btn-primary">Profile</a>
+          <a href="{{ url_for('logout') }}" id="watchlist-logout-btn" class="btn-ghost">Logout</a>
+        {% else %}
+          <a href="{{ url_for('auth') }}" class="btn-ghost">Login</a>
+          <a href="{{ url_for('auth') }}" class="btn-primary">Sign Up</a>
+        {% endif %}
       </div>
     </div>
   </nav>
 
   <main class="watchlist-main">
-    <!-- EMPTY / GUEST WATCHLIST STATE -->
-    <div id="watchlist-empty-state" class="watchlist-state">
+    {% if watchlist_count == 0 %}
+      {#
+        EMPTY STATE — shown when the logged-in user's watchlist has no items.
+        Guest case is handled at the route level (@login_required redirects).
+      #}
       <section class="page-section watchlist-empty-hero">
         <div class="page-container">
           <div class="card-cinema watchlist-empty-card">
@@ -41,18 +46,18 @@
                 <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 2a7 7 0 110 14 7 7 0 010-14zm1 3h-2v5h5v-2h-3V8z"/>
               </svg>
             </span>
-            <h1 id="watchlist-empty-title" class="hero-heading">Your Watchlist is Empty</h1>
-            <p id="watchlist-empty-copy" class="hero-copy">
+            <h1 class="hero-heading">Your Watchlist is Empty</h1>
+            <p class="hero-copy">
               Start building your watchlist by browsing movies and adding the ones you want to watch later.
             </p>
             <div class="card-actions">
-              <a id="watchlist-empty-cta" href="{{ url_for('home') }}" class="btn-primary">Browse Movies</a>
+              <a href="{{ url_for('home') }}" class="btn-primary">Browse Movies</a>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="watchlist-empty-info-section" class="page-section">
+      <section class="page-section">
         <div class="page-container card-cinema watchlist-empty-info">
           <h2 class="section-title">How to build your watchlist</h2>
           <div class="card-content">
@@ -64,10 +69,8 @@
           </div>
         </div>
       </section>
-    </div>
-
-    <!-- FILLED WATCHLIST STATE -->
-    <div id="watchlist-filled-state" class="watchlist-state hidden">
+    {% else %}
+      {# FILLED STATE — render the user's actual watchlist. #}
       <section class="page-section watchlist-hero">
         <div class="page-container watchlist-hero-card card-cinema">
           <div class="watchlist-intro">
@@ -86,12 +89,13 @@
             </div>
           </div>
           <div class="card-actions">
-            <a href="#" class="btn-nav">Add more titles</a>
-            <a href="#" class="btn-nav">Open recommendations</a>
+            <a href="{{ url_for('search') }}" class="btn-nav">Add more titles</a>
+            <a href="{{ url_for('home') }}" class="btn-nav">Open recommendations</a>
           </div>
         </div>
       </section>
 
+      {# Sort buttons are placeholders for now — wired up in a follow-up commit. #}
       <section class="page-section">
         <div class="page-container watchlist-sort-card card-cinema">
           <div class="sort-bar">
@@ -104,57 +108,48 @@
               <a href="#" class="btn-filter">Title</a>
               <a href="#" class="btn-filter">Year</a>
             </div>
-            <div class="sort-count">3 movies</div>
+            <div class="sort-count">{{ watchlist_count }} movie{{ 's' if watchlist_count != 1 else '' }}</div>
           </div>
         </div>
       </section>
 
       <section class="page-section">
         <div class="page-container watchlist-grid">
-          <article class="card-cinema watchlist-card">
-            <img src="https://images.unsplash.com/photo-1517602302552-471fe67acf66?auto=format&fit=crop&w=900&q=80" alt="Hidden Truth" />
-            <div class="card-badge">★ 8.9</div>
-            <div class="card-content">
-              <h3 class="card-title">Hidden Truth</h3>
-              <div class="card-meta">
-                <span>2025</span>
-                <span>Mystery</span>
+          {% for item in watchlist_items %}
+            {% set movie = item.movie %}
+            <article class="card-cinema watchlist-card" data-movie-id="{{ movie.id }}">
+              <a href="{{ url_for('movie', movie_id=movie.id) }}" class="watchlist-card-link">
+                {% if movie.poster_path %}
+                  <img src="{{ movie.poster_path }}" alt="{{ movie.title }} poster" />
+                {% else %}
+                  <img src="https://picsum.photos/seed/wl{{ movie.id }}/600/400" alt="{{ movie.title }} poster" />
+                {% endif %}
+                {% if movie.average_rating is not none %}
+                  <div class="card-badge">&#9733; {{ '%.1f' % movie.average_rating }}</div>
+                {% endif %}
+              </a>
+              <div class="card-content">
+                <h3 class="card-title">{{ movie.title }}</h3>
+                <div class="card-meta">
+                  {% if movie.release_year %}<span>{{ movie.release_year }}</span>{% endif %}
+                  {% if movie.primary_genre %}<span>{{ movie.primary_genre }}</span>{% endif %}
+                </div>
+                <div class="card-actions">
+                  {#
+                    Remove button: UI shell only — the AJAX click handler is
+                    wired up in the next commit. data-movie-id on the parent
+                    article is the integration hook.
+                  #}
+                  <button
+                    type="button"
+                    class="btn-ghost watchlist-remove-btn"
+                    data-movie-id="{{ movie.id }}"
+                    aria-label="Remove {{ movie.title }} from watchlist"
+                  >Remove</button>
+                </div>
               </div>
-              <div class="card-actions">
-                <a href="#" class="btn-ghost">Remove</a>
-              </div>
-            </div>
-          </article>
-
-          <article class="card-cinema watchlist-card">
-            <img src="https://images.unsplash.com/photo-1517602302552-471fe67acf66?auto=format&fit=crop&w=900&q=80" alt="Flight of Rebels" />
-            <div class="card-badge">★ 8.5</div>
-            <div class="card-content">
-              <h3 class="card-title">Flight of Rebels</h3>
-              <div class="card-meta">
-                <span>2024</span>
-                <span>Action</span>
-              </div>
-              <div class="card-actions">
-                <a href="#" class="btn-ghost">Remove</a>
-              </div>
-            </div>
-          </article>
-
-          <article class="card-cinema watchlist-card">
-            <img src="https://images.unsplash.com/photo-1505685296765-3a2736de412f?auto=format&fit=crop&w=900&q=80" alt="Nightfall" />
-            <div class="card-badge">★ 8.6</div>
-            <div class="card-content">
-              <h3 class="card-title">Nightfall</h3>
-              <div class="card-meta">
-                <span>2023</span>
-                <span>Drama</span>
-              </div>
-              <div class="card-actions">
-                <a href="#" class="btn-ghost">Remove</a>
-              </div>
-            </div>
-          </article>
+            </article>
+          {% endfor %}
         </div>
       </section>
 
@@ -164,38 +159,17 @@
             <h2 class="section-title">Need viewing inspiration?</h2>
             <p class="hero-copy">Keep your watchlist full with curated movie picks and reminders for the next great watch night.</p>
             <div class="card-actions">
-              <a href="#" class="btn-primary">Browse recommendations</a>
+              <a href="{{ url_for('search') }}" class="btn-primary">Browse recommendations</a>
             </div>
           </div>
         </div>
       </section>
-    </div>
+    {% endif %}
   </main>
 
   <footer>
     <div class="page-container footer-note">© 2026 Movie Star. Movie nights start here.</div>
   </footer>
-
-  <!-- Demo State Switcher -->
-  <div id="demo-state-switcher" class="demo-state-panel">
-    <button id="demo-toggle-btn" class="demo-toggle-btn" type="button" title="Toggle demo state controls">⚙️</button>
-    <div id="demo-controls" class="demo-controls hidden">
-      <div class="demo-control-group">
-        <label class="demo-label" for="auth-state-select">Auth State</label>
-        <select id="auth-state-select" class="demo-select">
-          <option value="guest">Guest</option>
-          <option value="logged-in">Logged In</option>
-        </select>
-      </div>
-      <div class="demo-control-group">
-        <label class="demo-label" for="watchlist-state-select">Watchlist State</label>
-        <select id="watchlist-state-select" class="demo-select">
-          <option value="empty">Empty</option>
-          <option value="filled">Filled</option>
-        </select>
-      </div>
-    </div>
-  </div>
 
   <script src="{{ url_for('static', filename='js/watchlist_page.js') }}" defer></script>
 </body>
