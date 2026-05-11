@@ -22,10 +22,11 @@ Notes for teammates:
 """
 from flask import abort, render_template, request
 from flask_login import login_required
+from sqlalchemy import func
 
 from app import app, db
 from app.forms import SearchForm
-from app.models import Genre, Movie
+from app.models import Genre, Movie, Review
 
 
 # Display constants — adjust here if the design tweaks them.
@@ -126,6 +127,23 @@ def search():
     if year:
         query = query.filter(Movie.release_year == year)
 
+    # min_rating is a derived value (AVG of related reviews). Apply at the
+    # DB level via a subquery joined on movie_id, BEFORE pagination, so the
+    # result count and page links reflect the filtered set correctly.
+    threshold = _parse_min_rating(min_rating_raw)
+    if threshold is not None:
+        avg_subq = (
+            db.session.query(
+                Review.movie_id.label("movie_id"),
+                func.avg(Review.rating).label("avg_rating"),
+            )
+            .group_by(Review.movie_id)
+            .subquery()
+        )
+        query = query.join(
+            avg_subq, Movie.id == avg_subq.c.movie_id
+        ).filter(avg_subq.c.avg_rating >= threshold)
+
     query = query.order_by(Movie.release_year.desc(), Movie.title.asc())
 
     # Paginate at the DB level. error_out=False -> empty page instead of 404.
@@ -133,15 +151,7 @@ def search():
         page=page, per_page=SEARCH_PAGE_SIZE, error_out=False
     )
 
-    # min_rating is a derived value, so filter the page items in Python.
-    threshold = _parse_min_rating(min_rating_raw)
-    if threshold is not None:
-        movies = [
-            m for m in pagination.items
-            if (m.average_rating or 0) >= threshold
-        ]
-    else:
-        movies = pagination.items
+    movies = pagination.items
 
     # Genre chips are rendered from the DB so they always match seed data.
     all_genres = Genre.query.order_by(Genre.name.asc()).all()
