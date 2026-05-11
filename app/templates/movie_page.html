@@ -14,13 +14,18 @@
       <a href="{{ url_for('home') }}" class="nav-logo">Movie Star</a>
 
       <ul class="nav-links">
-        <li><a href="{{ url_for('home') }}" data-auth-nav="logged-in">Home</a></li>
-        <li><a href="{{ url_for('watchlist') }}" data-auth-nav="logged-in">Watchlist</a></li>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('watchlist') }}">Watchlist</a></li>
       </ul>
 
       <div class="nav-actions movie-nav-actions">
-        <a href="{{ url_for('profile') }}" class="btn-primary" data-auth-nav="logged-in">Profile</a>
-        <a href="{{ url_for('logout') }}" id="movie-logout-btn" class="btn-ghost">Logout</a>
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('profile') }}" class="btn-primary">Profile</a>
+          <a href="{{ url_for('logout') }}" id="movie-logout-btn" class="btn-ghost">Logout</a>
+        {% else %}
+          <a href="{{ url_for('auth') }}" class="btn-ghost">Login</a>
+          <a href="{{ url_for('auth') }}" class="btn-primary">Sign Up</a>
+        {% endif %}
       </div>
     </div>
   </nav>
@@ -114,115 +119,20 @@
 
         <hr class="section-divider" />
 
+        {#
+          REVIEW SECTION — placeholder until Module C ships.
+          The dummy data was removed to avoid showing the same fake reviews
+          on every movie. The real write-review form, community reviews
+          list, sort dropdown, and "Load More" button will be added by
+          Module C when the review endpoints are implemented.
+        #}
         <section id="write-review">
-          <h2 class="content-title">Write a Review</h2>
+          <h2 class="content-title">Reviews</h2>
           <div class="write-review-card">
-            <div class="review-field-block">
-              <p class="review-field-label">Your Rating</p>
-              <div class="star-row" id="star-container" aria-label="Choose a rating from 1 to 10">
-                <button class="star-btn" type="button" data-val="1" aria-label="Rate 1 out of 10">&#9733;</button>
-                <button class="star-btn" type="button" data-val="2" aria-label="Rate 2 out of 10">&#9733;</button>
-                <button class="star-btn" type="button" data-val="3" aria-label="Rate 3 out of 10">&#9733;</button>
-                <button class="star-btn" type="button" data-val="4" aria-label="Rate 4 out of 10">&#9733;</button>
-                <button class="star-btn" type="button" data-val="5" aria-label="Rate 5 out of 10">&#9733;</button>
-                <button class="star-btn" type="button" data-val="6" aria-label="Rate 6 out of 10">&#9733;</button>
-                <button class="star-btn" type="button" data-val="7" aria-label="Rate 7 out of 10">&#9733;</button>
-                <button class="star-btn" type="button" data-val="8" aria-label="Rate 8 out of 10">&#9733;</button>
-                <button class="star-btn" type="button" data-val="9" aria-label="Rate 9 out of 10">&#9733;</button>
-                <button class="star-btn" type="button" data-val="10" aria-label="Rate 10 out of 10">&#9733;</button>
-              </div>
-              <p class="review-rating-label" id="rating-label">Click to rate</p>
-            </div>
-
-            <input type="text" placeholder="Review title (optional)" class="field-input movie-review-input" />
-            <textarea rows="4" placeholder="Share your thoughts about this movie..." class="field-input movie-review-input movie-review-textarea"></textarea>
-
-            <div class="review-actions-row">
-              <label class="review-checkbox-row">
-                <input type="checkbox" class="accent-yellow-500 w-4 h-4" />
-                <span>Contains spoilers</span>
-              </label>
-              <button class="btn-primary movie-submit-btn" type="button">Submit Review</button>
-            </div>
+            <p class="content-copy">
+              Reviews will appear here once the review endpoints are implemented (Module C).
+            </p>
           </div>
-        </section>
-
-        <hr class="section-divider" />
-
-        <section>
-          <div class="community-reviews-header">
-            <h2 class="content-title content-title-tight">Community Reviews <span class="content-title-sub">(1,284)</span></h2>
-            <select class="review-sort-select" aria-label="Sort community reviews">
-              <option>Most Helpful</option>
-              <option>Most Recent</option>
-              <option>Highest Rated</option>
-              <option>Lowest Rated</option>
-            </select>
-          </div>
-
-          <div class="review-list">
-            <article class="review-card card-cinema">
-              <div class="review-top-row">
-                <div class="review-user-row">
-                  <img src="https://picsum.photos/seed/user1/40/40" alt="filmcritic99 avatar" class="review-avatar" />
-                  <div>
-                    <a href="{{ url_for('user_profile', user_id=1) }}" class="review-user-link">filmcritic99</a>
-                    <p class="review-date">March 12, 2025</p>
-                  </div>
-                </div>
-                <div class="review-score">&#9733; 10/10</div>
-              </div>
-              <h3 class="review-title">A masterclass in storytelling and visual effects</h3>
-              <p class="review-copy">Christopher Nolan crafts something extraordinary here. The dream layers feel distinct without becoming confusing, the emotional stakes stay grounded, and the score drives every scene forward.</p>
-              <div class="review-footer-row">
-                <button class="helpful-btn" type="button">Helpful (342)</button>
-                <button class="review-link-btn" type="button">Reply</button>
-                <button class="review-link-btn review-link-btn-end" type="button">Report</button>
-              </div>
-            </article>
-
-            <article class="review-card card-cinema">
-              <div class="review-top-row">
-                <div class="review-user-row">
-                  <img src="https://picsum.photos/seed/user2/40/40" alt="nolanfan2024 avatar" class="review-avatar" />
-                  <div>
-                    <a href="{{ url_for('user_profile', user_id=2) }}" class="review-user-link">nolanfan2024</a>
-                    <p class="review-date">January 5, 2025</p>
-                  </div>
-                </div>
-                <div class="review-score">&#9733; 8/10</div>
-              </div>
-              <h3 class="review-title">Mind-bending but emotionally distant</h3>
-              <p class="review-copy">The concept is brilliant and the action is exceptional, but the emotional connection is strongest only with Cobb. Even so, the craft level is so high that the film remains intensely watchable.</p>
-              <div class="review-footer-row">
-                <button class="helpful-btn" type="button">Helpful (187)</button>
-                <button class="review-link-btn" type="button">Reply</button>
-                <button class="review-link-btn review-link-btn-end" type="button">Report</button>
-              </div>
-            </article>
-
-            <article class="review-card card-cinema">
-              <div class="review-top-row">
-                <div class="review-user-row">
-                  <img src="https://picsum.photos/seed/user3/40/40" alt="cinephile_aus avatar" class="review-avatar" />
-                  <div>
-                    <a href="{{ url_for('user_profile', user_id=3) }}" class="review-user-link">cinephile_aus</a>
-                    <p class="review-date">December 28, 2024</p>
-                  </div>
-                </div>
-                <div class="review-score">&#9733; 7/10</div>
-              </div>
-              <h3 class="review-title">Great but slightly overhyped</h3>
-              <p class="review-copy">The zero-gravity corridor fight is still incredible, but some exposition feels heavy on repeat viewings. It remains ambitious, polished, and memorable even when it over-explains itself.</p>
-              <div class="review-footer-row">
-                <button class="helpful-btn" type="button">Helpful (94)</button>
-                <button class="review-link-btn" type="button">Reply</button>
-                <button class="review-link-btn review-link-btn-end" type="button">Report</button>
-              </div>
-            </article>
-          </div>
-
-          <button class="btn-load-more" type="button">Load More Reviews</button>
         </section>
       </div>
 
