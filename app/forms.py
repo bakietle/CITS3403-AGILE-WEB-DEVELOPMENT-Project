@@ -6,15 +6,91 @@ schemas: they validate inputs, render CSRF tokens, and integrate with the
 Flask request lifecycle.
 
 Currently contains:
-    - SearchForm  (Module B - Movies + Search)
+    - LoginForm     (Module A - Auth)
+    - SignupForm    (Module A - Auth)
+    - SearchForm    (Module B - Movies + Search)
 """
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField
-from wtforms.validators import Length, NumberRange, Optional
+from wtforms import (
+    BooleanField,
+    IntegerField,
+    PasswordField,
+    SelectField,
+    StringField,
+    SubmitField,
+)
+from wtforms.validators import (
+    DataRequired,
+    Email,
+    EqualTo,
+    Length,
+    NumberRange,
+    Optional,
+)
 
+
+# ─────────────────────────────────────────────────────────────────────
+# Module A — Authentication forms
+# ─────────────────────────────────────────────────────────────────────
+
+class LoginForm(FlaskForm):
+    email = StringField(
+        "Email",
+        validators=[
+            DataRequired(message="Please enter your email address."),
+            Email(message="Please enter a valid email address."),
+        ],
+    )
+    password = PasswordField(
+        "Password",
+        validators=[DataRequired(message="Please enter your password.")],
+    )
+    remember_me = BooleanField("Remember Me")
+    submit = SubmitField("Enter the Stage")
+
+
+class SignupForm(FlaskForm):
+    username = StringField(
+        "Username",
+        validators=[
+            DataRequired(message="Please choose a username."),
+            Length(
+                min=3,
+                max=64,
+                message="Username must be between 3 and 64 characters.",
+            ),
+        ],
+    )
+    email = StringField(
+        "Email",
+        validators=[
+            DataRequired(message="Please enter your email address."),
+            Email(message="Please enter a valid email address."),
+            Length(max=120, message="Email must be 120 characters or fewer."),
+        ],
+    )
+    password = PasswordField(
+        "Password",
+        validators=[
+            DataRequired(message="Please enter a password."),
+            Length(min=8, message="Password must be at least 8 characters."),
+        ],
+    )
+    confirm_password = PasswordField(
+        "Confirm Password",
+        validators=[
+            DataRequired(message="Please confirm your password."),
+            EqualTo("password", message="Passwords must match."),
+        ],
+    )
+    submit = SubmitField("Join Movie Star")
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Module B — Search form
+# ─────────────────────────────────────────────────────────────────────
 
 # Min-rating dropdown values shown on the search page.
-# Stored as plain strings so the template can mark the active option easily.
 MIN_RATING_CHOICES = [
     ("Any", "Any"),
     ("5+", "5+"),

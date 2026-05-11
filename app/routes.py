@@ -1,14 +1,15 @@
-"""Page routes for Module B (Movies + Search).
+"""Page routes for Module B (Movies + Search) and shared page shells.
 
-These are the server-rendered (SSR) pages owned by the movies/search module:
+Module B owns the server-rendered pages backed by real Movie data:
 
     GET /            home page (hero search + highest-rated grid)
     GET /home        same as /
     GET /search      search results with filters + pagination
     GET /movie/<id>  single-movie detail page
 
-Other modules (auth, reviews, watchlist, profile) own their own routes
-defined in their respective files.
+Routes for other modules are still thin shells until those modules
+implement their own queries. They're listed at the bottom of this file.
+Private routes (watchlist, profile) carry @login_required from Module A.
 
 Notes for teammates:
     - The "Popular Reviews" section on the home page currently renders
@@ -19,7 +20,8 @@ Notes for teammates:
       module. The write-review form and community reviews list belong
       to Module C.
 """
-from flask import render_template, request
+from flask import abort, render_template, request
+from flask_login import login_required
 
 from app import app, db
 from app.forms import SearchForm
@@ -63,7 +65,7 @@ def _parse_min_rating(raw):
 
 
 # ─────────────────────────────────────────────────────────────────────────
-# Pages
+# Pages owned by Module B
 # ─────────────────────────────────────────────────────────────────────────
 
 @app.route("/")
@@ -163,22 +165,23 @@ def movie(movie_id):
     """Single movie detail page (hero + details sidebar)."""
     movie_obj = db.session.get(Movie, movie_id)
     if movie_obj is None:
-        # 404 will use Flask's default handler unless someone adds a custom one.
-        from flask import abort
         abort(404)
     return render_template("movie_page.html", movie=movie_obj)
 
 
 # ─────────────────────────────────────────────────────────────────────────
 # Pages owned by other modules — kept as thin shells until they take over.
+# Private routes are protected with @login_required (Module A).
 # ─────────────────────────────────────────────────────────────────────────
 
 @app.route("/watchlist")
+@login_required
 def watchlist():
     return render_template("watchlist_page.html")
 
 
 @app.route("/profile")
+@login_required
 def profile():
     return render_template("my_profile.html")
 
