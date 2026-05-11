@@ -1,4 +1,5 @@
 from flask import render_template
+from flask_login import login_required
 
 from app import app
 
@@ -10,6 +11,7 @@ def home():
 
 
 @app.route("/watchlist")
+@login_required
 def watchlist():
     return render_template("watchlist_page.html")
 
@@ -25,6 +27,7 @@ def movie(movie_id):
 
 
 @app.route("/profile")
+@login_required
 def profile():
     return render_template("my_profile.html")
 
