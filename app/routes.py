@@ -172,11 +172,40 @@ def search():
 
 @app.route("/movie/<int:movie_id>")
 def movie(movie_id):
-    """Single movie detail page (hero + details sidebar)."""
+    """Single movie detail page (hero + details sidebar + reviews).
+
+    The review section is rendered with three pieces of context:
+      * `user_review`     — current user's own review on this movie (or None)
+      * `reviews`         — everyone else's reviews (sorted newest first)
+      * `review_form`     — fresh ReviewForm bound for create/edit submission
+    """
     movie_obj = db.session.get(Movie, movie_id)
     if movie_obj is None:
         abort(404)
-    return render_template("movie_page.html", movie=movie_obj)
+
+    user_review = None
+    if current_user.is_authenticated:
+        user_review = Review.query.filter_by(
+            user_id=current_user.id, movie_id=movie_id
+        ).first()
+
+    # Community reviews — exclude the current user's own review since it's
+    # shown separately at the top under "Your Review".
+    others_query = Review.query.filter_by(movie_id=movie_id)
+    if user_review is not None:
+        others_query = others_query.filter(Review.id != user_review.id)
+    reviews = others_query.order_by(Review.created_at.desc()).all()
+
+    review_form = ReviewForm()
+
+    return render_template(
+        "movie_page.html",
+        movie=movie_obj,
+        reviews=reviews,
+        user_review=user_review,
+        review_form=review_form,
+        community_count=len(reviews),
+    )
 
 
 # ─────────────────────────────────────────────────────────────────────────

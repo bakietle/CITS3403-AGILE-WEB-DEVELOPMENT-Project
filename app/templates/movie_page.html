@@ -122,18 +122,165 @@
         <hr class="section-divider" />
 
         {#
-          REVIEW SECTION — placeholder until Module C ships.
-          The dummy data was removed to avoid showing the same fake reviews
-          on every movie. The real write-review form, community reviews
-          list, sort dropdown, and "Load More" button will be added by
-          Module C when the review endpoints are implemented.
+          REVIEW SECTION (Module C).
+          Three states for the top half ("write/your review"):
+            * Logged in + has reviewed → show user's review card with
+              Edit/Delete buttons and a hidden inline edit form.
+            * Logged in + no review    → show write-review form.
+            * Logged out              → show CTA to log in.
+          The bottom half ("Community Reviews") lists everyone else's
+          reviews; the current user's own review is omitted because it
+          already appears above.
         #}
         <section id="write-review">
-          <h2 class="content-title">Reviews</h2>
-          <div class="write-review-card">
-            <p class="content-copy">
-              Reviews will appear here once the review endpoints are implemented (Module C).
-            </p>
+          {% if current_user.is_authenticated %}
+            {% if user_review %}
+              {# ----- Your existing review ----- #}
+              <h2 class="content-title">Your Review</h2>
+              <article class="write-review-card review-card card-cinema your-review-card" data-review-id="{{ user_review.id }}">
+                <div class="review-top-row">
+                  <div class="review-score">&#9733; {{ user_review.rating }}/10</div>
+                  {% if user_review.contains_spoilers %}
+                    <span class="review-spoiler-tag">Contains spoilers</span>
+                  {% endif %}
+                </div>
+                <p class="review-copy" data-review-body>{{ user_review.body }}</p>
+                <div class="review-footer-row">
+                  <p class="review-date">
+                    Posted {{ user_review.created_at.strftime('%B %d, %Y') }}
+                    {% if user_review.updated_at %}
+                      &middot; edited {{ user_review.updated_at.strftime('%B %d, %Y') }}
+                    {% endif %}
+                  </p>
+                  <div class="review-actions-row review-actions-row-end">
+                    <button class="btn-ghost review-edit-btn" type="button" data-review-id="{{ user_review.id }}">Edit</button>
+                    <button class="btn-ghost review-delete-btn" type="button" data-review-id="{{ user_review.id }}">Delete</button>
+                  </div>
+                </div>
+
+                {# Inline edit form, hidden until "Edit" is clicked (JS in next commit). #}
+                <form
+                  class="write-review-card review-edit-form hidden"
+                  action="{{ url_for('review_edit', review_id=user_review.id) }}"
+                  method="post"
+                  data-review-id="{{ user_review.id }}"
+                >
+                  {{ review_form.hidden_tag() }}
+                  <div class="review-field-block">
+                    <label class="review-field-label" for="edit-rating-{{ user_review.id }}">Your Rating</label>
+                    <select id="edit-rating-{{ user_review.id }}" name="rating" class="field-input" required>
+                      {% for n in range(1, 11) %}
+                        <option value="{{ n }}" {% if n == user_review.rating %}selected{% endif %}>{{ n }} / 10</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <textarea
+                    name="body"
+                    rows="4"
+                    maxlength="2000"
+                    required
+                    class="field-input movie-review-input movie-review-textarea"
+                  >{{ user_review.body }}</textarea>
+                  <div class="review-actions-row">
+                    <label class="review-checkbox-row">
+                      <input type="checkbox" name="contains_spoilers" value="y" {% if user_review.contains_spoilers %}checked{% endif %} />
+                      <span>Contains spoilers</span>
+                    </label>
+                    <div class="review-actions-row-end">
+                      <button class="btn-ghost review-edit-cancel" type="button" data-review-id="{{ user_review.id }}">Cancel</button>
+                      <button class="btn-primary movie-submit-btn" type="submit">Save changes</button>
+                    </div>
+                  </div>
+                </form>
+              </article>
+            {% else %}
+              {# ----- Write a new review form ----- #}
+              <h2 class="content-title">Write a Review</h2>
+              <form
+                id="write-review-form"
+                class="write-review-card"
+                action="{{ url_for('review_create', movie_id=movie.id) }}"
+                method="post"
+              >
+                {{ review_form.hidden_tag() }}
+                <div class="review-field-block">
+                  <label class="review-field-label" for="rating">Your Rating</label>
+                  <select id="rating" name="rating" class="field-input" required>
+                    <option value="">Choose a rating…</option>
+                    {% for n in range(1, 11) %}
+                      <option value="{{ n }}">{{ n }} / 10</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <textarea
+                  name="body"
+                  rows="4"
+                  maxlength="2000"
+                  required
+                  placeholder="Share your thoughts about this movie..."
+                  class="field-input movie-review-input movie-review-textarea"
+                ></textarea>
+                <div class="review-actions-row">
+                  <label class="review-checkbox-row">
+                    <input type="checkbox" name="contains_spoilers" value="y" />
+                    <span>Contains spoilers</span>
+                  </label>
+                  <button class="btn-primary movie-submit-btn" type="submit">Submit Review</button>
+                </div>
+              </form>
+            {% endif %}
+          {% else %}
+            {# ----- Guest CTA ----- #}
+            <h2 class="content-title">Write a Review</h2>
+            <div class="write-review-card">
+              <p class="content-copy">
+                <a class="text-gold" href="{{ url_for('auth') }}">Log in or sign up</a>
+                to share your thoughts on this movie.
+              </p>
+            </div>
+          {% endif %}
+        </section>
+
+        <hr class="section-divider" />
+
+        {# ----- Community reviews list (everyone except the current user) ----- #}
+        <section>
+          <div class="community-reviews-header">
+            <h2 class="content-title content-title-tight">
+              Community Reviews <span class="content-title-sub">({{ community_count }})</span>
+            </h2>
+            <select class="review-sort-select" aria-label="Sort community reviews">
+              <option value="recent">Most Recent</option>
+              <option value="highest">Highest Rated</option>
+              <option value="lowest">Lowest Rated</option>
+            </select>
+          </div>
+
+          <div class="review-list">
+            {% for review in reviews %}
+              <article class="review-card card-cinema" data-review-id="{{ review.id }}">
+                <div class="review-top-row">
+                  <div class="review-user-row">
+                    <img
+                      src="https://picsum.photos/seed/user{{ review.user_id }}/40/40"
+                      alt="{{ review.user.username }} avatar"
+                      class="review-avatar"
+                    />
+                    <div>
+                      <a href="{{ url_for('user_profile', user_id=review.user_id) }}" class="review-user-link">{{ review.user.username }}</a>
+                      <p class="review-date">{{ review.created_at.strftime('%B %d, %Y') }}</p>
+                    </div>
+                  </div>
+                  <div class="review-score">&#9733; {{ review.rating }}/10</div>
+                </div>
+                {% if review.contains_spoilers %}
+                  <p class="review-spoiler-warning">&#9888; Contains spoilers</p>
+                {% endif %}
+                <p class="review-copy">{{ review.body }}</p>
+              </article>
+            {% else %}
+              <p class="content-copy">No reviews yet. Be the first to share your thoughts!</p>
+            {% endfor %}
           </div>
         </section>
       </div>
