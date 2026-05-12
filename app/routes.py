@@ -25,7 +25,7 @@ from flask_login import current_user, login_required
 from sqlalchemy import func
 
 from app import app, db
-from app.forms import SearchForm
+from app.forms import ReviewForm, SearchForm
 from app.models import Genre, Movie, Review, WatchlistItem
 
 
@@ -270,6 +270,130 @@ def watchlist_remove(movie_id):
     db.session.delete(item)
     db.session.commit()
     return jsonify(ok=True, removed=True)
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Module C — Reviews
+# ─────────────────────────────────────────────────────────────────────────
+#
+# Authorisation rule for edit / delete:
+#
+#     if review.user_id != current_user.id:
+#         abort(403)
+#
+# Endpoints are AJAX-friendly (return JSON, expect form-data with the
+# CSRF token in X-CSRFToken header or as csrf_token form field).
+
+
+def _review_to_json(review):
+    """Shape a Review for JSON responses."""
+    return {
+        "id": review.id,
+        "movie_id": review.movie_id,
+        "user_id": review.user_id,
+        "username": review.user.username if review.user else None,
+        "rating": review.rating,
+        "body": review.body,
+        "contains_spoilers": review.contains_spoilers,
+        "created_at": review.created_at.isoformat() if review.created_at else None,
+        "updated_at": review.updated_at.isoformat() if review.updated_at else None,
+    }
+
+
+def _first_form_error(form):
+    """Return the first user-facing validation error message on a form."""
+    for messages in form.errors.values():
+        if messages:
+            return messages[0]
+    return "Invalid submission."
+
+
+@app.route("/movie/<int:movie_id>/review", methods=["POST"])
+@login_required
+def review_create(movie_id):
+    """Create a new review on the given movie for the current user."""
+    movie = db.session.get(Movie, movie_id)
+    if movie is None:
+        return jsonify(ok=False, error="Movie not found."), 404
+
+    # The model has UniqueConstraint(user_id, movie_id) so we reject
+    # duplicates explicitly with 409 instead of letting it raise an
+    # IntegrityError on commit.
+    existing = Review.query.filter_by(
+        user_id=current_user.id, movie_id=movie_id
+    ).first()
+    if existing is not None:
+        return (
+            jsonify(
+                ok=False,
+                error="You have already reviewed this movie. Use the edit endpoint instead.",
+                existing_review_id=existing.id,
+            ),
+            409,
+        )
+
+    form = ReviewForm()
+    if not form.validate_on_submit():
+        return (
+            jsonify(ok=False, error=_first_form_error(form), errors=form.errors),
+            400,
+        )
+
+    review = Review(
+        user_id=current_user.id,
+        movie_id=movie_id,
+        rating=form.rating.data,
+        body=form.body.data.strip(),
+        contains_spoilers=bool(form.contains_spoilers.data),
+    )
+    db.session.add(review)
+    db.session.commit()
+    return jsonify(ok=True, review=_review_to_json(review)), 201
+
+
+@app.route("/review/<int:review_id>/edit", methods=["POST"])
+@login_required
+def review_edit(review_id):
+    """Edit one of the current user's own reviews.
+
+    A user who is not the review's author is rejected with 403, so this
+    cannot be used to modify someone else's review.
+    """
+    review = db.session.get(Review, review_id)
+    if review is None:
+        return jsonify(ok=False, error="Review not found."), 404
+    if review.user_id != current_user.id:
+        abort(403)
+
+    form = ReviewForm()
+    if not form.validate_on_submit():
+        return (
+            jsonify(ok=False, error=_first_form_error(form), errors=form.errors),
+            400,
+        )
+
+    review.rating = form.rating.data
+    review.body = form.body.data.strip()
+    review.contains_spoilers = bool(form.contains_spoilers.data)
+    # updated_at is filled automatically by the model's onupdate hook.
+    db.session.commit()
+    return jsonify(ok=True, review=_review_to_json(review))
+
+
+@app.route("/review/<int:review_id>/delete", methods=["POST"])
+@login_required
+def review_delete(review_id):
+    """Delete one of the current user's own reviews."""
+    review = db.session.get(Review, review_id)
+    if review is None:
+        return jsonify(ok=False, error="Review not found."), 404
+    if review.user_id != current_user.id:
+        abort(403)
+
+    db.session.delete(review)
+    db.session.commit()
+    # Related likes + comments are cascaded away by the model's cascade rules.
+    return jsonify(ok=True, deleted=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────
