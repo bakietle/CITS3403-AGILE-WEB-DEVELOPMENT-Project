@@ -25,8 +25,15 @@ from flask_login import current_user, login_required
 from sqlalchemy import func
 
 from app import app, db
-from app.forms import ReviewForm, SearchForm
-from app.models import Genre, Movie, Review, ReviewLike, WatchlistItem
+from app.forms import CommentForm, ReviewForm, SearchForm
+from app.models import (
+    Genre,
+    Movie,
+    Review,
+    ReviewComment,
+    ReviewLike,
+    WatchlistItem,
+)
 
 
 # Display constants — adjust here if the design tweaks them.
@@ -220,6 +227,7 @@ def movie(movie_id):
 
     reviews = others_query.all()
     review_form = ReviewForm()
+    comment_form = CommentForm()
 
     return render_template(
         "movie_page.html",
@@ -227,6 +235,7 @@ def movie(movie_id):
         reviews=reviews,
         user_review=user_review,
         review_form=review_form,
+        comment_form=comment_form,
         community_count=len(reviews),
         active_sort=sort,
     )
@@ -477,6 +486,92 @@ def review_unlike(review_id):
     db.session.delete(like)
     db.session.commit()
     return jsonify(ok=True, unliked=True, like_count=review.like_count)
+
+
+def _comment_to_json(comment):
+    """Shape a ReviewComment for JSON responses."""
+    return {
+        "id": comment.id,
+        "review_id": comment.review_id,
+        "user_id": comment.user_id,
+        "username": comment.user.username if comment.user else None,
+        "parent_comment_id": comment.parent_comment_id,
+        "body": comment.display_body,
+        "is_deleted": comment.is_deleted,
+        "created_at": comment.created_at.isoformat() if comment.created_at else None,
+    }
+
+
+@app.route("/review/<int:review_id>/comment", methods=["POST"])
+@login_required
+def comment_create(review_id):
+    """Add a top-level comment on a review."""
+    review = db.session.get(Review, review_id)
+    if review is None:
+        return jsonify(ok=False, error="Review not found."), 404
+
+    form = CommentForm()
+    if not form.validate_on_submit():
+        return (
+            jsonify(ok=False, error=_first_form_error(form), errors=form.errors),
+            400,
+        )
+
+    comment = ReviewComment(
+        review_id=review_id,
+        user_id=current_user.id,
+        body=form.body.data,
+        parent_comment_id=None,
+    )
+    db.session.add(comment)
+    db.session.commit()
+    return jsonify(ok=True, comment=_comment_to_json(comment)), 201
+
+
+@app.route("/comment/<int:comment_id>/reply", methods=["POST"])
+@login_required
+def comment_reply(comment_id):
+    """Reply to an existing comment (threaded via parent_comment_id)."""
+    parent = db.session.get(ReviewComment, comment_id)
+    if parent is None:
+        return jsonify(ok=False, error="Comment not found."), 404
+
+    form = CommentForm()
+    if not form.validate_on_submit():
+        return (
+            jsonify(ok=False, error=_first_form_error(form), errors=form.errors),
+            400,
+        )
+
+    reply = ReviewComment(
+        review_id=parent.review_id,
+        user_id=current_user.id,
+        body=form.body.data,
+        parent_comment_id=parent.id,
+    )
+    db.session.add(reply)
+    db.session.commit()
+    return jsonify(ok=True, comment=_comment_to_json(reply)), 201
+
+
+@app.route("/comment/<int:comment_id>/delete", methods=["POST"])
+@login_required
+def comment_delete(comment_id):
+    """Soft-delete one of the current user's own comments.
+
+    We don't hard-delete because the row may be a parent of replies; the
+    template renders display_body which substitutes '[comment removed]'
+    for soft-deleted comments so the thread structure stays intact.
+    """
+    comment = db.session.get(ReviewComment, comment_id)
+    if comment is None:
+        return jsonify(ok=False, error="Comment not found."), 404
+    if comment.user_id != current_user.id:
+        abort(403)
+
+    comment.is_deleted = True
+    db.session.commit()
+    return jsonify(ok=True, deleted=True)
 
 
 @app.route("/review/<int:review_id>/delete", methods=["POST"])

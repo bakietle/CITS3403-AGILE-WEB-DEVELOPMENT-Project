@@ -10,6 +10,7 @@ Currently contains:
     - SignupForm    (Module A - Auth)
     - SearchForm    (Module B - Movies + Search)
     - ReviewForm    (Module C - Reviews)
+    - CommentForm   (Module C - Comments on reviews)
 """
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -183,3 +184,27 @@ class ReviewForm(FlaskForm):
         ],
     )
     contains_spoilers = BooleanField("Contains spoilers")
+
+
+# Comment form is shared by both POST /review/<id>/comment and
+# POST /comment/<id>/reply — same payload shape (body only), only the
+# route differs.
+
+COMMENT_BODY_MAX = 1000
+
+
+class CommentForm(FlaskForm):
+    """Create a comment on a review or a reply to an existing comment."""
+
+    body = TextAreaField(
+        "Comment",
+        filters=[lambda v: v.strip() if isinstance(v, str) else v],
+        validators=[
+            DataRequired(message="Please write a comment."),
+            Length(
+                min=1,
+                max=COMMENT_BODY_MAX,
+                message=f"Comment must be {COMMENT_BODY_MAX} characters or fewer.",
+            ),
+        ],
+    )
