@@ -22,6 +22,7 @@ const editButtons = Array.from(document.querySelectorAll('.review-edit-btn'));
 const deleteButtons = Array.from(document.querySelectorAll('.review-delete-btn'));
 const editCancelButtons = Array.from(document.querySelectorAll('.review-edit-cancel'));
 const editForms = Array.from(document.querySelectorAll('.review-edit-form'));
+const reviewSortSelect = document.getElementById('review-sort-select');
 
 // ── Helpers ────────────────────────────────────────────────────────
 
@@ -187,6 +188,17 @@ editForms.forEach((form) => {
     showError(result.data && result.data.error);
   });
 });
+
+// ── Community-reviews sort dropdown ───────────────────────────────
+
+if (reviewSortSelect) {
+  // Auto-submit the parent GET form on change so the URL becomes
+  // ?sort=highest / ?sort=lowest etc. and remains bookmarkable.
+  reviewSortSelect.addEventListener('change', () => {
+    const form = reviewSortSelect.closest('form');
+    if (form) form.submit();
+  });
+}
 
 // ── Delete own review (with confirmation) ─────────────────────────
 

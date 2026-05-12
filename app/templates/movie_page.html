@@ -249,11 +249,27 @@
             <h2 class="content-title content-title-tight">
               Community Reviews <span class="content-title-sub">({{ community_count }})</span>
             </h2>
-            <select class="review-sort-select" aria-label="Sort community reviews">
-              <option value="recent">Most Recent</option>
-              <option value="highest">Highest Rated</option>
-              <option value="lowest">Lowest Rated</option>
-            </select>
+            {#
+              The dropdown is a GET form so the URL stays bookmarkable
+              (e.g. /movie/1?sort=highest). It auto-submits on change via
+              the small JS handler in movie_page.js — no separate button.
+            #}
+            <form
+              method="get"
+              action="{{ url_for('movie', movie_id=movie.id) }}"
+              class="review-sort-form"
+            >
+              <select
+                name="sort"
+                id="review-sort-select"
+                class="review-sort-select"
+                aria-label="Sort community reviews"
+              >
+                <option value="recent"  {% if active_sort == 'recent'  %}selected{% endif %}>Most Recent</option>
+                <option value="highest" {% if active_sort == 'highest' %}selected{% endif %}>Highest Rated</option>
+                <option value="lowest"  {% if active_sort == 'lowest'  %}selected{% endif %}>Lowest Rated</option>
+              </select>
+            </form>
           </div>
 
           <div class="review-list">

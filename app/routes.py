@@ -170,18 +170,29 @@ def search():
     )
 
 
+REVIEW_SORTS = ("recent", "highest", "lowest")
+
+
 @app.route("/movie/<int:movie_id>")
 def movie(movie_id):
     """Single movie detail page (hero + details sidebar + reviews).
 
-    The review section is rendered with three pieces of context:
+    The review section is rendered with these pieces of context:
       * `user_review`     — current user's own review on this movie (or None)
-      * `reviews`         — everyone else's reviews (sorted newest first)
+      * `reviews`         — everyone else's reviews
       * `review_form`     — fresh ReviewForm bound for create/edit submission
+      * `active_sort`     — one of 'recent' (default) / 'highest' / 'lowest'
+
+    The sort applies only to community reviews; the user's own review
+    always sits at the top regardless.
     """
     movie_obj = db.session.get(Movie, movie_id)
     if movie_obj is None:
         abort(404)
+
+    sort = (request.args.get("sort") or "recent").strip().lower()
+    if sort not in REVIEW_SORTS:
+        sort = "recent"
 
     user_review = None
     if current_user.is_authenticated:
@@ -194,8 +205,20 @@ def movie(movie_id):
     others_query = Review.query.filter_by(movie_id=movie_id)
     if user_review is not None:
         others_query = others_query.filter(Review.id != user_review.id)
-    reviews = others_query.order_by(Review.created_at.desc()).all()
 
+    # Newest first is the tiebreaker for all rating-based sorts.
+    if sort == "highest":
+        others_query = others_query.order_by(
+            Review.rating.desc(), Review.created_at.desc()
+        )
+    elif sort == "lowest":
+        others_query = others_query.order_by(
+            Review.rating.asc(), Review.created_at.desc()
+        )
+    else:  # recent (default)
+        others_query = others_query.order_by(Review.created_at.desc())
+
+    reviews = others_query.all()
     review_form = ReviewForm()
 
     return render_template(
@@ -205,6 +228,7 @@ def movie(movie_id):
         user_review=user_review,
         review_form=review_form,
         community_count=len(reviews),
+        active_sort=sort,
     )
 
 
