@@ -20,13 +20,13 @@ Notes for teammates:
       module. The write-review form and community reviews list belong
       to Module C.
 """
-from flask import abort, render_template, request
-from flask_login import login_required
+from flask import abort, jsonify, render_template, request
+from flask_login import current_user, login_required
 from sqlalchemy import func
 
 from app import app, db
 from app.forms import SearchForm
-from app.models import Genre, Movie, Review
+from app.models import Genre, Movie, Review, WatchlistItem
 
 
 # Display constants — adjust here if the design tweaks them.
@@ -180,15 +180,102 @@ def movie(movie_id):
 
 
 # ─────────────────────────────────────────────────────────────────────────
-# Pages owned by other modules — kept as thin shells until they take over.
-# Private routes are protected with @login_required (Module A).
+# Module D — Watchlist
 # ─────────────────────────────────────────────────────────────────────────
+#
+# Security rule: the user_id on each WatchlistItem is taken from
+# current_user, NEVER from the request body / URL. The <movie_id> in the
+# URL is what the user wants to add/remove; the user themselves comes
+# from the session.
+
+WATCHLIST_SORTS = ("date", "rating", "title", "year")
+
+
+def _sorted_watchlist_items(items, sort):
+    """Sort watchlist items in Python.
+
+    Average rating is a derived property over related Review rows, so doing
+    this in Python keeps the route simple and avoids per-sort SQL changes.
+    Watchlists are per-user and typically small, so the cost is negligible.
+    """
+    if sort == "title":
+        items.sort(key=lambda i: (i.movie.title or "").lower())
+    elif sort == "year":
+        items.sort(key=lambda i: i.movie.release_year or 0, reverse=True)
+    elif sort == "rating":
+        items.sort(key=lambda i: i.movie.average_rating or -1, reverse=True)
+    else:  # "date" — default. Newest additions first.
+        items.sort(key=lambda i: i.created_at, reverse=True)
+    return items
+
 
 @app.route("/watchlist")
 @login_required
 def watchlist():
-    return render_template("watchlist_page.html")
+    """Render the current user's watchlist.
 
+    Supports ?sort=date|rating|title|year to reorder the cards. Unknown
+    values fall back to date (newest first).
+    """
+    sort = (request.args.get("sort") or "date").strip().lower()
+    if sort not in WATCHLIST_SORTS:
+        sort = "date"
+
+    items = WatchlistItem.query.filter_by(user_id=current_user.id).all()
+    items = _sorted_watchlist_items(items, sort)
+
+    return render_template(
+        "watchlist_page.html",
+        watchlist_items=items,
+        watchlist_count=len(items),
+        active_sort=sort,
+    )
+
+
+@app.route("/watchlist/add/<int:movie_id>", methods=["POST"])
+@login_required
+def watchlist_add(movie_id):
+    """Add a movie to the current user's watchlist.
+
+    Idempotent: if the movie is already on the watchlist, returns OK
+    without creating a duplicate (the model has a UniqueConstraint that
+    would raise IntegrityError otherwise).
+    """
+    movie = db.session.get(Movie, movie_id)
+    if movie is None:
+        return jsonify(ok=False, error="Movie not found."), 404
+
+    existing = WatchlistItem.query.filter_by(
+        user_id=current_user.id, movie_id=movie_id
+    ).first()
+    if existing is not None:
+        return jsonify(ok=True, already_added=True)
+
+    item = WatchlistItem(user_id=current_user.id, movie_id=movie_id)
+    db.session.add(item)
+    db.session.commit()
+    return jsonify(ok=True, added=True), 201
+
+
+@app.route("/watchlist/remove/<int:movie_id>", methods=["POST"])
+@login_required
+def watchlist_remove(movie_id):
+    """Remove a movie from the current user's watchlist."""
+    item = WatchlistItem.query.filter_by(
+        user_id=current_user.id, movie_id=movie_id
+    ).first()
+    if item is None:
+        return jsonify(ok=False, error="Not in your watchlist."), 404
+
+    db.session.delete(item)
+    db.session.commit()
+    return jsonify(ok=True, removed=True)
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Pages owned by other modules — kept as thin shells until they take over.
+# Private routes are protected with @login_required (Module A).
+# ─────────────────────────────────────────────────────────────────────────
 
 @app.route("/profile")
 @login_required
