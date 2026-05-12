@@ -20,13 +20,24 @@ Notes for teammates:
       module. The write-review form and community reviews list belong
       to Module C.
 """
-from flask import abort, jsonify, render_template, request
+from collections import Counter
+
+from flask import abort, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import func
 
 from app import app, db
-from app.forms import ReviewForm, SearchForm
-from app.models import Genre, Movie, Review, WatchlistItem
+from app.forms import CommentForm, ProfileEditForm, ReviewForm, SearchForm
+from app.models import (
+    Follow,
+    Genre,
+    Movie,
+    Review,
+    ReviewComment,
+    ReviewLike,
+    User,
+    WatchlistItem,
+)
 
 
 # Display constants — adjust here if the design tweaks them.
@@ -220,6 +231,7 @@ def movie(movie_id):
 
     reviews = others_query.all()
     review_form = ReviewForm()
+    comment_form = CommentForm()
 
     return render_template(
         "movie_page.html",
@@ -227,6 +239,7 @@ def movie(movie_id):
         reviews=reviews,
         user_review=user_review,
         review_form=review_form,
+        comment_form=comment_form,
         community_count=len(reviews),
         active_sort=sort,
     )
@@ -433,6 +446,150 @@ def review_edit(review_id):
     return jsonify(ok=True, review=_review_to_json(review))
 
 
+@app.route("/review/<int:review_id>/like", methods=["POST"])
+@login_required
+def review_like(review_id):
+    """Like a review on behalf of the current user.
+
+    Idempotent: re-liking returns 200 with already_liked=True rather than
+    blowing up on the UniqueConstraint(user_id, review_id) of ReviewLike.
+    A user is allowed to like their own review (no self-vote restriction).
+    """
+    review = db.session.get(Review, review_id)
+    if review is None:
+        return jsonify(ok=False, error="Review not found."), 404
+
+    existing = ReviewLike.query.filter_by(
+        user_id=current_user.id, review_id=review_id
+    ).first()
+    if existing is not None:
+        return jsonify(
+            ok=True, already_liked=True, like_count=review.like_count
+        )
+
+    like = ReviewLike(user_id=current_user.id, review_id=review_id)
+    db.session.add(like)
+    db.session.commit()
+    return jsonify(ok=True, liked=True, like_count=review.like_count), 201
+
+
+@app.route("/review/<int:review_id>/unlike", methods=["POST"])
+@login_required
+def review_unlike(review_id):
+    """Remove the current user's like on a review."""
+    review = db.session.get(Review, review_id)
+    if review is None:
+        return jsonify(ok=False, error="Review not found."), 404
+
+    like = ReviewLike.query.filter_by(
+        user_id=current_user.id, review_id=review_id
+    ).first()
+    if like is None:
+        return jsonify(ok=False, error="You have not liked this review."), 404
+
+    db.session.delete(like)
+    db.session.commit()
+    return jsonify(ok=True, unliked=True, like_count=review.like_count)
+
+
+def _comment_to_json(comment):
+    """Shape a ReviewComment for JSON responses."""
+    return {
+        "id": comment.id,
+        "review_id": comment.review_id,
+        "user_id": comment.user_id,
+        "username": comment.user.username if comment.user else None,
+        "parent_comment_id": comment.parent_comment_id,
+        "body": comment.display_body,
+        "is_deleted": comment.is_deleted,
+        "created_at": comment.created_at.isoformat() if comment.created_at else None,
+    }
+
+
+@app.route("/review/<int:review_id>/comment", methods=["POST"])
+@login_required
+def comment_create(review_id):
+    """Add a top-level comment on a review."""
+    review = db.session.get(Review, review_id)
+    if review is None:
+        return jsonify(ok=False, error="Review not found."), 404
+
+    form = CommentForm()
+    if not form.validate_on_submit():
+        return (
+            jsonify(ok=False, error=_first_form_error(form), errors=form.errors),
+            400,
+        )
+
+    comment = ReviewComment(
+        review_id=review_id,
+        user_id=current_user.id,
+        body=form.body.data,
+        parent_comment_id=None,
+    )
+    db.session.add(comment)
+    db.session.commit()
+    return jsonify(ok=True, comment=_comment_to_json(comment)), 201
+
+
+@app.route("/comment/<int:comment_id>/reply", methods=["POST"])
+@login_required
+def comment_reply(comment_id):
+    """Reply to an existing comment (threaded via parent_comment_id)."""
+    parent = db.session.get(ReviewComment, comment_id)
+    if parent is None:
+        return jsonify(ok=False, error="Comment not found."), 404
+
+    # The template renders at most two visual levels (top-level comment
+    # + one row of replies). Reject attempts to reply to a reply so the
+    # DB never accumulates rows the UI cannot show.
+    if parent.parent_comment_id is not None:
+        return (
+            jsonify(
+                ok=False,
+                error="Replies can only be posted on top-level comments.",
+            ),
+            400,
+        )
+
+    form = CommentForm()
+    if not form.validate_on_submit():
+        return (
+            jsonify(ok=False, error=_first_form_error(form), errors=form.errors),
+            400,
+        )
+
+    reply = ReviewComment(
+        review_id=parent.review_id,
+        user_id=current_user.id,
+        body=form.body.data,
+        parent_comment_id=parent.id,
+    )
+    db.session.add(reply)
+    db.session.commit()
+    return jsonify(ok=True, comment=_comment_to_json(reply)), 201
+
+
+@app.route("/comment/<int:comment_id>/delete", methods=["POST"])
+@login_required
+def comment_delete(comment_id):
+    """Soft-delete one of the current user's own comments.
+
+    We don't hard-delete because the row may be a parent of replies; the
+    template renders display_body which substitutes '[comment removed]'
+    for soft-deleted comments so the thread structure stays intact.
+    """
+    comment = db.session.get(ReviewComment, comment_id)
+    if comment is None:
+        return jsonify(ok=False, error="Comment not found."), 404
+    if comment.user_id != current_user.id:
+        abort(403)
+
+    comment.is_deleted = True
+    db.session.commit()
+    return jsonify(ok=True, deleted=True)
+
+
 @app.route("/review/<int:review_id>/delete", methods=["POST"])
 @login_required
 def review_delete(review_id):
@@ -450,16 +607,163 @@ def review_delete(review_id):
 
 
 # ─────────────────────────────────────────────────────────────────────────
-# Pages owned by other modules — kept as thin shells until they take over.
-# Private routes are protected with @login_required (Module A).
+# Module E — Profile + Follow
 # ─────────────────────────────────────────────────────────────────────────
+
+
+def _top_genres_for(user, limit=4):
+    """Compute the user's favourite genres by counting genre tags across
+    all the movies they've reviewed. Returns a list of (name, count)."""
+    counter = Counter()
+    for review in user.reviews:
+        if review.movie is None:
+            continue
+        for g in review.movie.genres:
+            counter[g.name] += 1
+    return counter.most_common(limit)
+
 
 @app.route("/profile")
 @login_required
 def profile():
-    return render_template("my_profile.html")
+    """Render the current user's own profile page."""
+    user = current_user
+    reviews = (
+        Review.query.filter_by(user_id=user.id)
+        .order_by(Review.created_at.desc())
+        .all()
+    )
+    watchlist_count = WatchlistItem.query.filter_by(user_id=user.id).count()
+    liked_count = (
+        ReviewLike.query.filter_by(user_id=user.id).count()
+    )
+    return render_template(
+        "my_profile.html",
+        user=user,
+        reviews=reviews,
+        watchlist_count=watchlist_count,
+        liked_count=liked_count,
+        favourite_genres=_top_genres_for(user),
+    )
 
 
 @app.route("/user/<int:user_id>")
 def user_profile(user_id):
-    return render_template("other_profile.html")
+    """Public profile page for any user.
+
+    If a logged-in user lands on their own /user/<id> URL we redirect to
+    /profile so the 'edit your profile' affordances show up correctly.
+    """
+    user = db.session.get(User, user_id)
+    if user is None:
+        abort(404)
+    if current_user.is_authenticated and current_user.id == user.id:
+        return redirect(url_for("profile"))
+
+    reviews = (
+        Review.query.filter_by(user_id=user.id)
+        .order_by(Review.created_at.desc())
+        .all()
+    )
+    is_following = (
+        current_user.is_authenticated and current_user.is_following(user)
+    )
+    return render_template(
+        "other_profile.html",
+        user=user,
+        reviews=reviews,
+        is_following=is_following,
+    )
+
+
+@app.route("/profile/edit", methods=["GET", "POST"])
+@login_required
+def profile_edit():
+    """Edit the current user's profile.
+
+    GET renders the form pre-filled with existing values; POST validates
+    and persists. Username uniqueness is checked here because it depends
+    on DB state we don't want to bake into the form class.
+    """
+    form = ProfileEditForm()
+
+    if request.method == "GET":
+        form.username.data = current_user.username
+        form.bio.data = current_user.bio or ""
+        form.avatar_path.data = current_user.avatar_path or ""
+        return render_template("profile_edit.html", form=form)
+
+    # POST
+    if not form.validate_on_submit():
+        return (
+            render_template("profile_edit.html", form=form),
+            400,
+        )
+
+    new_username = form.username.data
+    if new_username != current_user.username:
+        clash = db.session.scalar(
+            db.select(User).where(User.username == new_username)
+        )
+        if clash is not None:
+            form.username.errors.append("That username is already taken.")
+            return render_template("profile_edit.html", form=form), 409
+
+    current_user.username = new_username
+    current_user.bio = form.bio.data or None
+    current_user.avatar_path = form.avatar_path.data or None
+    db.session.commit()
+    flash("Profile updated.", "success")
+    return redirect(url_for("profile"))
+
+
+@app.route("/user/<int:user_id>/follow", methods=["POST"])
+@login_required
+def user_follow(user_id):
+    """Follow another user. Idempotent."""
+    target = db.session.get(User, user_id)
+    if target is None:
+        return jsonify(ok=False, error="User not found."), 404
+    if target.id == current_user.id:
+        return jsonify(ok=False, error="You cannot follow yourself."), 400
+
+    if current_user.is_following(target):
+        return jsonify(
+            ok=True,
+            already_following=True,
+            follower_count=target.follower_count,
+        )
+
+    current_user.follow(target)
+    db.session.commit()
+    return (
+        jsonify(
+            ok=True,
+            following=True,
+            follower_count=target.follower_count,
+        ),
+        201,
+    )
+
+
+@app.route("/user/<int:user_id>/unfollow", methods=["POST"])
+@login_required
+def user_unfollow(user_id):
+    """Stop following another user."""
+    target = db.session.get(User, user_id)
+    if target is None:
+        return jsonify(ok=False, error="User not found."), 404
+
+    if not current_user.is_following(target):
+        return (
+            jsonify(ok=False, error="You are not following this user."),
+            404,
+        )
+
+    current_user.unfollow(target)
+    db.session.commit()
+    return jsonify(
+        ok=True,
+        unfollowed=True,
+        follower_count=target.follower_count,
+    )

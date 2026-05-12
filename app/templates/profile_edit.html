@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Star | Edit Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/my_profile.css') }}" />
+</head>
+<body class="profile-page">
+  <nav class="navbar-cinema" id="navbar">
+    <div class="page-container profile-nav-wrap">
+      <a href="{{ url_for('home') }}" class="nav-logo">Movie Star</a>
+
+      <ul class="nav-links">
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('watchlist') }}">Watchlist</a></li>
+      </ul>
+
+      <div class="nav-actions profile-nav-actions">
+        <a href="{{ url_for('profile') }}" class="btn-primary">Profile</a>
+        <a href="{{ url_for('logout') }}" class="btn-ghost">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="profile-main">
+    <section class="profile-hero">
+      <div class="page-container">
+        <div class="card-cinema profile-hero-card profile-edit-card">
+          <header class="profile-edit-header">
+            <p class="eyebrow">Account</p>
+            <h1 class="profile-name">Edit your profile</h1>
+            <p class="profile-meta">
+              Change your display name, write a short bio, or update your avatar URL.
+            </p>
+          </header>
+
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <ul class="profile-flash-list">
+                {% for category, msg in messages %}
+                  <li class="profile-flash profile-flash-{{ category }}">{{ msg }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% endwith %}
+
+          <form
+            action="{{ url_for('profile_edit') }}"
+            method="post"
+            class="profile-edit-form"
+            novalidate
+          >
+            {{ form.hidden_tag() }}
+
+            <div class="review-field-block">
+              <label class="review-field-label" for="username">Username</label>
+              {{ form.username(
+                id="username",
+                class_="field-input",
+                placeholder="Your username",
+                maxlength=64,
+                required=true
+              ) }}
+              {% for err in form.username.errors %}
+                <p class="form-error">{{ err }}</p>
+              {% endfor %}
+            </div>
+
+            <div class="review-field-block">
+              <label class="review-field-label" for="bio">Bio</label>
+              {{ form.bio(
+                id="bio",
+                class_="field-input movie-review-input movie-review-textarea",
+                rows=4,
+                maxlength=500,
+                placeholder="Tell other film lovers what you watch."
+              ) }}
+              {% for err in form.bio.errors %}
+                <p class="form-error">{{ err }}</p>
+              {% endfor %}
+            </div>
+
+            <div class="review-field-block">
+              <label class="review-field-label" for="avatar_path">Avatar URL (optional)</label>
+              {{ form.avatar_path(
+                id="avatar_path",
+                class_="field-input",
+                placeholder="https://...",
+                maxlength=255
+              ) }}
+              {% for err in form.avatar_path.errors %}
+                <p class="form-error">{{ err }}</p>
+              {% endfor %}
+              <p class="form-hint">Leave blank to use the default avatar.</p>
+            </div>
+
+            <div class="review-actions-row review-actions-row-end">
+              <a href="{{ url_for('profile') }}" class="btn-ghost">Cancel</a>
+              {{ form.submit(class_="btn-primary movie-submit-btn") }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="page-container footer-note">&copy; 2026 Movie Star. Movie nights start here.</div>
+  </footer>
+</body>
+</html>

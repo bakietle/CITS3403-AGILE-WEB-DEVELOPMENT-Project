@@ -23,6 +23,12 @@ const deleteButtons = Array.from(document.querySelectorAll('.review-delete-btn')
 const editCancelButtons = Array.from(document.querySelectorAll('.review-edit-cancel'));
 const editForms = Array.from(document.querySelectorAll('.review-edit-form'));
 const reviewSortSelect = document.getElementById('review-sort-select');
+const likeButtons = Array.from(document.querySelectorAll('.review-like-btn'));
+const commentForms = Array.from(document.querySelectorAll('.comment-form'));
+const replyForms = Array.from(document.querySelectorAll('.comment-reply-form'));
+const replyButtons = Array.from(document.querySelectorAll('.comment-reply-btn'));
+const replyCancelButtons = Array.from(document.querySelectorAll('.comment-reply-cancel'));
+const commentDeleteButtons = Array.from(document.querySelectorAll('.comment-delete-btn'));
 
 // ── Helpers ────────────────────────────────────────────────────────
 
@@ -186,6 +192,111 @@ editForms.forEach((form) => {
 
     if (submitBtn) submitBtn.disabled = false;
     showError(result.data && result.data.error);
+  });
+});
+
+// ── Comments: post / reply / delete ────────────────────────────────
+//
+// All three flows submit FormData with the X-CSRFToken header through
+// the shared postJson helper and reload the page on success, so the
+// re-rendered server template is the source of truth for thread order
+// and counts.
+
+function getCommentReplyForm(commentId) {
+  return document.querySelector(`.comment-reply-form[data-comment-id="${commentId}"]`);
+}
+
+replyButtons.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const form = getCommentReplyForm(btn.dataset.commentId);
+    if (form) form.classList.remove('hidden');
+  });
+});
+
+replyCancelButtons.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const form = getCommentReplyForm(btn.dataset.commentId);
+    if (form) {
+      form.classList.add('hidden');
+      const ta = form.querySelector('textarea');
+      if (ta) ta.value = '';
+    }
+  });
+});
+
+function bindCommentForm(form) {
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
+    const result = await postJson(form.action, { body: new FormData(form) });
+    if (result === null) return;
+
+    if (result.ok) {
+      window.location.reload();
+      return;
+    }
+
+    if (submitBtn) submitBtn.disabled = false;
+    showError(result.data && result.data.error);
+  });
+}
+
+commentForms.forEach(bindCommentForm);
+replyForms.forEach(bindCommentForm);
+
+commentDeleteButtons.forEach((btn) => {
+  btn.addEventListener('click', async () => {
+    const commentId = btn.dataset.commentId;
+    if (!commentId) return;
+
+    const confirmed = window.confirm('Delete this comment? It will be marked as removed in the thread.');
+    if (!confirmed) return;
+
+    btn.disabled = true;
+    const result = await postJson(`/comment/${commentId}/delete`);
+    if (result === null) return;
+
+    if (result.ok) {
+      window.location.reload();
+      return;
+    }
+
+    btn.disabled = false;
+    showError(result.data && result.data.error);
+  });
+});
+
+// ── Like / unlike a review ────────────────────────────────────────
+
+likeButtons.forEach((btn) => {
+  btn.addEventListener('click', async () => {
+    const reviewId = btn.dataset.reviewId;
+    if (!reviewId) return;
+
+    const isLiked = btn.classList.contains('is-liked');
+    const action = isLiked ? 'unlike' : 'like';
+
+    btn.disabled = true;
+    const result = await postJson(`/review/${reviewId}/${action}`);
+    if (result === null) return;
+
+    if (result.ok) {
+      // Flip the visual state and update the count from the server's
+      // authoritative response, then re-enable the button.
+      btn.classList.toggle('is-liked');
+      const textSpan = btn.querySelector('.review-like-text');
+      const countSpan = btn.querySelector('.review-like-count');
+      if (textSpan) textSpan.textContent = isLiked ? 'Like' : 'Liked';
+      if (countSpan && typeof result.data.like_count === 'number') {
+        countSpan.textContent = `(${result.data.like_count})`;
+      }
+      btn.disabled = false;
+    } else {
+      btn.disabled = false;
+      showError(result.data && result.data.error);
+    }
   });
 });
 

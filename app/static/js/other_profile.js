@@ -1,19 +1,50 @@
+// Other user's profile page interactions.
+//
+// Two things this file does:
+//   * Navbar scroll effect for visual polish.
+//   * Follow / Unfollow toggle on the hero card, posting to
+//     /user/<id>/follow or /unfollow and updating the visible follower
+//     count from the server's authoritative response.
+//
+// CSRF: token is read from <meta name="csrf-token"> in the page head.
+
 const navbar = document.getElementById('navbar');
-const logoutButton = document.getElementById('other-profile-logout-btn');
 const followButton = document.getElementById('follow-btn');
-const followerCount = document.getElementById('follower-count');
-const likeButtons = Array.from(document.querySelectorAll('[data-like-btn]'));
-const loggedInNavLinks = Array.from(document.querySelectorAll('[data-auth-nav="logged-in"]'));
+const followerCountEl = document.getElementById('follower-count');
 
-let isFollowing = false;
+// ── Helpers ────────────────────────────────────────────────────────
 
-const preserveLoggedInState = () => {
-  try {
-    localStorage.setItem('movieStarDemoAuth', 'logged-in');
-  } catch (error) {
-    // Ignore storage failures in static preview.
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  return meta ? meta.content : '';
+}
+
+async function postFollow(action, userId) {
+  // action is 'follow' or 'unfollow'.
+  const response = await fetch(`/user/${userId}/${action}`, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCsrfToken(),
+      'Accept': 'application/json',
+    },
+  });
+
+  if (response.redirected || response.status === 401) {
+    const next = encodeURIComponent(window.location.pathname);
+    window.location.href = `/auth?next=${next}`;
+    return null;
   }
-};
+
+  let data = {};
+  try {
+    data = await response.json();
+  } catch (e) {
+    // Not JSON.
+  }
+  return { ok: response.ok, status: response.status, data };
+}
+
+// ── Navbar ────────────────────────────────────────────────────────
 
 if (navbar) {
   window.addEventListener('scroll', () => {
@@ -21,42 +52,35 @@ if (navbar) {
   });
 }
 
-if (logoutButton) {
-  logoutButton.addEventListener('click', () => {
-    try {
-      localStorage.setItem('movieStarDemoAuth', 'guest');
-    } catch (error) {
-      // Ignore storage failures in static preview.
+// ── Follow / Unfollow ──────────────────────────────────────────────
+
+if (followButton) {
+  followButton.addEventListener('click', async () => {
+    const userId = followButton.dataset.userId;
+    if (!userId) return;
+
+    const isFollowing = followButton.classList.contains('is-following');
+    const action = isFollowing ? 'unfollow' : 'follow';
+
+    followButton.disabled = true;
+    const result = await postFollow(action, userId);
+    if (result === null) return;
+
+    if (result.ok) {
+      followButton.classList.toggle('is-following');
+      followButton.textContent = isFollowing ? 'Follow' : 'Following';
+      if (
+        followerCountEl
+        && typeof result.data.follower_count === 'number'
+      ) {
+        followerCountEl.textContent = result.data.follower_count;
+      }
+      followButton.disabled = false;
+    } else {
+      followButton.disabled = false;
+      const message = (result.data && result.data.error)
+        || 'Could not update your follow status.';
+      window.alert(message);
     }
   });
 }
-
-loggedInNavLinks.forEach((link) => {
-  link.addEventListener('click', preserveLoggedInState);
-});
-
-if (followButton && followerCount) {
-  followButton.addEventListener('click', () => {
-    const currentFollowers = Number(followerCount.textContent);
-
-    isFollowing = !isFollowing;
-    followerCount.textContent = String(isFollowing ? currentFollowers + 1 : currentFollowers - 1);
-    followButton.textContent = isFollowing ? 'Following' : 'Follow';
-    followButton.classList.toggle('btn-ghost', isFollowing);
-    followButton.classList.toggle('btn-primary', !isFollowing);
-  });
-}
-
-likeButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    const count = button.querySelector('.like-count');
-
-    if (!count) {
-      return;
-    }
-
-    const current = Number(count.textContent);
-    const isLiked = button.classList.toggle('is-liked');
-    count.textContent = String(isLiked ? current + 1 : current - 1);
-  });
-});

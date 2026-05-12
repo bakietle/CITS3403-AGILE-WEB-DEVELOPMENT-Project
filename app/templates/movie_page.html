@@ -11,6 +11,112 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/movie_page.css') }}" />
 </head>
 <body class="movie-page min-h-screen">
+
+  {#
+    ─── Macros for rendering review comments ───────────────────────────
+    The model supports unbounded nesting via parent_comment_id, but for
+    UI clarity we render at most two levels: top-level comments + their
+    direct replies (flat, no replies-of-replies on the page).
+  #}
+
+  {% macro render_comment_card(comment, is_reply=False) %}
+    <div class="comment-card {% if is_reply %}comment-reply{% endif %} {% if comment.is_deleted %}comment-deleted{% endif %}"
+         data-comment-id="{{ comment.id }}">
+      <div class="comment-meta">
+        {% if comment.user %}
+          <a href="{{ url_for('user_profile', user_id=comment.user_id) }}" class="comment-user-link">
+            {{ comment.user.username }}
+          </a>
+        {% else %}
+          <span class="comment-user-link">[deleted user]</span>
+        {% endif %}
+        <span class="comment-date">{{ comment.created_at.strftime('%b %d, %Y') }}</span>
+      </div>
+
+      <p class="comment-body">{{ comment.display_body }}</p>
+
+      {% if not comment.is_deleted and current_user.is_authenticated %}
+        <div class="comment-actions-row">
+          {% if not is_reply %}
+            <button class="comment-reply-btn" type="button" data-comment-id="{{ comment.id }}">Reply</button>
+          {% endif %}
+          {% if comment.user_id == current_user.id %}
+            <button class="comment-delete-btn" type="button" data-comment-id="{{ comment.id }}">Delete</button>
+          {% endif %}
+        </div>
+
+        {% if not is_reply %}
+          {# Hidden reply form, toggled by JS. #}
+          <form class="comment-reply-form hidden"
+                action="{{ url_for('comment_reply', comment_id=comment.id) }}"
+                method="post"
+                data-comment-id="{{ comment.id }}">
+            {{ comment_form.hidden_tag() }}
+            <textarea name="body" rows="2" maxlength="1000" required
+                      placeholder="Write a reply..."
+                      class="field-input comment-textarea"></textarea>
+            <div class="comment-form-actions">
+              <button type="button" class="btn-ghost comment-reply-cancel" data-comment-id="{{ comment.id }}">Cancel</button>
+              <button type="submit" class="btn-primary">Reply</button>
+            </div>
+          </form>
+        {% endif %}
+      {% endif %}
+    </div>
+  {% endmacro %}
+
+  {% macro render_comments_section(review) %}
+    <section class="review-comments-section">
+      <h4 class="review-comments-title">
+        Comments <span class="review-comments-count">({{ review.comments | rejectattr('is_deleted') | list | length }})</span>
+      </h4>
+
+      <div class="comment-list">
+        {#
+          Iterate over ALL top-level comments (the model's
+          top_level_comments helper filters out is_deleted, which would
+          drop replies-of-deleted-parents from the page). We keep a
+          deleted parent visible if any of its replies are still alive,
+          showing it as the "[comment removed]" placeholder so the
+          thread structure stays readable.
+        #}
+        {% set rendered_any = namespace(value=False) %}
+        {% for top in review.comments if top.parent_comment_id is none %}
+          {% set visible_replies = top.replies | rejectattr('is_deleted') | list %}
+          {% if not top.is_deleted or visible_replies %}
+            {{ render_comment_card(top, is_reply=False) }}
+            {% for reply in visible_replies %}
+              {{ render_comment_card(reply, is_reply=True) }}
+            {% endfor %}
+            {% set rendered_any.value = True %}
+          {% endif %}
+        {% endfor %}
+        {% if not rendered_any.value %}
+          <p class="comment-empty">No comments yet.</p>
+        {% endif %}
+      </div>
+
+      {% if current_user.is_authenticated %}
+        <form class="comment-form"
+              action="{{ url_for('comment_create', review_id=review.id) }}"
+              method="post"
+              data-review-id="{{ review.id }}">
+          {{ comment_form.hidden_tag() }}
+          <textarea name="body" rows="2" maxlength="1000" required
+                    placeholder="Add a comment..."
+                    class="field-input comment-textarea"></textarea>
+          <div class="comment-form-actions">
+            <button type="submit" class="btn-primary">Post comment</button>
+          </div>
+        </form>
+      {% else %}
+        <p class="comment-empty-cta">
+          <a href="{{ url_for('auth') }}" class="text-gold">Log in</a> to leave a comment.
+        </p>
+      {% endif %}
+    </section>
+  {% endmacro %}
+
   <nav class="navbar-cinema" id="navbar">
     <div class="page-container movie-nav-wrap">
       <a href="{{ url_for('home') }}" class="nav-logo">Movie Star</a>
@@ -153,10 +259,21 @@
                     {% endif %}
                   </p>
                   <div class="review-actions-row review-actions-row-end">
+                    {# Like button — yes, you may like your own review. #}
+                    <button
+                      class="helpful-btn review-like-btn {% if user_review.is_liked_by(current_user) %}is-liked{% endif %}"
+                      type="button"
+                      data-review-id="{{ user_review.id }}"
+                    >
+                      <span class="review-like-text">{% if user_review.is_liked_by(current_user) %}Liked{% else %}Like{% endif %}</span>
+                      <span class="review-like-count">({{ user_review.like_count }})</span>
+                    </button>
                     <button class="btn-ghost review-edit-btn" type="button" data-review-id="{{ user_review.id }}">Edit</button>
                     <button class="btn-ghost review-delete-btn" type="button" data-review-id="{{ user_review.id }}">Delete</button>
                   </div>
                 </div>
+
+                {{ render_comments_section(user_review) }}
 
                 {# Inline edit form, hidden until "Edit" is clicked (JS in next commit). #}
                 <form
@@ -293,6 +410,18 @@
                   <p class="review-spoiler-warning">&#9888; Contains spoilers</p>
                 {% endif %}
                 <p class="review-copy">{{ review.body }}</p>
+                <div class="review-footer-row">
+                  <button
+                    class="helpful-btn review-like-btn {% if review.is_liked_by(current_user) %}is-liked{% endif %}"
+                    type="button"
+                    data-review-id="{{ review.id }}"
+                  >
+                    <span class="review-like-text">{% if review.is_liked_by(current_user) %}Liked{% else %}Like{% endif %}</span>
+                    <span class="review-like-count">({{ review.like_count }})</span>
+                  </button>
+                </div>
+
+                {{ render_comments_section(review) }}
               </article>
             {% else %}
               <p class="content-copy">No reviews yet. Be the first to share your thoughts!</p>
