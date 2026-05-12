@@ -540,6 +540,18 @@ def comment_reply(comment_id):
     if parent is None:
         return jsonify(ok=False, error="Comment not found."), 404
 
+    # The template renders at most two visual levels (top-level comment
+    # + one row of replies). Reject attempts to reply to a reply so the
+    # DB never accumulates rows the UI cannot show.
+    if parent.parent_comment_id is not None:
+        return (
+            jsonify(
+                ok=False,
+                error="Replies can only be posted on top-level comments.",
+            ),
+            400,
+        )
+
     form = CommentForm()
     if not form.validate_on_submit():
         return (
