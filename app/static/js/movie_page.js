@@ -23,6 +23,7 @@ const deleteButtons = Array.from(document.querySelectorAll('.review-delete-btn')
 const editCancelButtons = Array.from(document.querySelectorAll('.review-edit-cancel'));
 const editForms = Array.from(document.querySelectorAll('.review-edit-form'));
 const reviewSortSelect = document.getElementById('review-sort-select');
+const likeButtons = Array.from(document.querySelectorAll('.review-like-btn'));
 
 // ── Helpers ────────────────────────────────────────────────────────
 
@@ -186,6 +187,38 @@ editForms.forEach((form) => {
 
     if (submitBtn) submitBtn.disabled = false;
     showError(result.data && result.data.error);
+  });
+});
+
+// ── Like / unlike a review ────────────────────────────────────────
+
+likeButtons.forEach((btn) => {
+  btn.addEventListener('click', async () => {
+    const reviewId = btn.dataset.reviewId;
+    if (!reviewId) return;
+
+    const isLiked = btn.classList.contains('is-liked');
+    const action = isLiked ? 'unlike' : 'like';
+
+    btn.disabled = true;
+    const result = await postJson(`/review/${reviewId}/${action}`);
+    if (result === null) return;
+
+    if (result.ok) {
+      // Flip the visual state and update the count from the server's
+      // authoritative response, then re-enable the button.
+      btn.classList.toggle('is-liked');
+      const textSpan = btn.querySelector('.review-like-text');
+      const countSpan = btn.querySelector('.review-like-count');
+      if (textSpan) textSpan.textContent = isLiked ? 'Like' : 'Liked';
+      if (countSpan && typeof result.data.like_count === 'number') {
+        countSpan.textContent = `(${result.data.like_count})`;
+      }
+      btn.disabled = false;
+    } else {
+      btn.disabled = false;
+      showError(result.data && result.data.error);
+    }
   });
 });
 

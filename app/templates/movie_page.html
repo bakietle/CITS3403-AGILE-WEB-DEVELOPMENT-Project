@@ -153,6 +153,15 @@
                     {% endif %}
                   </p>
                   <div class="review-actions-row review-actions-row-end">
+                    {# Like button — yes, you may like your own review. #}
+                    <button
+                      class="helpful-btn review-like-btn {% if user_review.is_liked_by(current_user) %}is-liked{% endif %}"
+                      type="button"
+                      data-review-id="{{ user_review.id }}"
+                    >
+                      <span class="review-like-text">{% if user_review.is_liked_by(current_user) %}Liked{% else %}Like{% endif %}</span>
+                      <span class="review-like-count">({{ user_review.like_count }})</span>
+                    </button>
                     <button class="btn-ghost review-edit-btn" type="button" data-review-id="{{ user_review.id }}">Edit</button>
                     <button class="btn-ghost review-delete-btn" type="button" data-review-id="{{ user_review.id }}">Delete</button>
                   </div>
@@ -293,6 +302,16 @@
                   <p class="review-spoiler-warning">&#9888; Contains spoilers</p>
                 {% endif %}
                 <p class="review-copy">{{ review.body }}</p>
+                <div class="review-footer-row">
+                  <button
+                    class="helpful-btn review-like-btn {% if review.is_liked_by(current_user) %}is-liked{% endif %}"
+                    type="button"
+                    data-review-id="{{ review.id }}"
+                  >
+                    <span class="review-like-text">{% if review.is_liked_by(current_user) %}Liked{% else %}Like{% endif %}</span>
+                    <span class="review-like-count">({{ review.like_count }})</span>
+                  </button>
+                </div>
               </article>
             {% else %}
               <p class="content-copy">No reviews yet. Be the first to share your thoughts!</p>

@@ -26,7 +26,7 @@ from sqlalchemy import func
 
 from app import app, db
 from app.forms import ReviewForm, SearchForm
-from app.models import Genre, Movie, Review, WatchlistItem
+from app.models import Genre, Movie, Review, ReviewLike, WatchlistItem
 
 
 # Display constants — adjust here if the design tweaks them.
@@ -431,6 +431,52 @@ def review_edit(review_id):
     # updated_at is filled automatically by the model's onupdate hook.
     db.session.commit()
     return jsonify(ok=True, review=_review_to_json(review))
+
+
+@app.route("/review/<int:review_id>/like", methods=["POST"])
+@login_required
+def review_like(review_id):
+    """Like a review on behalf of the current user.
+
+    Idempotent: re-liking returns 200 with already_liked=True rather than
+    blowing up on the UniqueConstraint(user_id, review_id) of ReviewLike.
+    A user is allowed to like their own review (no self-vote restriction).
+    """
+    review = db.session.get(Review, review_id)
+    if review is None:
+        return jsonify(ok=False, error="Review not found."), 404
+
+    existing = ReviewLike.query.filter_by(
+        user_id=current_user.id, review_id=review_id
+    ).first()
+    if existing is not None:
+        return jsonify(
+            ok=True, already_liked=True, like_count=review.like_count
+        )
+
+    like = ReviewLike(user_id=current_user.id, review_id=review_id)
+    db.session.add(like)
+    db.session.commit()
+    return jsonify(ok=True, liked=True, like_count=review.like_count), 201
+
+
+@app.route("/review/<int:review_id>/unlike", methods=["POST"])
+@login_required
+def review_unlike(review_id):
+    """Remove the current user's like on a review."""
+    review = db.session.get(Review, review_id)
+    if review is None:
+        return jsonify(ok=False, error="Review not found."), 404
+
+    like = ReviewLike.query.filter_by(
+        user_id=current_user.id, review_id=review_id
+    ).first()
+    if like is None:
+        return jsonify(ok=False, error="You have not liked this review."), 404
+
+    db.session.delete(like)
+    db.session.commit()
+    return jsonify(ok=True, unliked=True, like_count=review.like_count)
 
 
 @app.route("/review/<int:review_id>/delete", methods=["POST"])
