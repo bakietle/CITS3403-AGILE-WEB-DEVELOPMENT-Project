@@ -169,6 +169,10 @@ class ReviewForm(FlaskForm):
     )
     body = TextAreaField(
         "Review",
+        # Strip surrounding whitespace BEFORE validators run, so a body of
+        # "   " collapses to "" and is rejected by DataRequired instead of
+        # silently being stored as empty after the route's own .strip().
+        filters=[lambda v: v.strip() if isinstance(v, str) else v],
         validators=[
             DataRequired(message="Please write a review."),
             Length(
