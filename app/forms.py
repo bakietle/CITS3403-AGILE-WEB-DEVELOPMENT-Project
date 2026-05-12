@@ -6,11 +6,12 @@ schemas: they validate inputs, render CSRF tokens, and integrate with the
 Flask request lifecycle.
 
 Currently contains:
-    - LoginForm     (Module A - Auth)
-    - SignupForm    (Module A - Auth)
-    - SearchForm    (Module B - Movies + Search)
-    - ReviewForm    (Module C - Reviews)
-    - CommentForm   (Module C - Comments on reviews)
+    - LoginForm        (Module A - Auth)
+    - SignupForm       (Module A - Auth)
+    - SearchForm       (Module B - Movies + Search)
+    - ReviewForm       (Module C - Reviews)
+    - CommentForm      (Module C - Comments on reviews)
+    - ProfileEditForm  (Module E - Profile)
 """
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -208,3 +209,55 @@ class CommentForm(FlaskForm):
             ),
         ],
     )
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Module E — Profile edit form
+# ─────────────────────────────────────────────────────────────────────
+
+PROFILE_BIO_MAX = 500
+PROFILE_AVATAR_MAX = 255
+
+
+class ProfileEditForm(FlaskForm):
+    """Edit the current user's profile (username, bio, avatar URL).
+
+    Username uniqueness is checked at the route level because we need
+    access to the database session and the current user's id.
+    """
+
+    username = StringField(
+        "Username",
+        filters=[lambda v: v.strip() if isinstance(v, str) else v],
+        validators=[
+            DataRequired(message="Username is required."),
+            Length(
+                min=3,
+                max=64,
+                message="Username must be between 3 and 64 characters.",
+            ),
+        ],
+    )
+    bio = TextAreaField(
+        "Bio",
+        filters=[lambda v: v.strip() if isinstance(v, str) else v],
+        validators=[
+            Optional(),
+            Length(
+                max=PROFILE_BIO_MAX,
+                message=f"Bio must be {PROFILE_BIO_MAX} characters or fewer.",
+            ),
+        ],
+    )
+    avatar_path = StringField(
+        "Avatar URL",
+        filters=[lambda v: v.strip() if isinstance(v, str) else v],
+        validators=[
+            Optional(),
+            Length(
+                max=PROFILE_AVATAR_MAX,
+                message="Avatar URL is too long.",
+            ),
+        ],
+    )
+    submit = SubmitField("Save changes")

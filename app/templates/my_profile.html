@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Movie Star | My Profile</title>
+  <title>Movie Star | {{ user.username }}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/my_profile.css') }}" />
@@ -14,13 +14,18 @@
       <a href="{{ url_for('home') }}" class="nav-logo">Movie Star</a>
 
       <ul class="nav-links">
-        <li><a href="{{ url_for('home') }}" data-auth-nav="logged-in">Home</a></li>
-        <li><a href="{{ url_for('watchlist') }}" data-auth-nav="logged-in">Watchlist</a></li>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('watchlist') }}">Watchlist</a></li>
       </ul>
 
       <div class="nav-actions profile-nav-actions">
-        <a href="{{ url_for('profile') }}" class="btn-primary" data-auth-nav="logged-in">Profile</a>
-        <a href="{{ url_for('logout') }}" id="my-profile-logout-btn" class="btn-ghost">Logout</a>
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('profile') }}" class="btn-primary">Profile</a>
+          <a href="{{ url_for('logout') }}" id="my-profile-logout-btn" class="btn-ghost">Logout</a>
+        {% else %}
+          <a href="{{ url_for('auth') }}" class="btn-ghost">Login</a>
+          <a href="{{ url_for('auth') }}" class="btn-primary">Sign Up</a>
+        {% endif %}
       </div>
     </div>
   </nav>
@@ -30,34 +35,44 @@
       <div class="page-container">
         <div class="card-cinema profile-hero-card">
           <div class="profile-avatar-wrap">
-            <img src="https://i.pravatar.cc/120?img=12" alt="Alex Chen avatar" class="profile-avatar" />
+            {% if user.avatar_path %}
+              <img src="{{ user.avatar_path }}" alt="{{ user.username }} avatar" class="profile-avatar" />
+            {% else %}
+              <img src="https://i.pravatar.cc/120?u={{ user.id }}" alt="{{ user.username }} avatar" class="profile-avatar" />
+            {% endif %}
           </div>
 
           <div class="profile-hero-copy">
             <p class="eyebrow">My Profile</p>
-            <h1 class="profile-name">Alex Chen</h1>
-            <p class="profile-meta">@alex_chen / Joined March 2024</p>
-            <p class="profile-bio">
-              Film lover, sci-fi obsessive, and regular review poster. Usually watching something thoughtful,
-              strange, or visually ambitious.
+            <h1 class="profile-name">{{ user.username }}</h1>
+            <p class="profile-meta">
+              @{{ user.username }}
+              {% if user.created_at %}
+                &middot; Joined {{ user.created_at.strftime('%B %Y') }}
+              {% endif %}
             </p>
+            {% if user.bio %}
+              <p class="profile-bio">{{ user.bio }}</p>
+            {% else %}
+              <p class="profile-bio profile-bio-muted">Tell other film lovers what you watch.</p>
+            {% endif %}
           </div>
 
           <div class="profile-hero-actions">
-            <button id="edit-profile-btn" class="btn-nav" type="button">Edit Profile</button>
+            <a href="{{ url_for('profile_edit') }}" id="edit-profile-btn" class="btn-nav">Edit Profile</a>
           </div>
 
           <div class="profile-stats">
             <div class="profile-stat">
-              <span class="profile-stat-value">28</span>
+              <span class="profile-stat-value">{{ user.review_count }}</span>
               <span class="profile-stat-label">Reviews</span>
             </div>
             <div class="profile-stat">
-              <span class="profile-stat-value">143</span>
+              <span class="profile-stat-value">{{ user.following_count }}</span>
               <span class="profile-stat-label">Following</span>
             </div>
             <div class="profile-stat">
-              <span class="profile-stat-value">381</span>
+              <span class="profile-stat-value">{{ user.follower_count }}</span>
               <span class="profile-stat-label">Followers</span>
             </div>
           </div>
@@ -73,96 +88,53 @@
               <p class="eyebrow">Recent Activity</p>
               <h2 class="section-title">My Reviews</h2>
             </div>
-            <p class="section-copy">A short list of recent reviews from this prototype profile.</p>
+            <p class="section-copy">
+              {% if reviews %}
+                Showing {{ reviews | length }} review{{ 's' if reviews | length != 1 else '' }}.
+              {% else %}
+                No reviews yet — head to a <a href="{{ url_for('home') }}" class="text-gold">movie page</a> to write your first one.
+              {% endif %}
+            </p>
           </div>
 
           <div class="profile-review-list">
-            <article class="card-cinema profile-review-card" data-review-card>
-              <div class="profile-review-poster-wrap">
-                <img src="https://image.tmdb.org/t/p/w92/AmR3JG1VQVxU8TfAvljUhfSFUOx.jpg" alt="Dune: Part Two poster" class="profile-review-poster" />
-              </div>
-              <div class="profile-review-body">
-                <div class="profile-review-top">
-                  <div>
-                    <h3 class="profile-review-title">Dune: Part Two</h3>
-                    <p class="profile-review-meta">2024 / Sci-Fi / Denis Villeneuve</p>
+            {% for review in reviews %}
+              {% set movie = review.movie %}
+              <article class="card-cinema profile-review-card" data-review-id="{{ review.id }}">
+                <a href="{{ url_for('movie', movie_id=movie.id) }}" class="profile-review-poster-wrap">
+                  {% if movie.poster_path %}
+                    <img src="{{ movie.poster_path }}" alt="{{ movie.title }} poster" class="profile-review-poster" />
+                  {% else %}
+                    <img src="https://picsum.photos/seed/profile{{ movie.id }}/92/138" alt="{{ movie.title }} poster" class="profile-review-poster" />
+                  {% endif %}
+                </a>
+                <div class="profile-review-body">
+                  <div class="profile-review-top">
+                    <div>
+                      <h3 class="profile-review-title">
+                        <a href="{{ url_for('movie', movie_id=movie.id) }}">{{ movie.title }}</a>
+                      </h3>
+                      <p class="profile-review-meta">
+                        {% if movie.release_year %}{{ movie.release_year }}{% endif %}
+                        {% if movie.primary_genre %} / {{ movie.primary_genre }}{% endif %}
+                        {% if movie.director_name %} / {{ movie.director_name }}{% endif %}
+                      </p>
+                    </div>
+                    <span class="profile-review-rating">&#9733; {{ review.rating }}/10</span>
                   </div>
-                  <span class="profile-review-rating">&#9733; 5/5</span>
-                </div>
-                <p class="profile-review-copy">
-                  Villeneuve delivers scale without losing emotional control. The set pieces land, the pacing stays sharp,
-                  and every image feels like it belongs on a cinema screen.
-                </p>
-                <div class="profile-review-footer">
-                  <div class="profile-review-meta-group">
-                    <span class="profile-review-date">Posted 10 March 2024</span>
-                    <span class="profile-review-likes">24 likes</span>
-                  </div>
-                  <div class="profile-review-actions">
-                    <button class="review-action-btn" type="button" data-review-edit>Edit</button>
-                    <button class="review-action-btn review-action-btn-danger" type="button" data-review-delete>Delete</button>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <article class="card-cinema profile-review-card" data-review-card>
-              <div class="profile-review-poster-wrap">
-                <img src="https://image.tmdb.org/t/p/w92/wTnV3PCVW5O92JMrFvvrRcV39RU.jpg" alt="Past Lives poster" class="profile-review-poster" />
-              </div>
-              <div class="profile-review-body">
-                <div class="profile-review-top">
-                  <div>
-                    <h3 class="profile-review-title">Past Lives</h3>
-                    <p class="profile-review-meta">2023 / Romance / Celine Song</p>
-                  </div>
-                  <span class="profile-review-rating">&#9733; 5/5</span>
-                </div>
-                <p class="profile-review-copy">
-                  Quiet, precise, and devastating in the best way. It says a lot with very little and trusts the audience
-                  to sit with the emotional weight.
-                </p>
-                <div class="profile-review-footer">
-                  <div class="profile-review-meta-group">
-                    <span class="profile-review-date">Posted 4 February 2024</span>
-                    <span class="profile-review-likes">31 likes</span>
-                  </div>
-                  <div class="profile-review-actions">
-                    <button class="review-action-btn" type="button" data-review-edit>Edit</button>
-                    <button class="review-action-btn review-action-btn-danger" type="button" data-review-delete>Delete</button>
+                  <p class="profile-review-copy">{{ review.body }}</p>
+                  <div class="profile-review-footer">
+                    <div class="profile-review-meta-group">
+                      <span class="profile-review-date">Posted {{ review.created_at.strftime('%d %B %Y') }}</span>
+                      <span class="profile-review-likes">{{ review.like_count }} like{{ 's' if review.like_count != 1 else '' }}</span>
+                    </div>
+                    <div class="profile-review-actions">
+                      <a href="{{ url_for('movie', movie_id=movie.id) }}#write-review" class="review-action-btn">Open</a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </article>
-
-            <article class="card-cinema profile-review-card" data-review-card>
-              <div class="profile-review-poster-wrap">
-                <img src="https://image.tmdb.org/t/p/w92/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg" alt="Poor Things poster" class="profile-review-poster" />
-              </div>
-              <div class="profile-review-body">
-                <div class="profile-review-top">
-                  <div>
-                    <h3 class="profile-review-title">Poor Things</h3>
-                    <p class="profile-review-meta">2023 / Drama / Yorgos Lanthimos</p>
-                  </div>
-                  <span class="profile-review-rating">&#9733; 3/5</span>
-                </div>
-                <p class="profile-review-copy">
-                  Bold and visually inventive, but the performance and design work carried me more than the full story did.
-                  Still a memorable watch.
-                </p>
-                <div class="profile-review-footer">
-                  <div class="profile-review-meta-group">
-                    <span class="profile-review-date">Posted 20 January 2024</span>
-                    <span class="profile-review-likes">9 likes</span>
-                  </div>
-                  <div class="profile-review-actions">
-                    <button class="review-action-btn" type="button" data-review-edit>Edit</button>
-                    <button class="review-action-btn review-action-btn-danger" type="button" data-review-delete>Delete</button>
-                  </div>
-                </div>
-              </div>
-            </article>
+              </article>
+            {% endfor %}
           </div>
         </div>
 
@@ -171,11 +143,42 @@
             <p class="eyebrow">Overview</p>
             <h2 class="sidebar-title">Average Rating</h2>
             <div class="sidebar-rating-row">
-              <span class="sidebar-rating-value">4.2</span>
-              <span class="sidebar-rating-total">/ 5</span>
+              {% if user.average_rating is not none %}
+                <span class="sidebar-rating-value">{{ '%.1f' % user.average_rating }}</span>
+                <span class="sidebar-rating-total">/ 10</span>
+              {% else %}
+                <span class="sidebar-rating-value">—</span>
+              {% endif %}
             </div>
-            <p class="sidebar-copy">Based on 28 submitted reviews.</p>
+            <p class="sidebar-copy">
+              {% if user.review_count > 0 %}
+                Based on {{ user.review_count }} submitted review{{ 's' if user.review_count != 1 else '' }}.
+              {% else %}
+                Submit your first review to start a rating average.
+              {% endif %}
+            </p>
           </div>
+
+          <div class="card-cinema profile-side-card">
+            <p class="eyebrow">Library</p>
+            <h2 class="sidebar-title">At a glance</h2>
+            <ul class="profile-side-list">
+              <li><a href="{{ url_for('watchlist') }}">Watchlist</a> &mdash; {{ watchlist_count }} movie{{ 's' if watchlist_count != 1 else '' }}</li>
+              <li>Liked reviews &mdash; {{ liked_count }}</li>
+            </ul>
+          </div>
+
+          {% if favourite_genres %}
+            <div class="card-cinema profile-side-card">
+              <p class="eyebrow">Tastes</p>
+              <h2 class="sidebar-title">Favourite genres</h2>
+              <ul class="profile-side-list">
+                {% for name, count in favourite_genres %}
+                  <li>{{ name }} &mdash; {{ count }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
         </aside>
       </div>
     </section>

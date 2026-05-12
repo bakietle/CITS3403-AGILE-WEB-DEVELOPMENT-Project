@@ -1,62 +1,15 @@
-const navbar = document.getElementById('navbar');
-const logoutButton = document.getElementById('my-profile-logout-btn');
-const editProfileButton = document.getElementById('edit-profile-btn');
-const editButtons = Array.from(document.querySelectorAll('[data-review-edit]'));
-const deleteButtons = Array.from(document.querySelectorAll('[data-review-delete]'));
-const loggedInNavLinks = Array.from(document.querySelectorAll('[data-auth-nav="logged-in"]'));
+// My profile page interactions.
+//
+// All the demo localStorage / fake-auth logic that used to live here has
+// been removed now that the page is server-rendered with real data and
+// gated behind @login_required. The Edit Profile button is a plain link
+// to /profile/edit so no JS is required for it either; this file just
+// keeps the navbar scroll effect for visual polish.
 
-const preserveLoggedInState = () => {
-  try {
-    localStorage.setItem('movieStarDemoAuth', 'logged-in');
-  } catch (error) {
-    // Ignore storage failures in static preview.
-  }
-};
+const navbar = document.getElementById('navbar');
 
 if (navbar) {
   window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 40);
   });
 }
-
-if (logoutButton) {
-  logoutButton.addEventListener('click', () => {
-    try {
-      localStorage.setItem('movieStarDemoAuth', 'guest');
-    } catch (error) {
-      // Ignore storage failures in static preview.
-    }
-  });
-}
-
-loggedInNavLinks.forEach((link) => {
-  link.addEventListener('click', preserveLoggedInState);
-});
-
-if (editProfileButton) {
-  editProfileButton.addEventListener('click', () => {
-    window.alert('Edit profile is not implemented in this prototype yet.');
-  });
-}
-
-editButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    window.alert('Review editing is postponed in this simplified prototype.');
-  });
-});
-
-deleteButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    const reviewCard = button.closest('[data-review-card]');
-
-    if (!reviewCard) {
-      return;
-    }
-
-    const confirmed = window.confirm('Remove this review from the profile list?');
-
-    if (confirmed) {
-      reviewCard.remove();
-    }
-  });
-});
