@@ -9,6 +9,7 @@ Currently contains:
     - LoginForm     (Module A - Auth)
     - SignupForm    (Module A - Auth)
     - SearchForm    (Module B - Movies + Search)
+    - ReviewForm    (Module C - Reviews)
 """
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -18,11 +19,13 @@ from wtforms import (
     SelectField,
     StringField,
     SubmitField,
+    TextAreaField,
 )
 from wtforms.validators import (
     DataRequired,
     Email,
     EqualTo,
+    InputRequired,
     Length,
     NumberRange,
     Optional,
@@ -135,3 +138,48 @@ class SearchForm(FlaskForm):
         validators=[Optional()],
         default="Any",
     )
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Module C — Review form
+# ─────────────────────────────────────────────────────────────────────
+
+REVIEW_BODY_MAX = 2000
+
+
+class ReviewForm(FlaskForm):
+    """Create or edit a review.
+
+    Used by both POST /movie/<id>/review and POST /review/<id>/edit, so
+    it has no submit button — it's submitted via AJAX, not via a regular
+    HTML form submit.
+
+    Validation mirrors the DB CheckConstraint on Review.rating (1..10)
+    and a sensible 2000-char ceiling on body. CSRF is provided by the
+    global CSRFProtect — AJAX callers must send X-CSRFToken header or
+    include csrf_token as a form field.
+    """
+
+    rating = IntegerField(
+        "Rating",
+        validators=[
+            InputRequired(message="Please choose a rating from 1 to 10."),
+            NumberRange(min=1, max=10, message="Rating must be between 1 and 10."),
+        ],
+    )
+    body = TextAreaField(
+        "Review",
+        # Strip surrounding whitespace BEFORE validators run, so a body of
+        # "   " collapses to "" and is rejected by DataRequired instead of
+        # silently being stored as empty after the route's own .strip().
+        filters=[lambda v: v.strip() if isinstance(v, str) else v],
+        validators=[
+            DataRequired(message="Please write a review."),
+            Length(
+                min=1,
+                max=REVIEW_BODY_MAX,
+                message=f"Review must be {REVIEW_BODY_MAX} characters or fewer.",
+            ),
+        ],
+    )
+    contains_spoilers = BooleanField("Contains spoilers")
