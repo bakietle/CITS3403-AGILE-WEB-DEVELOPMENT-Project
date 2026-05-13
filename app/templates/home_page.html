@@ -62,15 +62,18 @@
   <section class="page-section">
     <div class="page-container">
       <div class="section-head">
-        <div class="filter-bar">
-          <a href="{{ url_for('search') }}" class="btn-nav">Genre</a>
-          <a href="{{ url_for('search') }}" class="btn-nav">Release Year</a>
-          <a href="{{ url_for('search') }}" class="btn-nav">Highest Rating</a>
-          <a href="{{ url_for('search') }}" class="btn-ghost">Clear Filters</a>
-        </div>
         <div>
           <h2 class="section-title">Highest Rating Movies</h2>
           <p class="section-subtitle">Curated films with the highest score from our community.</p>
+        </div>
+        {#
+          The old "Genre / Release Year / Highest Rating / Clear Filters"
+          row was removed because every button just linked to /search
+          without pre-filling anything, which set false expectations.
+          One honest link to the full search page replaces them.
+        #}
+        <div class="filter-bar">
+          <a href="{{ url_for('search') }}" class="btn-nav">Browse all movies</a>
         </div>
       </div>
 
