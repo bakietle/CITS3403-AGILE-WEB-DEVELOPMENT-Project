@@ -60,7 +60,18 @@
 
           <div class="profile-hero-actions">
             <a href="{{ url_for('profile_edit') }}" id="edit-profile-btn" class="btn-nav">Edit Profile</a>
+            <a href="{{ url_for('change_password') }}" class="btn-nav">Change Password</a>
           </div>
+
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <ul class="profile-flash-list profile-flash-list-wide">
+                {% for category, msg in messages %}
+                  <li class="profile-flash profile-flash-{{ category }}">{{ msg }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% endwith %}
 
           <div class="profile-stats">
             <div class="profile-stat">

@@ -8,6 +8,7 @@ Flask request lifecycle.
 Currently contains:
     - LoginForm        (Module A - Auth)
     - SignupForm       (Module A - Auth)
+    - ChangePasswordForm (Module A - Auth)
     - SearchForm       (Module B - Movies + Search)
     - ReviewForm       (Module C - Reviews)
     - CommentForm      (Module C - Comments on reviews)
@@ -89,6 +90,28 @@ class SignupForm(FlaskForm):
         ],
     )
     submit = SubmitField("Join Movie Star")
+
+
+class ChangePasswordForm(FlaskForm):
+    current_password = PasswordField(
+        "Current Password",
+        validators=[DataRequired(message="Please enter your current password.")],
+    )
+    new_password = PasswordField(
+        "New Password",
+        validators=[
+            DataRequired(message="Please enter a new password."),
+            Length(min=8, message="New password must be at least 8 characters."),
+        ],
+    )
+    confirm_new_password = PasswordField(
+        "Confirm New Password",
+        validators=[
+            DataRequired(message="Please confirm your new password."),
+            EqualTo("new_password", message="New passwords must match."),
+        ],
+    )
+    submit = SubmitField("Change Password")
 
 
 # ─────────────────────────────────────────────────────────────────────

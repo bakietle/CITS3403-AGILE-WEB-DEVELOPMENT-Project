@@ -79,6 +79,121 @@
 .profile-hero-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.profile-hero-actions .btn-nav {
+  white-space: nowrap;
+}
+
+.profile-edit-card {
+  display: block;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.profile-edit-header {
+  margin-bottom: 24px;
+}
+
+.profile-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.review-field-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-field-label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.movie-review-input {
+  border-radius: 8px;
+}
+
+.movie-review-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.review-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.review-actions-row-end {
+  justify-content: flex-end;
+}
+
+.movie-submit-btn {
+  padding: 11px 26px;
+  font-size: 0.85rem;
+}
+
+.form-error {
+  margin-top: -12px;
+  color: #fca5a5;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.form-hint {
+  margin-top: -12px;
+  color: #6b7280;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.profile-flash-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  list-style: none;
+}
+
+.profile-flash-list-wide {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.profile-flash,
+.profile-form-summary {
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.profile-flash-success {
+  border: 1px solid rgba(74, 222, 128, 0.32);
+  background: rgba(34, 197, 94, 0.1);
+  color: #bbf7d0;
+}
+
+.profile-flash-error,
+.profile-form-summary {
+  border: 1px solid rgba(248, 113, 113, 0.36);
+  background: rgba(220, 38, 38, 0.1);
+  color: #fecaca;
+}
+
+.profile-form-summary {
+  margin-bottom: 18px;
 }
 
 .profile-stats {
