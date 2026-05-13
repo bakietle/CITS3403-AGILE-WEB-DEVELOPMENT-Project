@@ -22,7 +22,7 @@
   {% macro render_comment_card(comment, is_reply=False) %}
     <div class="comment-card {% if is_reply %}comment-reply{% endif %} {% if comment.is_deleted %}comment-deleted{% endif %}"
          data-comment-id="{{ comment.id }}">
-      <div class="comment-meta">
+      <div class="comment-header">
         {% if comment.user %}
           <a href="{{ url_for('user_profile', user_id=comment.user_id) }}" class="comment-user-link">
             {{ comment.user.username }}
@@ -33,15 +33,15 @@
         <span class="comment-date">{{ comment.created_at.strftime('%b %d, %Y') }}</span>
       </div>
 
-      <p class="comment-body">{{ comment.display_body }}</p>
+      <div class="comment-body">{{ comment.display_body }}</div>
 
       {% if not comment.is_deleted and current_user.is_authenticated %}
         <div class="comment-actions-row">
           {% if not is_reply %}
-            <button class="comment-reply-btn" type="button" data-comment-id="{{ comment.id }}">Reply</button>
+            <button class="comment-action-btn comment-reply-btn" type="button" data-comment-id="{{ comment.id }}">Reply</button>
           {% endif %}
           {% if comment.user_id == current_user.id %}
-            <button class="comment-delete-btn" type="button" data-comment-id="{{ comment.id }}">Delete</button>
+            <button class="comment-action-btn comment-delete-btn" type="button" data-comment-id="{{ comment.id }}">Delete</button>
           {% endif %}
         </div>
 
@@ -56,8 +56,8 @@
                       placeholder="Write a reply..."
                       class="field-input comment-textarea"></textarea>
             <div class="comment-form-actions">
-              <button type="button" class="btn-ghost comment-reply-cancel" data-comment-id="{{ comment.id }}">Cancel</button>
-              <button type="submit" class="btn-primary">Reply</button>
+              <button type="button" class="btn-ghost comment-reply-cancel comment-form-secondary" data-comment-id="{{ comment.id }}">Cancel</button>
+              <button type="submit" class="btn-primary comment-submit-btn">Reply</button>
             </div>
           </form>
         {% endif %}
@@ -84,10 +84,16 @@
         {% for top in review.comments if top.parent_comment_id is none %}
           {% set visible_replies = top.replies | rejectattr('is_deleted') | list %}
           {% if not top.is_deleted or visible_replies %}
-            {{ render_comment_card(top, is_reply=False) }}
-            {% for reply in visible_replies %}
-              {{ render_comment_card(reply, is_reply=True) }}
-            {% endfor %}
+            <div class="comment-thread" data-thread-root-id="{{ top.id }}">
+              {{ render_comment_card(top, is_reply=False) }}
+              {% if visible_replies %}
+                <div class="comment-replies">
+                  {% for reply in visible_replies %}
+                    {{ render_comment_card(reply, is_reply=True) }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
             {% set rendered_any.value = True %}
           {% endif %}
         {% endfor %}
@@ -106,7 +112,7 @@
                     placeholder="Add a comment..."
                     class="field-input comment-textarea"></textarea>
           <div class="comment-form-actions">
-            <button type="submit" class="btn-primary">Post comment</button>
+            <button type="submit" class="btn-primary comment-submit-btn">Post Comment</button>
           </div>
         </form>
       {% else %}
