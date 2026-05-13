@@ -22,4 +22,4 @@ csrf = CSRFProtect(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "auth"
 
-from app import auth, models, routes, seed
+from app import auth, models, routes, seed, posters
