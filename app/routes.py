@@ -27,7 +27,13 @@ from flask_login import current_user, login_required
 from sqlalchemy import func
 
 from app import app, db
-from app.forms import CommentForm, ProfileEditForm, ReviewForm, SearchForm
+from app.forms import (
+    ChangePasswordForm,
+    CommentForm,
+    ProfileEditForm,
+    ReviewForm,
+    SearchForm,
+)
 from app.models import (
     Follow,
     Genre,
@@ -714,6 +720,34 @@ def profile_edit():
     current_user.avatar_path = form.avatar_path.data or None
     db.session.commit()
     flash("Profile updated.", "success")
+    return redirect(url_for("profile"))
+
+
+@app.route("/profile/change-password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    """Allow the logged-in user to change their password."""
+    form = ChangePasswordForm()
+
+    if request.method == "GET":
+        return render_template("change_password.html", form=form)
+
+    if not form.validate_on_submit():
+        return render_template("change_password.html", form=form), 400
+
+    if not current_user.check_password(form.current_password.data):
+        form.current_password.errors.append("Current password is incorrect.")
+        return render_template("change_password.html", form=form), 400
+
+    if current_user.check_password(form.new_password.data):
+        form.new_password.errors.append(
+            "New password must be different from your current password."
+        )
+        return render_template("change_password.html", form=form), 400
+
+    current_user.set_password(form.new_password.data)
+    db.session.commit()
+    flash("Password changed successfully.", "success")
     return redirect(url_for("profile"))
 
 
