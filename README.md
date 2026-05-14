@@ -75,6 +75,20 @@ Make sure you have the following installed:
 - `flask db upgrade` applies database migrations without reseeding demo data.
 - `flask seed-db` intentionally resets and recreates demo data. This recreates demo users, so changed demo passwords are reset to the seed password values.
 
+### Running the tests
+
+Unit tests use pytest with an isolated temporary SQLite database, so they
+do not touch `app/app.db` or your `.env` configuration. From the project
+root:
+
+```bash
+pytest tests/test_unit.py -v
+```
+
+You should see 10 tests pass in about 1-2 seconds. The suite covers
+sign-up + login, search filters, review CRUD, watchlist add, like
+toggle, and the follow-yourself guard.
+
 5. **Set up environment variables**
 
    Create a `.env` file in the root directory:
