@@ -33,12 +33,18 @@ Notes:
       no separate driver install needed. Chrome itself must be
       installed on the machine.
 """
+import os
 import multiprocessing
 import time
 import unittest
 import uuid
 
+# config.py raises if SECRET_KEY is missing, so plant one in the env
+# before the Flask app is imported in the server subprocess.
+os.environ.setdefault("SECRET_KEY", "test-secret-key-for-selenium-only")
+
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -82,7 +88,10 @@ class MovieStarSeleniumTests(unittest.TestCase):
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--window-size=1920,1080")
-        self.driver = webdriver.Chrome(options=options)
+        try:
+            self.driver = webdriver.Chrome(options=options)
+        except WebDriverException as exc:
+            self.skipTest(f"Chrome WebDriver is not available: {exc}")
         self.driver.implicitly_wait(3)
         self.wait = WebDriverWait(self.driver, 5)
 
