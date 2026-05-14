@@ -69,6 +69,12 @@ Make sure you have the following installed:
    pip install -r requirements.txt
    ```
 
+### Development database commands
+
+- `python run.py` or `flask run` starts the app and should not reset data.
+- `flask db upgrade` applies database migrations without reseeding demo data.
+- `flask seed-db` intentionally resets and recreates demo data. This recreates demo users, so changed demo passwords are reset to the seed password values.
+
 5. **Set up environment variables**
 
    Create a `.env` file in the root directory:

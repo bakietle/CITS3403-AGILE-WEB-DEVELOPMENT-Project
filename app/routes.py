@@ -21,6 +21,7 @@ Notes for teammates:
       to Module C.
 """
 from collections import Counter
+from datetime import datetime
 
 from flask import abort, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
@@ -746,6 +747,7 @@ def change_password():
         return render_template("change_password.html", form=form), 400
 
     current_user.set_password(form.new_password.data)
+    current_user.password_changed_at = datetime.utcnow()
     db.session.commit()
     flash("Password changed successfully.", "success")
     return redirect(url_for("profile"))

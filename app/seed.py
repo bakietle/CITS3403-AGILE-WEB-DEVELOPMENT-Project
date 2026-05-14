@@ -7,6 +7,11 @@ This wipes ALL data from the seed-affected tables and reseeds. Don't run
 on a database you've put real or hand-curated data into — anything not
 in this file will be lost.
 
+Normal app startup imports this module only to register the `seed-db` CLI
+command. It does not seed or reset data unless that command is run manually.
+Running `flask seed-db` recreates demo users and resets their passwords to
+the demo password values below.
+
 The seed is deliberately small (~25 movies, 6 users, ~40 reviews) so the
 app feels populated without becoming unwieldy. A handful of edge cases
 are seeded on purpose:
@@ -1890,7 +1895,8 @@ def _create_comments(user_lookup, review_lookup):
 
 @app.cli.command("seed-db")
 def seed_db():
-    """Wipe all data and reseed the database with sample content."""
+    """Reset demo data and recreate sample users with demo passwords."""
+    click.echo("Resetting demo data. Demo user passwords will be reset.")
     click.echo("Clearing existing data...")
     _clear()
 
