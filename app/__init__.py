@@ -22,4 +22,6 @@ csrf = CSRFProtect(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "auth"
 
+# Import seed/poster modules to register manual Flask CLI commands only.
+# Normal app startup does not seed, reset, or fetch data.
 from app import auth, models, routes, seed, posters
