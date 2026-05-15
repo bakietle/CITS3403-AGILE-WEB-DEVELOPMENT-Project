@@ -1,254 +1,296 @@
 """Unit tests for the Movie Star Flask app.
 
 Each module is exercised on at least one happy path and one error path
-where applicable. Tests use a temp SQLite database (per fixtures in
-conftest.py) and never touch the network.
+where applicable. Tests use a temp SQLite database and never touch the
+network.
 
 Run with:
 
-    pytest tests/test_unit.py -v
+    python -m unittest tests.test_unit -v
+
+or:
+
+    python -m unittest discover tests -v
 """
-from app import db
-from app.models import Review, ReviewLike, User, WatchlistItem
+import os
+import tempfile
+import unittest
+from pathlib import Path
+
+# config.py raises if SECRET_KEY is missing, so plant one in the env
+# BEFORE importing the app. The value is only ever used by unittest.
+os.environ.setdefault("SECRET_KEY", "test-secret-key-for-unittest-only")
+
+from sqlalchemy import create_engine  # noqa: E402
+
+from app import app, db  # noqa: E402
+from app.models import Genre, Movie, Review, ReviewLike, User, WatchlistItem  # noqa: E402
 
 
-# ──────────────────────────────────────────────────────────────────
-# 1. Auth — signup stores password as a hash, not plaintext
-# ──────────────────────────────────────────────────────────────────
+class MovieStarUnitTests(unittest.TestCase):
+    """HTTP-level unit tests using Flask's unittest-friendly test client."""
 
-def test_signup_creates_user_with_hashed_password(client, app):
-    """POST /signup should insert a User whose password is hashed."""
-    response = client.post(
-        "/signup",
-        data={
-            "username": "alice",
-            "email": "alice@example.com",
-            "password": "supersecret",
-            "confirm_password": "supersecret",
-        },
-        follow_redirects=False,
-    )
-    # On success the route redirects to /profile.
-    assert response.status_code in (200, 302)
+    def setUp(self):
+        """Configure a fresh temporary SQLite database for each test."""
+        fd, self.temp_db_path = tempfile.mkstemp(suffix=".sqlite")
+        os.close(fd)
+        self.database_uri = f"sqlite:///{Path(self.temp_db_path).as_posix()}"
 
-    with app.app_context():
+        app.config.update(
+            TESTING=True,
+            WTF_CSRF_ENABLED=False,
+            SQLALCHEMY_DATABASE_URI=self.database_uri,
+        )
+
+        self.app_context = app.app_context()
+        self.app_context.push()
+
+        # Flask-SQLAlchemy caches the engine after app import, so rebind it
+        # to this test's temp database before creating tables.
+        try:
+            db.engine.dispose()
+        except Exception:
+            pass
+        db.engines[None] = create_engine(self.database_uri)
+        db.drop_all()
+        db.create_all()
+
+        self.client = app.test_client()
+
+    def tearDown(self):
+        """Drop the schema and delete the temporary SQLite file."""
+        db.session.remove()
+        db.drop_all()
+        try:
+            db.engine.dispose()
+        except Exception:
+            pass
+        self.app_context.pop()
+
+        if os.path.exists(self.temp_db_path):
+            os.unlink(self.temp_db_path)
+
+    def make_user(self, username="alice", email=None, password="password123"):
+        """Insert a User with sensible defaults; password is hashed."""
+        user = User(
+            username=username,
+            email=email or f"{username}@example.com",
+        )
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        return user
+
+    def make_movie(self, title="Test Movie", release_year=2020, genres=None, **kwargs):
+        """Insert a Movie; genres can be passed as a list of names."""
+        defaults = {"director_name": "Test Director"}
+        defaults.update(kwargs)
+        movie = Movie(title=title, release_year=release_year, **defaults)
+        if genres:
+            attached = []
+            for name in genres:
+                genre = db.session.query(Genre).filter_by(name=name).first()
+                if genre is None:
+                    genre = Genre(name=name)
+                    db.session.add(genre)
+                attached.append(genre)
+            movie.genres = attached
+        db.session.add(movie)
+        db.session.commit()
+        return movie
+
+    def login(self, user_id):
+        """Log the test client in by writing Flask-Login session keys."""
+        with self.client.session_transaction() as sess:
+            sess["_user_id"] = str(user_id)
+            sess["_fresh"] = True
+
+    def test_signup_creates_user_with_hashed_password(self):
+        """POST /signup should insert a User whose password is hashed."""
+        response = self.client.post(
+            "/signup",
+            data={
+                "username": "alice",
+                "email": "alice@example.com",
+                "password": "supersecret",
+                "confirm_password": "supersecret",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertIn(response.status_code, (200, 302))
+
         user = User.query.filter_by(email="alice@example.com").first()
-        assert user is not None
-        # Password is hashed, never stored as plaintext.
-        assert user.password_hash != "supersecret"
-        assert user.check_password("supersecret") is True
+        self.assertIsNotNone(user)
+        self.assertNotEqual(user.password_hash, "supersecret")
+        self.assertTrue(user.check_password("supersecret"))
 
+    def test_signup_rejects_duplicate_email(self):
+        """A second signup with an existing email should return 409."""
+        self.make_user(username="alice", email="alice@example.com")
 
-# ──────────────────────────────────────────────────────────────────
-# 2. Auth — signup rejects a duplicate email with 409
-# ──────────────────────────────────────────────────────────────────
+        response = self.client.post(
+            "/signup",
+            data={
+                "username": "alice_again",
+                "email": "alice@example.com",
+                "password": "anotherpassword",
+                "confirm_password": "anotherpassword",
+            },
+        )
 
-def test_signup_rejects_duplicate_email(client, make_user):
-    """A second signup with an existing email should return 409."""
-    make_user(username="alice", email="alice@example.com")
+        self.assertEqual(response.status_code, 409)
 
-    response = client.post(
-        "/signup",
-        data={
-            "username": "alice_again",
-            "email": "alice@example.com",  # already taken
-            "password": "anotherpassword",
-            "confirm_password": "anotherpassword",
-        },
-    )
-    assert response.status_code == 409
+    def test_login_wrong_password_returns_401(self):
+        """POST /login with the wrong password should return 401."""
+        self.make_user(
+            username="alice",
+            email="alice@example.com",
+            password="correct-password",
+        )
 
+        response = self.client.post(
+            "/login",
+            data={"email": "alice@example.com", "password": "wrong-password"},
+        )
 
-# ──────────────────────────────────────────────────────────────────
-# 3. Auth — wrong password returns 401
-# ──────────────────────────────────────────────────────────────────
+        self.assertEqual(response.status_code, 401)
 
-def test_login_wrong_password_returns_401(client, make_user):
-    """POST /login with the wrong password should return 401."""
-    make_user(
-        username="alice",
-        email="alice@example.com",
-        password="correct-password",
-    )
+    def test_search_filters_by_genre(self):
+        """/search?genre=Sci-Fi should show only Sci-Fi movies."""
+        self.make_movie(title="Inception", genres=["Sci-Fi"])
+        self.make_movie(title="Past Lives", genres=["Drama"])
 
-    response = client.post(
-        "/login",
-        data={"email": "alice@example.com", "password": "wrong-password"},
-    )
-    assert response.status_code == 401
+        response = self.client.get("/search?genre=Sci-Fi")
 
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Inception", response.data)
+        self.assertNotIn(b"Past Lives", response.data)
 
-# ──────────────────────────────────────────────────────────────────
-# 4. Movies / Search — genre filter
-# ──────────────────────────────────────────────────────────────────
+    def test_search_min_rating_excludes_low_rated(self):
+        """Movies with average rating below the threshold are filtered out."""
+        high = self.make_movie(title="HighRated", genres=["Sci-Fi"])
+        low = self.make_movie(title="LowRated", genres=["Sci-Fi"])
+        reviewer = self.make_user(username="bob", email="bob@example.com")
 
-def test_search_filters_by_genre(client, make_movie):
-    """/search?genre=Sci-Fi should show only Sci-Fi movies."""
-    make_movie(title="Inception", genres=["Sci-Fi"])
-    make_movie(title="Past Lives", genres=["Drama"])
-
-    response = client.get("/search?genre=Sci-Fi")
-    assert response.status_code == 200
-    assert b"Inception" in response.data
-    assert b"Past Lives" not in response.data
-
-
-# ──────────────────────────────────────────────────────────────────
-# 5. Movies / Search — min_rating excludes low-rated movies
-# ──────────────────────────────────────────────────────────────────
-
-def test_search_min_rating_excludes_low_rated(
-    client, app, make_user, make_movie,
-):
-    """Movies with average rating below the threshold are filtered out
-    BEFORE pagination, so the rendered page only contains qualifying
-    titles."""
-    high = make_movie(title="HighRated", genres=["Sci-Fi"])
-    low = make_movie(title="LowRated", genres=["Sci-Fi"])
-    reviewer = make_user(username="bob", email="bob@example.com")
-
-    with app.app_context():
-        db.session.add(Review(
-            user_id=reviewer.id, movie_id=high.id, rating=9, body="great",
-        ))
-        db.session.add(Review(
-            user_id=reviewer.id, movie_id=low.id, rating=4, body="meh",
-        ))
+        db.session.add(
+            Review(user_id=reviewer.id, movie_id=high.id, rating=9, body="great")
+        )
+        db.session.add(
+            Review(user_id=reviewer.id, movie_id=low.id, rating=4, body="meh")
+        )
         db.session.commit()
 
-    response = client.get("/search?min_rating=7%2B")
-    assert response.status_code == 200
-    assert b"HighRated" in response.data
-    assert b"LowRated" not in response.data
+        response = self.client.get("/search?min_rating=7%2B")
 
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"HighRated", response.data)
+        self.assertNotIn(b"LowRated", response.data)
 
-# ──────────────────────────────────────────────────────────────────
-# 6. Reviews — duplicate review on the same movie returns 409
-# ──────────────────────────────────────────────────────────────────
+    def test_review_duplicate_returns_409(self):
+        """A user may only review each movie once; the second attempt is 409."""
+        alice = self.make_user(username="alice", email="alice@example.com")
+        movie = self.make_movie(title="Inception")
+        self.login(alice.id)
 
-def test_review_duplicate_returns_409(
-    client, make_user, make_movie, login,
-):
-    """A user may only review each movie once; the second attempt is 409."""
-    alice = make_user(username="alice", email="alice@example.com")
-    movie = make_movie(title="Inception")
-    login(alice.id)
+        first_response = self.client.post(
+            f"/movie/{movie.id}/review",
+            data={"rating": "9", "body": "great"},
+        )
+        self.assertEqual(first_response.status_code, 201)
 
-    r1 = client.post(
-        f"/movie/{movie.id}/review",
-        data={"rating": "9", "body": "great"},
-    )
-    assert r1.status_code == 201
+        second_response = self.client.post(
+            f"/movie/{movie.id}/review",
+            data={"rating": "7", "body": "changed my mind"},
+        )
+        self.assertEqual(second_response.status_code, 409)
 
-    r2 = client.post(
-        f"/movie/{movie.id}/review",
-        data={"rating": "7", "body": "changed my mind"},
-    )
-    assert r2.status_code == 409
+    def test_review_non_owner_edit_returns_403(self):
+        """A user trying to edit someone else's review should get 403."""
+        alice = self.make_user(username="alice", email="alice@example.com")
+        bob = self.make_user(username="bob", email="bob@example.com")
+        movie = self.make_movie(title="Inception")
 
-
-# ──────────────────────────────────────────────────────────────────
-# 7. Reviews — non-owner editing returns 403
-# ──────────────────────────────────────────────────────────────────
-
-def test_review_non_owner_edit_returns_403(
-    client, app, make_user, make_movie, login,
-):
-    """A user trying to edit someone else's review should get 403."""
-    alice = make_user(username="alice", email="alice@example.com")
-    bob = make_user(username="bob", email="bob@example.com")
-    movie = make_movie(title="Inception")
-
-    with app.app_context():
         review = Review(
-            user_id=alice.id, movie_id=movie.id, rating=9, body="loved it",
+            user_id=alice.id,
+            movie_id=movie.id,
+            rating=9,
+            body="loved it",
         )
         db.session.add(review)
         db.session.commit()
         review_id = review.id
 
-    # Bob tries to edit Alice's review.
-    login(bob.id)
-    response = client.post(
-        f"/review/{review_id}/edit",
-        data={"rating": "1", "body": "hijacked"},
-    )
-    assert response.status_code == 403
+        self.login(bob.id)
+        response = self.client.post(
+            f"/review/{review_id}/edit",
+            data={"rating": "1", "body": "hijacked"},
+        )
 
+        self.assertEqual(response.status_code, 403)
 
-# ──────────────────────────────────────────────────────────────────
-# 8. Watchlist — add is idempotent
-# ──────────────────────────────────────────────────────────────────
+    def test_watchlist_add_is_idempotent(self):
+        """Re-adding a movie should not create a second WatchlistItem row."""
+        alice = self.make_user(username="alice", email="alice@example.com")
+        movie = self.make_movie(title="Inception")
+        self.login(alice.id)
 
-def test_watchlist_add_is_idempotent(
-    client, app, make_user, make_movie, login,
-):
-    """Re-adding a movie should not create a second WatchlistItem row."""
-    alice = make_user(username="alice", email="alice@example.com")
-    movie = make_movie(title="Inception")
-    login(alice.id)
+        first_response = self.client.post(f"/watchlist/add/{movie.id}")
+        self.assertEqual(first_response.status_code, 201)
+        self.assertTrue(first_response.get_json()["added"])
 
-    r1 = client.post(f"/watchlist/add/{movie.id}")
-    assert r1.status_code == 201
-    assert r1.get_json()["added"] is True
+        second_response = self.client.post(f"/watchlist/add/{movie.id}")
+        self.assertEqual(second_response.status_code, 200)
+        self.assertTrue(second_response.get_json()["already_added"])
 
-    r2 = client.post(f"/watchlist/add/{movie.id}")
-    assert r2.status_code == 200
-    assert r2.get_json()["already_added"] is True
-
-    with app.app_context():
         count = WatchlistItem.query.filter_by(
-            user_id=alice.id, movie_id=movie.id,
+            user_id=alice.id,
+            movie_id=movie.id,
         ).count()
-        assert count == 1  # not 2
+        self.assertEqual(count, 1)
 
+    def test_like_review_increments_count(self):
+        """POST /review/<id>/like should add a row and increment like_count."""
+        alice = self.make_user(username="alice", email="alice@example.com")
+        bob = self.make_user(username="bob", email="bob@example.com")
+        movie = self.make_movie(title="Inception")
 
-# ──────────────────────────────────────────────────────────────────
-# 9. Likes — liking a review increments like_count
-# ──────────────────────────────────────────────────────────────────
-
-def test_like_review_increments_count(
-    client, app, make_user, make_movie, login,
-):
-    """POST /review/<id>/like should add a row and increment like_count."""
-    alice = make_user(username="alice", email="alice@example.com")
-    bob = make_user(username="bob", email="bob@example.com")
-    movie = make_movie(title="Inception")
-
-    with app.app_context():
         review = Review(
-            user_id=alice.id, movie_id=movie.id, rating=9, body="great",
+            user_id=alice.id,
+            movie_id=movie.id,
+            rating=9,
+            body="great",
         )
         db.session.add(review)
         db.session.commit()
         review_id = review.id
 
-    login(bob.id)
-    response = client.post(f"/review/{review_id}/like")
-    assert response.status_code == 201
-    body = response.get_json()
-    assert body["liked"] is True
-    assert body["like_count"] == 1
+        self.login(bob.id)
+        response = self.client.post(f"/review/{review_id}/like")
 
-    # And the DB now has a ReviewLike row.
-    with app.app_context():
+        self.assertEqual(response.status_code, 201)
+        body = response.get_json()
+        self.assertTrue(body["liked"])
+        self.assertEqual(body["like_count"], 1)
+
         like_rows = ReviewLike.query.filter_by(
-            user_id=bob.id, review_id=review_id,
+            user_id=bob.id,
+            review_id=review_id,
         ).count()
-        assert like_rows == 1
+        self.assertEqual(like_rows, 1)
+
+    def test_follow_self_returns_400(self):
+        """POST /user/<own_id>/follow should be rejected with 400."""
+        alice = self.make_user(username="alice", email="alice@example.com")
+        self.login(alice.id)
+
+        response = self.client.post(f"/user/{alice.id}/follow")
+
+        self.assertEqual(response.status_code, 400)
+        payload = response.get_json()
+        self.assertFalse(payload["ok"])
+        self.assertIn("yourself", payload["error"].lower())
 
 
-# ──────────────────────────────────────────────────────────────────
-# 10. Profile — cannot follow yourself
-# ──────────────────────────────────────────────────────────────────
-
-def test_follow_self_returns_400(client, make_user, login):
-    """POST /user/<own_id>/follow should be rejected with 400."""
-    alice = make_user(username="alice", email="alice@example.com")
-    login(alice.id)
-
-    response = client.post(f"/user/{alice.id}/follow")
-    assert response.status_code == 400
-    payload = response.get_json()
-    assert payload["ok"] is False
-    assert "yourself" in payload["error"].lower()
+if __name__ == "__main__":
+    unittest.main()
