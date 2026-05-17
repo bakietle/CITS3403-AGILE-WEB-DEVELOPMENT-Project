@@ -51,6 +51,7 @@ function fadeAndRemove(card) {
   card.style.transform = 'scale(0.96)';
   window.setTimeout(() => {
     card.remove();
+    updateCount();
     // If that was the last card, reload to render the empty state from
     // the server template instead of patching the DOM by hand.
     if (!document.querySelector('.watchlist-card')) {
