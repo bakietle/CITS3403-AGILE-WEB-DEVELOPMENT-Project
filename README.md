@@ -90,7 +90,7 @@ CITS3403-AGILE-WEB-DEVELOPMENT-Project/
 │  ├─ forms.py           # Flask-WTF form definitions
 │  ├─ seed.py            # `flask seed-db` CLI command (demo data)
 │  ├─ posters.py         # `flask fetch-posters` CLI command (OMDb)
-│  ├─ app.db             # SQLite database (created by `flask db upgrade`)
+│  ├─ app.db             # Local SQLite database — generated, gitignored, not committed
 │  ├─ templates/         # Jinja2 templates (one .html per page)
 │  └─ static/
 │     ├─ css/            # One stylesheet per page + shared style.css
@@ -151,17 +151,23 @@ CITS3403-AGILE-WEB-DEVELOPMENT-Project/
    ```bash
    cp .env.example .env
    ```
-   At minimum your `.env` needs:
+   Your `.env` should mirror [`.env.example`](.env.example):
    ```env
-   FLASK_APP=run.py
-   FLASK_ENV=development
    SECRET_KEY=replace-with-your-own-secret-key
-   DATABASE_URL=                # leave blank to use the bundled SQLite db
-   OMDB_KEY=                    # optional — only needed for `flask fetch-posters`
+   DATABASE_URL=
+   OMDB_KEY=
    ```
-   > The app will refuse to start if `SECRET_KEY` is missing. If
-   > `DATABASE_URL` is blank, SQLAlchemy falls back to
-   > `sqlite:///app/app.db`.
+   - `SECRET_KEY` is **required** — the app refuses to start without it.
+   - `DATABASE_URL` can be left blank — SQLAlchemy falls back to the
+     local SQLite file at `app/app.db`.
+   - `OMDB_KEY` is optional and only used by `flask fetch-posters` (see
+     [Movie Posters](#-movie-posters-omdb)).
+
+   > ⚠️ **Never commit your `.env` file.** It holds local secrets like
+   > `SECRET_KEY` and `OMDB_KEY`. The file is already listed in
+   > [`.gitignore`](.gitignore), so as long as you don't force-add it
+   > you're fine. Only [`.env.example`](.env.example) (with empty
+   > values) belongs in the repo.
 
 6. **Apply database migrations**
    ```bash
@@ -285,7 +291,7 @@ database, so seed it first:
 
 ```bash
 flask seed-db
-python -m unittest tests.test_selenium
+python -m unittest tests.test_selenium -v
 ```
 
 Selenium 4 auto-downloads the matching ChromeDriver, so you only need
