@@ -38,6 +38,13 @@ async function postWatchlistRemove(movieId) {
   return { ok: response.ok, data };
 }
 
+function updateCount() {
+  const counter = document.querySelector('.sort-count');
+  if (!counter) return;
+  const count = document.querySelectorAll('.watchlist-card').length;
+  counter.textContent = `${count} movie${count !== 1 ? 's' : ''}`;
+}
+
 function fadeAndRemove(card) {
   card.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
   card.style.opacity = '0';
