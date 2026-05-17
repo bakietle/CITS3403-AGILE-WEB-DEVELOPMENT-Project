@@ -247,6 +247,22 @@ body::before {
   opacity: 1;
 }
 
+/* Rating pill (gold badge) shown on movie/watchlist/search cards. */
+.card-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold);
+  color: var(--dark);
+  padding: 10px 14px;
+  border-radius: 9999px;
+  font-weight: 700;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+}
+
 /* Movie card */
 .movie-card img {
   display: block;
