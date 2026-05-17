@@ -19,6 +19,17 @@ add/remove, review likes, comment posting).
 
 ---
 
+## 👥 Team
+
+| Name          | Student ID | GitHub        |
+|---------------|------------|---------------|
+| Ba Kiet Le    | 24337123   | bakietle      |
+| Hogan Tan     | 23644329   | HOGAN-T       |
+| Mengfei Chen  | 24011929   | Mengfei-Chen  |
+| Wei Bin Ting  | 24033168   | Smolyellow    |
+
+---
+
 ## ✨ Features
 
 **Accounts & profiles**
@@ -60,7 +71,7 @@ add/remove, review likes, comment posting).
 | Auth         | Flask-Login, Flask-WTF (CSRF), Werkzeug password hashing      |
 | ORM / DB     | Flask-SQLAlchemy, SQLite (default)                            |
 | Migrations   | Flask-Migrate (Alembic)                                       |
-| Testing      | `unittest` / `pytest`, Selenium (headless Chrome)             |
+| Testing      | Python `unittest`, Selenium WebDriver (headless Chrome)       |
 | External API | OMDb (optional — used only to fetch posters)                  |
 
 ---
@@ -86,7 +97,7 @@ CITS3403-AGILE-WEB-DEVELOPMENT-Project/
 │     └─ js/             # One script per page (AJAX, tab toggles, etc.)
 ├─ migrations/           # Alembic migration history
 ├─ tests/
-│  ├─ test_unit.py       # pytest unit tests (isolated temp SQLite)
+│  ├─ test_unit.py       # unittest unit tests (isolated temp SQLite)
 │  └─ test_selenium.py   # Selenium end-to-end tests (headless Chrome)
 ├─ run.py                # Entry point — `python run.py` or `flask run`
 ├─ requirements.txt
@@ -162,7 +173,14 @@ CITS3403-AGILE-WEB-DEVELOPMENT-Project/
    flask seed-db
    ```
 
-8. **Run the application**
+8. **Fetch real movie posters** (optional — requires `OMDB_KEY`)
+   ```bash
+   flask fetch-posters
+   ```
+   Without this, movies fall back to placeholder posters. See the
+   [Movie Posters](#-movie-posters-omdb) section below for details.
+
+9. **Run the application**
    ```bash
    python run.py
    ```
@@ -171,7 +189,7 @@ CITS3403-AGILE-WEB-DEVELOPMENT-Project/
    flask run
    ```
 
-9. Open your browser at <http://localhost:5000>.
+10. Open your browser at <http://localhost:5000>.
 
 ---
 
@@ -189,9 +207,38 @@ share the same password: **`password123`**.
 | maya@example.com     | maya_patel    |
 | ghost@example.com    | ghost_user    |
 
-> ⚠️ `flask seed-db` **resets** demo data and **resets demo passwords**
-> back to `password123` every time it runs. It does not affect users
-> you sign up yourself.
+> ⚠️ `flask seed-db` wipes existing data (users, movies, reviews,
+> watchlist, follows, likes, comments) and recreates the demo dataset
+> from scratch. It is intended for local development and testing only —
+> do not run it against a database that has real data you want to keep.
+
+---
+
+## 🎞️ Movie Posters (OMDb)
+
+Real movie posters are fetched from the [OMDb API](https://www.omdbapi.com/)
+and cached as URLs in your local database.
+
+- Sign up for a free OMDb API key and add it to your `.env`:
+  ```env
+  OMDB_KEY=your-omdb-api-key
+  ```
+- Run the fetch command to populate poster URLs for every movie:
+  ```bash
+  flask fetch-posters
+  ```
+- After running `flask seed-db`, posters reset along with the rest of
+  the demo data and movies fall back to placeholder images. Re-run
+  `flask fetch-posters` to repopulate them.
+- **Recommended first-run order:**
+  ```bash
+  flask db upgrade
+  flask seed-db
+  flask fetch-posters
+  python run.py
+  ```
+- Skipping this step is fine — the app works with placeholder posters,
+  it just looks nicer with the real ones.
 
 ---
 
@@ -209,18 +256,24 @@ share the same password: **`password123`**.
 
 ## 🧪 Running the Tests
 
-### Unit tests (pytest)
+### Unit tests (unittest)
 
 The unit tests spin up the app against an isolated temporary SQLite
 database, so they never touch `app/app.db` or your `.env`.
 
+Run just the unit suite:
 ```bash
-pytest tests/test_unit.py -v
+python -m unittest tests.test_unit -v
 ```
 
-You should see 10 tests pass in about 1–2 seconds. The suite covers
-sign-up + login, search filters, review CRUD, watchlist add, like
-toggle, and the follow-yourself guard.
+Or run **all** tests (unit + Selenium) via test discovery:
+```bash
+python -m unittest discover tests -v
+```
+
+You should see 10 unit tests pass in about 1–2 seconds. The suite
+covers sign-up + login, search filters, review CRUD, watchlist add,
+like toggle, and the follow-yourself guard.
 
 ### Selenium tests (end-to-end)
 
@@ -252,13 +305,3 @@ running headless, comment out the `--headless=new` line in
 
 ---
 
-## 👥 Team
-
-| Name | Student ID | GitHub |
-|------|------------|--------|
-| Ba Kiet Le    | 24337123    | bakietle      |
-| Hogan Tan     | 23644329    | HOGAN-T       |
-| Mengfei Chen  | 24011929    | Mengfei-Chen  |
-| Wei Bin Ting  | 24033168    | Smolyellow    |
-
----
